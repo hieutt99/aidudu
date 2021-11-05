@@ -1,1 +1,3 @@
-media/
+media/*
+!media/profile_pics/
+

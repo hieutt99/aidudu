@@ -5,6 +5,7 @@ from .views import *
 from rest_framework.routers import DefaultRouter
 
 router = DefaultRouter()
+router.register(r'boards', BoardViewSet, basename='board')
 router.register(r'workspaces', WorkspaceViewSet, basename='workspace')
 
 urlpatterns = [

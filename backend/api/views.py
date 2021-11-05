@@ -1,12 +1,17 @@
+from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework import status
+from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
+from rest_framework.permissions import AllowAny, BasePermission
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.contrib.auth import get_user_model
-from api.serializers import *
-from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
 from rest_framework.viewsets import ModelViewSet
+from utilities.request import parse_bool_or_400, parse_int_or_400
+
 from api.models import *
+from api.serializers import *
+
 
 class CurrentUserAPIView(APIView):
     def get(self, request):
@@ -14,5 +19,54 @@ class CurrentUserAPIView(APIView):
         return Response(serializer.data)
 
 
+class BoardViewSet(ModelViewSet):
+    model = Board
+
+    def get_serializer_class(self):
+        return BoardSerializer
+
+    def get_queryset(self):
+        workspace_id = parse_int_or_400(self.request.query_params, 'workspace')
+        recent = parse_bool_or_400(self.request.query_params, 'recent', False)
+        starred = parse_bool_or_400(self.request.query_params, 'starred', False)
+        limit = parse_int_or_400(self.request.query_params, 'limit', None)
+        user_id = parse_int_or_400(self.request.query_params, 'user')
+
+        if workspace_id is not None:
+            if not WorkspaceMembership.objects.filter(workspace_id=workspace_id, user_id=self.request.user.id).exists():
+                raise PermissionDenied(detail="You do not belong to this workspace or this workspace doesn't exist.")
+            return self.model.objects.filter(workspace_id=workspace_id)
+        
+        # check permission
+        if user_id is not None:
+            if user_id != self.request.user.id:
+                raise PermissionDenied()
+        else:
+            user_id = self.request.user.id
+
+        if starred:
+            boards = [bm.board for bm in BoardMembership.objects.filter(user_id=user_id, starred=starred)]
+            return boards[:limit] if limit is not None else boards
+        
+        if recent:
+            boards = [bm.board for bm in BoardMembership.objects.filter(user_id=user_id).order_by('-updated')]
+            return boards[:limit] if limit is not None else boards
+            
+
 class WorkspaceViewSet(ModelViewSet):
     model = Workspace
+
+    def get_serializer_class(self):
+        return WorkspaceSerializer
+    
+    def get_queryset(self):
+        user_id = parse_int_or_400(self.request.query_params, 'user')
+
+        if user_id is None:
+            user_id = self.request.user.id
+        
+        return [wm.workspace for wm in WorkspaceMembership.objects.filter(user_id=user_id)]
+    
+    def perform_create(self, serializer):
+        workspace = serializer.save()
+        WorkspaceMembership.objects.create(workspace=workspace, user=self.request.user, role=WorkspaceMembership.ROLE.ADMIN)

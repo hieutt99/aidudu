@@ -7,7 +7,7 @@ services:
             dockerfile: dockerfile
         image: aidudu:dev
         command: >
-            sh -c "python -m gunicorn aidudu.wsgi:application --bind=0.0.0.0:8000 --reload"
+            sh -c "python -m gunicorn aidudu.wsgi:application --bind=0.0.0.0:8000 --reload -w 4"
         env_file: 
             - ./backend/.env_files/backend.dev.env
         volumes:
