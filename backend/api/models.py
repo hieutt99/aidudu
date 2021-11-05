@@ -97,6 +97,7 @@ class BoardMembership(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='board_members')
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='boards')
     role = models.CharField(max_length=16, default=ROLE.ADMIN, choices=ROLE.choices)
+    starred = models.BooleanField(default=False)
     joined = models.DateField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
