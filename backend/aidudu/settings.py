@@ -27,6 +27,8 @@ DEBUG = os.getenv('DEBUG', 'true').lower() in ('true', '1')
 
 ALLOWED_HOSTS = ['*']
 
+AUTH_USER_MODEL = 'api.CustomUser'
+
 
 # Application definition
 
@@ -88,7 +90,7 @@ DATABASES = {
         'USER': os.environ['DB_USER'],
         'PASSWORD': os.environ['DB_PASSWORD'],
         'HOST': os.environ['DB_HOST'],
-        'PORT': os.environ['DB_POST'],
+        'PORT': os.environ['DB_PORT'],
     }
 }
 
@@ -138,18 +140,17 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
         # 'rest_framework.authentication.SessionAuthentication',
-        # 'rest_framework.authentication.BasicAuthentication',
-        'vtokens.authentication.CustomAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
     ),
 }
 
-CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOW_ALL_ORIGINS = True
 
-CORS_ORIGIN_WHITELIST = [
-    'http://localhost:3000'
-]
+# CORS_ORIGIN_WHITELIST = [
+#     'http://localhost:3000'
+# ]
 
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000'
