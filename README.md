@@ -59,5 +59,10 @@ npm run start
 ## FAQ
 ### How to run command inside Docker container
 ```bash
-docker-compose -f docker-compose.yml exec [COMMAND]
+docker-compose -f docker-compose.[ENV].yml exec [COMMAND]
+```
+
+### How to create an admin user
+```bash
+python3 manage.py createsuperuser
 ```

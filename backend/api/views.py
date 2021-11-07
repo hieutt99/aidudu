@@ -1,6 +1,10 @@
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
+import requests
+from django.urls import reverse
+import json
 from rest_framework import status
+from rest_framework.generics import GenericAPIView
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.permissions import AllowAny, BasePermission
@@ -17,6 +21,31 @@ class CurrentUserAPIView(APIView):
     def get(self, request):
         serializer = UserSerializer(request.user)
         return Response(serializer.data)
+
+
+class UserRegister(GenericAPIView):
+    serializer_class = UserRegisterSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args,  **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+
+        res_data = json.loads(requests.post(request.build_absolute_uri(reverse('login')), json=request.data).content)
+
+        return Response({
+            'access': res_data['access'],
+            'refresh': res_data['refresh'],
+            'user': UserSerializer(user, context=self.get_serializer_context()).data
+        }, status=status.HTTP_201_CREATED)
+
+
+
+class ForgotPasswordView(APIView):
+    def post(self, request, format=None):
+        # TODO: implement this feature
+        return Response(status=status.HTTP_200_OK)
 
 
 class BoardViewSet(ModelViewSet):
