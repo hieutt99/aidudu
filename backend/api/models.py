@@ -24,6 +24,7 @@ class CustomUser(AbstractUser):
 
     email = models.EmailField('Email address', unique=True)
     avatar = models.ImageField(default='profile_pics/default.jpg', upload_to='profile_pics/')
+    bio = models.CharField(default='', max_length=1000)
 
     def __str__(self):
         return f"{self.username} ({self.id})"
