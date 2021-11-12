@@ -159,9 +159,9 @@ class CardMembership(models.Model):
     """Represent the n-n relationship between card and member"""
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='card_members')
-    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='members')
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='cards')
     updated = models.DateTimeField(auto_now=True)
-    joined = models.DateField(auto_now_add=True, blank=True)
+    joined = models.DateField(auto_now_add=True)
     
     class Meta:
         unique_together = ('user', 'card')
