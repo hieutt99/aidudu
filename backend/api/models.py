@@ -155,6 +155,18 @@ class Card(models.Model):
     def __str__(self):
         return f"Card {self.title} ({self.id})"
 
+class CardMembership(models.Model):
+    """Represent the n-n relationship between card and member"""
+
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='card_members')
+    card = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='members')
+    updated = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        unique_together = ('user', 'card')
+
+    def __str__(self):
+        return f'BoardMembership ({self.id})'
 
 class CardLabel(models.Model):
     """Represent n-n relationship between card and label"""
