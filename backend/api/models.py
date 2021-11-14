@@ -24,6 +24,7 @@ class CustomUser(AbstractUser):
 
     email = models.EmailField('Email address', unique=True)
     avatar = models.ImageField(default='profile_pics/default.jpg', upload_to='profile_pics/')
+    bio = models.CharField(default='', max_length=512)
 
     def __str__(self):
         return f"{self.username} ({self.id})"
@@ -154,6 +155,19 @@ class Card(models.Model):
     def __str__(self):
         return f"Card {self.title} ({self.id})"
 
+class CardMembership(models.Model):
+    """Represent the n-n relationship between card and member"""
+
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='card_members')
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='cards')
+    updated = models.DateTimeField(auto_now=True)
+    joined = models.DateField(auto_now_add=True)
+    
+    class Meta:
+        unique_together = ('user', 'card')
+
+    def __str__(self):
+        return f'CardMembership ({self.id})'
 
 class CardLabel(models.Model):
     """Represent n-n relationship between card and label"""
