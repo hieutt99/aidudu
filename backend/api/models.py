@@ -114,6 +114,7 @@ class List(models.Model):
 
     name = models.CharField(default='', max_length=128)
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='lists')
+    position = models.IntegerField(default=0)
 
     def __str__(self):
         return f"List {self.name} ({self.id})"
@@ -150,6 +151,7 @@ class Card(models.Model):
     description = models.CharField(default='', max_length=256)
     start = models.DateTimeField(blank=True, null=True)
     due = models.DateTimeField(blank=True, null=True)
+    position = models.IntegerField(default=0)
     
     labels = models.ManyToManyField(Label, through='CardLabelRelationship')
     def __str__(self):
@@ -187,6 +189,7 @@ class Checklist(models.Model):
 
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='checklists')
     title = models.CharField(default='Untitled', max_length=128)
+    position = models.IntegerField(default=0)
 
     def __str__(self):
         return f'Checklist {self.title} ({self.id})'
@@ -198,6 +201,7 @@ class ChecklistItem(models.Model):
     checklist = models.ForeignKey(Checklist, on_delete=models.CASCADE, related_name='items')
     content = models.CharField(default='', max_length=128)
     checked = models.BooleanField(default=False)
+    position = models.IntegerField(default=0)
     
     def __str__(self):
         return f'Item {self.content} ({self.id})'
@@ -209,6 +213,7 @@ class Comment(models.Model):
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='comments')
     content = models.TextField(default='')
+    created = models.DateField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
