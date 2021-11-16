@@ -159,7 +159,7 @@ class CardMembership(models.Model):
     """Represent the n-n relationship between card and member"""
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='card_members')
-    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='cards')
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='user_cards')
     updated = models.DateTimeField(auto_now=True)
     joined = models.DateField(auto_now_add=True)
     
@@ -172,7 +172,7 @@ class CardMembership(models.Model):
 class CardLabelRelationship(models.Model):
     """Represent n-n relationship between card and label"""
 
-    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='cards')
+    card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='label_cards')
     label = models.ForeignKey(Label, on_delete=models.CASCADE, related_name='card_labels')
 
     class Meta:
