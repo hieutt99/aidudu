@@ -48,7 +48,7 @@ class WorkspaceSerializer(serializers.ModelSerializer):
 class CardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card
-        fields = "__all__"
+        fields = '__all__'
 
 class CardCreateSerializer(serializers.ModelSerializer):
     class Meta:

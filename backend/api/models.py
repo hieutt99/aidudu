@@ -67,7 +67,7 @@ class WorkspaceMembership(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='workspace_members')
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name='workspaces')
     role = models.CharField(max_length=16, default=ROLE.ADMIN, choices=ROLE.choices)
-    joined = models.DateField(auto_now_add=True, blank=True)
+    joined = models.DateTimeField(auto_now_add=True)
     
     class Meta:
         unique_together = ('user', 'workspace', 'role')
@@ -99,7 +99,7 @@ class BoardMembership(models.Model):
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='boards')
     role = models.CharField(max_length=16, default=ROLE.ADMIN, choices=ROLE.choices)
     starred = models.BooleanField(default=False)
-    joined = models.DateField(auto_now_add=True)
+    joined = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     
     class Meta:
@@ -154,6 +154,7 @@ class Card(models.Model):
     position = models.IntegerField(default=0)
     
     labels = models.ManyToManyField(Label, through='CardLabelRelationship')
+    
     def __str__(self):
         return f"Card {self.title} ({self.id})"
 
@@ -163,7 +164,7 @@ class CardMembership(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='card_members')
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='user_cards')
     updated = models.DateTimeField(auto_now=True)
-    joined = models.DateField(auto_now_add=True)
+    joined = models.DateTimeField(auto_now_add=True)
     
     class Meta:
         unique_together = ('user', 'card')
@@ -213,7 +214,7 @@ class Comment(models.Model):
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='comments')
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='comments')
     content = models.TextField(default='')
-    created = models.DateField(auto_now_add=True)
+    created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
