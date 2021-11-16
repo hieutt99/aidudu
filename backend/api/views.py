@@ -15,6 +15,7 @@ from utilities.request import parse_bool_or_400, parse_int_or_400
 
 from api.models import *
 from api.serializers import *
+from rest_framework.decorators import action
 
 
 class CurrentUserAPIView(APIView):
@@ -99,3 +100,69 @@ class WorkspaceViewSet(ModelViewSet):
     def perform_create(self, serializer):
         workspace = serializer.save()
         WorkspaceMembership.objects.create(workspace=workspace, user=self.request.user, role=WorkspaceMembership.ROLE.ADMIN)
+
+class CardViewSet(ModelViewSet):
+    model = Card
+
+    def get_serializer_class(self):
+        if self.action=='create':
+            return CardCreateSerializer
+        return CardSerializer
+
+    def get_queryset(self):
+        
+        return 
+
+    @action(detail=True, methods=['post'], url_path='labels')
+    def add_label_to_card(self, request, pk):
+        label_id = parse_int_or_400(request.data, 'id')
+        label = get_object_or_404(Label, id=label_id)
+
+        card_label = CardLabelRelationship.objects.filter(card_id=pk, label_id=label_id)
+        board = card_label.card.list.board
+        board_membership = BoardMembership.objects.filter(user_id=request.user, board=board)
+        if board_membership.exists() and label.board.id == board.id:
+            if not card_label.exists():
+                card_label = CardLabelRelationship.objects.create(card_id=pk, label_id=label_id)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            raise PermissionDenied(detail="You do not belong to this board or this board doesn't exist.")
+
+
+    @action(detail=True, methods=['post'], url_path='members')
+    def add_member_to_card(self, request, pk):
+        member_id = parse_int_or_400(request.data, 'id')
+        member = get_object_or_404(CustomUser, id=member_id)
+
+        card_membership = CardMembership.objects.filter(card_id=pk, user_id=member_id)
+        board_membership = BoardMembership.objects.filter(user_id=request.user, board=card_membership.card.list.board)
+        if board_membership.exists():
+            if not card_membership.exists():
+                card_membership = CardMembership.objects.create(card_id=pk, user_id=member_id)
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            raise PermissionDenied(detail="You do not belong to this board or this board doesn't exist.")
+
+
+    def delete_label_from_card(self, request, pk):
+        label_id = parse_int_or_400(request.data, 'id')
+        card_label = CardLabelRelationship.objects.filter(card_id=pk, label_id=label_id)
+        board_membership = BoardMembership.objects.filter(user_id=request.user, board=card_label.card.list.board)
+        if board_membership.exists():
+            if card_label.exists():
+                card_label.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            raise PermissionDenied(detail="You do not belong to this board or this board doesn't exist.")
+
+    def delete_member_from_card(self, request, pk):
+        member_id = parse_int_or_400(request.data, 'id')
+        card_membership = CardMembership.objects.filter(card_id=pk, user_id=member_id)
+        board_membership = BoardMembership.objects.filter(user_id=request.user, board=card_membership.card.list.board)
+        if board_membership.exists():
+            if card_membership.exists():
+                card_membership.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            raise PermissionDenied(detail="You do not belong to this board or this board doesn't exist.")
+
