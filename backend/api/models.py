@@ -145,13 +145,13 @@ class Label(models.Model):
 class Card(models.Model):
     """Represent card of list"""
 
-    list = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='cards')
+    list = models.ForeignKey(List, on_delete=models.CASCADE, related_name='cards')
     title = models.CharField(default='', max_length=128)
     description = models.CharField(default='', max_length=256)
     start = models.DateTimeField(blank=True, null=True)
     due = models.DateTimeField(blank=True, null=True)
     
-    labels = models.ManyToManyField(Label, through='CardLabel')
+    labels = models.ManyToManyField(Label, through='CardLabelRelationship')
     def __str__(self):
         return f"Card {self.title} ({self.id})"
 
@@ -169,7 +169,7 @@ class CardMembership(models.Model):
     def __str__(self):
         return f'CardMembership ({self.id})'
 
-class CardLabel(models.Model):
+class CardLabelRelationship(models.Model):
     """Represent n-n relationship between card and label"""
 
     card = models.ForeignKey(Card, on_delete=models.CASCADE, related_name='cards')
@@ -179,7 +179,7 @@ class CardLabel(models.Model):
         unique_together = ('card', 'label')
 
     def __str__(self):
-        return f'CardLabel ({self.id})'
+        return f'CardLabelRelationship ({self.id})'
 
 
 class Checklist(models.Model):
