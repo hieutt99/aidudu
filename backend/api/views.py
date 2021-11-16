@@ -109,9 +109,9 @@ class CardViewSet(ModelViewSet):
             return CardCreateSerializer
         return CardSerializer
 
-    def get_queryset(self):
+    # def get_queryset(self):
         
-        return 
+    #     return 
 
     @action(detail=True, methods=['post'], url_path='labels')
     def add_label_to_card(self, request, pk):
