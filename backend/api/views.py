@@ -143,7 +143,7 @@ class CardViewSet(ModelViewSet):
         else:
             raise PermissionDenied(detail="You do not belong to this board or this board doesn't exist.")
 
-
+    @action(detail=True, methods=['delete'], url_path='labels')
     def delete_label_from_card(self, request, pk):
         label_id = parse_int_or_400(request.data, 'id')
         card_label = CardLabelRelationship.objects.filter(card_id=pk, label_id=label_id)
@@ -155,6 +155,7 @@ class CardViewSet(ModelViewSet):
         else:
             raise PermissionDenied(detail="You do not belong to this board or this board doesn't exist.")
 
+    @action(detail=True, methods=['delete'], url_path='members')
     def delete_member_from_card(self, request, pk):
         member_id = parse_int_or_400(request.data, 'id')
         card_membership = CardMembership.objects.filter(card_id=pk, user_id=member_id)
