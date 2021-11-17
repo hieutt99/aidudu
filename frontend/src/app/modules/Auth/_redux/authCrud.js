@@ -1,14 +1,14 @@
 import axios from "axios";
-import { BACKEND_URL } from "../../../../config";
-export const LOGIN_URL = BACKEND_URL+"auth/login";
-export const REGISTER_URL = BACKEND_URL+"auth/register";
-export const REQUEST_PASSWORD_URL = BACKEND_URL+"auth/forgot-password";
 
-export const ME_URL = BACKEND_URL+"me";
+export const BACKEND_ORIGIN="http://128.0.0.1:8000/"
+export const LOGIN_URL = BACKEND_ORIGIN+"api/v1/auth/login";
+export const REGISTER_URL = BACKEND_ORIGIN+"api/v1/auth/register";
+export const REQUEST_PASSWORD_URL = BACKEND_ORIGIN+"api/v1/auth/forgot-password";
+
+export const ME_URL = BACKEND_ORIGIN+"api/v1/me";
 
 export function login(email, password) {
     const username = email;
-    console.log(LOGIN_URL)
     return axios.post(LOGIN_URL, { username, password });
   }
   

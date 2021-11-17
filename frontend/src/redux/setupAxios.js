@@ -34,8 +34,8 @@ export default function setupAxios(axios, store) {
 
       // Logout user if token refresh didn't work or user is disabled
       if (
-        err.config.url == `${BACKEND_ORIGIN}/api/v1/auth/refresh` ||
-        err.response.message == "Account is disabled."
+        err.config.url === `${BACKEND_ORIGIN}/api/v1/auth/refresh` ||
+        err.response.message === "Account is disabled."
       ) {
         store.dispatch(actions.logout());
         window.location.href = "/auth/login";
