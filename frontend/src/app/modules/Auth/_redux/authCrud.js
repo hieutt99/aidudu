@@ -1,6 +1,7 @@
 import axios from "axios";
 
-export const BACKEND_ORIGIN="http://128.0.0.1:8000/"
+// export const BACKEND_ORIGIN="http://128.0.0.1:8000/"
+import { BACKEND_ORIGIN } from "../../../../config";
 export const LOGIN_URL = BACKEND_ORIGIN+"api/v1/auth/login";
 export const REGISTER_URL = BACKEND_ORIGIN+"api/v1/auth/register";
 export const REQUEST_PASSWORD_URL = BACKEND_ORIGIN+"api/v1/auth/forgot-password";

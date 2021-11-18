@@ -1,4 +1,4 @@
-import { BACKEND_ORIGIN } from "../app/modules/Auth/_redux/authCrud";
+import { BACKEND_ORIGIN } from "../config";
 import { actions } from "../app/modules/Auth/_redux/authRedux";
 
 export default function setupAxios(axios, store) {
