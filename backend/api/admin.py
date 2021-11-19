@@ -16,3 +16,11 @@ class BoardAdmin(admin.ModelAdmin):
 @admin.register(List)
 class ListAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'name')
+
+@admin.register(Label)
+class LabelAdmin(admin.ModelAdmin):
+    list_display = ('__str__',)
+
+@admin.register(CardLabelRelationship)
+class CardLabelRelationshipAdmin(admin.ModelAdmin):
+    list_display = ('__str__',)
