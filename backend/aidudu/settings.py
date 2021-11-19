@@ -28,6 +28,9 @@ DEBUG = os.getenv('DEBUG', 'true').lower() in ('true', '1')
 ALLOWED_HOSTS = ['*']
 
 AUTH_USER_MODEL = 'api.CustomUser'
+AUTHENTICATION_BACKENDS = (
+    'api.backends.EmailBackend',
+)
 
 
 # Application definition
