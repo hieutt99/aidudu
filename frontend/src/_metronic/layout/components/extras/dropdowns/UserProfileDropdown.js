@@ -28,18 +28,18 @@ export function UserProfileDropdown() {
       >
         <div
           className={
-            "btn btn-icon btn-hover-transparent-white d-flex align-items-center btn-lg px-md-2 w-md-auto"
+            "btn btn-icon w-auto btn-clean d-flex align-items-center btn-lg px-2"
           }
         >
-          <span className="text-white opacity-70 font-weight-bold font-size-base d-none d-md-inline mr-1">
+          <span className="text-muted font-weight-bold font-size-base d-none d-md-inline mr-1">
             Hi,
           </span>{" "}
-          <span className="text-white opacity-90 font-weight-bolder font-size-base d-none d-md-inline mr-4">
-            {user.firstname} {user.lastname}
+          <span className="text-dark-50 font-weight-bolder font-size-base d-none d-md-inline mr-3">
+            {user.first_name} {user.last_name}
           </span>
-          <span className="symbol symbol-35">
-            <span className="symbol-label text-white font-size-h5 font-weight-bold bg-white-o-30">
-              {user.firstname[0]}
+          <span className="symbol symbol-35 symbol-light-success">
+            <span className="symbol-label font-size-h5 font-weight-bold">
+              {user.first_name[0]}
             </span>
           </span>
         </div>
@@ -54,7 +54,7 @@ export function UserProfileDropdown() {
                   <img src={toAbsoluteUrl("/media/users/300_21.jpg")} alt="" />
                 </div>
                 <div className="text-dark m-0 flex-grow-1 mr-3 font-size-h5">
-                  {user.firstname} {user.lastname}
+                  {user.first_name} {user.last_name}
                 </div>
                 <span className="label label-light-success label-lg font-weight-bold label-inline">
                   3 messages
@@ -75,12 +75,12 @@ export function UserProfileDropdown() {
             >
               <div className="symbol bg-white-o-15 mr-3">
                 <span className="symbol-label text-success font-weight-bold font-size-h4">
-                  {user.firstname[0]}
+                  {user.first_name[0]}
                 </span>
-                {/*<img alt="Pic" className="hidden" src={user.pic} />*/}
+                {/*<img alt="Pic" className="hidden" src={user.avatar} />*/}
               </div>
               <div className="text-white m-0 flex-grow-1 mr-3 font-size-h5">
-                {user.firstname} {user.lastname}
+                {user.first_name} {user.last_name}
               </div>
               <span className="label label-success label-lg font-weight-bold label-inline">
                 3 messages

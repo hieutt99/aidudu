@@ -20,10 +20,11 @@ const initialAuthState = {
 export const reducer = persistReducer(
   { storage, key: "v713-demo1-auth", whitelist: ["user", "authToken"] },
   (state = initialAuthState, action) => {
+
     switch (action.type) {
       case actionTypes.Login: {
         const { authToken } = action.payload;
-
+        
         return { authToken, user: undefined };
       }
 
@@ -40,12 +41,13 @@ export const reducer = persistReducer(
 
       case actionTypes.UserLoaded: {
         const { user } = action.payload;
-        return { ...state, user };
+        return { ...state, user: {...user} };
       }
 
       case actionTypes.SetUser: {
         const { user } = action.payload;
-        return { ...state, user };
+
+        return {...state, user: {...user} };
       }
 
       default:
@@ -79,8 +81,8 @@ export function* saga() {
   });
 
   yield takeLatest(actionTypes.UserRequested, function* userRequested() {
-    const { data: user } = yield getUserByToken();
+    const user = yield getUserByToken();
 
-    yield put(actions.fulfillUser(user));
+    yield put(actions.fulfillUser(user.data));
   });
 }
