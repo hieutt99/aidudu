@@ -1,6 +1,6 @@
 from api.tests.unit_tests.utils import *
 
-# 1 file 1 cladss ....
+# 1 file 1 class ....
 class AuthLoginTest(APITestCase):
 	url = reverse("login")
 	def setUp(self):
