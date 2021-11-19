@@ -12,17 +12,17 @@ class AuthLoginTest(APITestCase):
 class AuthRefreshTest(APITestCase):
 	url = reverse("refresh")
 	def setUp(self):
-
+		todo = False
 
 class AuthRegisterTest(APITestCase):
 	url = reverse("register")
 	def setUp(self):
-		
+		todo = False
 
 class AuthForgotPasswordTest(APITestCase):
 	url = reverse("forgot-password")
 	def setUp(self):
-		
+		todo = False
 		
 
 

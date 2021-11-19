@@ -18,14 +18,6 @@ class MeTest(APITestCase):
         '''
         hook_init_APITestCase(self)
         
-
-    
-    def api_authentication(self):
-        data = base64.b64encode(f'{self.username}:{self.password}'.encode()).decode()
-        self.client.credentials(HTTP_AUTHORIZATION=f"Basic {data}")
-        # print(self.client.__dict__)
-        # self.client.force_authenticate
-        self.client.HTTP_USER_AGENT='Mozilla/5.0'
         
     def test_success_get_info(self):
         # data = base64.b64encode(f'{self.username}:{self.password}'.encode()).decode()

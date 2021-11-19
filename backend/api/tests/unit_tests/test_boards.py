@@ -9,10 +9,9 @@ class BoardsTest(APITestCase):
     url = reverse("board")
 	def setUp(self):
         hook_init_APITestCase(self)
-        
     
     def test_success_create_board(self):
-        
+        todo = False
 
     def test_success_get_all_boards(self):
         resp = self.client.get(self.url)
