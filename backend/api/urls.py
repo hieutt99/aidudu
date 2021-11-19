@@ -18,7 +18,7 @@ urlpatterns = [
     path('auth/refresh', TokenRefreshView.as_view(), name='refresh'), # ok
     path('auth/register', UserRegister.as_view(), name='register'), # ok 
     path('auth/forgot-password', ForgotPasswordView.as_view(),name='forgot-password'),
-    path('me', CurrentUserAPIView.as_view(),name='me'),
+    path('me', CurrentUserAPIView.as_view(),name='me'),# ok
 ]
 
 urlpatterns += router.urls
