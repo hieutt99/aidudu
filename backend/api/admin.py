@@ -7,8 +7,12 @@ class UserAdmin(admin.ModelAdmin):
 
 @admin.register(Workspace)
 class WorkspaceAdmin(admin.ModelAdmin):
-    list_display = ('__str__',)
+    list_display = ('__str__', 'name')
 
 @admin.register(Board)
 class BoardAdmin(admin.ModelAdmin):
-    list_display = ('__str__',)
+    list_display = ('__str__', 'name')
+
+@admin.register(List)
+class ListAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'name')

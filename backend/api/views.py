@@ -81,7 +81,16 @@ class BoardViewSet(ModelViewSet):
         if recent:
             boards = [bm.board for bm in BoardMembership.objects.filter(user_id=user_id).order_by('-updated')]
             return boards[:limit] if limit is not None else boards
-            
+    
+    def perform_create(self, serializer):
+        board = serializer.save()
+        BoardMembership.objects.create(board=board, user=self.request.user, role=WorkspaceMembership.ROLE.ADMIN)
+
+    def get_object(self):
+        obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
+        self.check_object_permissions(self.request, obj)
+        return obj
+
 
 class WorkspaceViewSet(ModelViewSet):
     model = Workspace
@@ -101,6 +110,11 @@ class WorkspaceViewSet(ModelViewSet):
         workspace = serializer.save()
         WorkspaceMembership.objects.create(workspace=workspace, user=self.request.user, role=WorkspaceMembership.ROLE.ADMIN)
 
+    def retrieve(self, request, pk, *args, **kwargs):
+        instance = get_object_or_404(self.model, pk=pk)
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
 class CardViewSet(ModelViewSet):
     model = Card
 
@@ -109,9 +123,14 @@ class CardViewSet(ModelViewSet):
             return CardCreateSerializer
         return CardSerializer
 
-    # def get_queryset(self):
+    def get_queryset(self):
         
-    #     return 
+        return 
+    
+    def get_object(self):
+        obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
+        self.check_object_permissions(self.request, obj)
+        return obj
 
     @action(detail=True, methods=['post'], url_path='labels')
     def add_label_to_card(self, request, pk):
@@ -127,7 +146,6 @@ class CardViewSet(ModelViewSet):
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             raise PermissionDenied(detail="You do not belong to this board or this board doesn't exist.")
-
 
     @action(detail=True, methods=['post'], url_path='members')
     def add_member_to_card(self, request, pk):
