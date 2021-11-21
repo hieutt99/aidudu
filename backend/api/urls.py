@@ -12,6 +12,7 @@ router = DefaultRouter()
 router.register(r'boards', BoardViewSet, basename='board')
 router.register(r'workspaces', WorkspaceViewSet, basename='workspace')
 router.register(r'cards', CardViewSet, basename='card')
+router.register(r'lists', ListViewSet, basename='list')
 
 urlpatterns = [
     path('auth/login', TokenObtainPairView.as_view(), name='login'),
@@ -21,4 +22,3 @@ urlpatterns = [
     path('me', CurrentUserAPIView.as_view()),
     path('', include(router.urls))
 ]
-
