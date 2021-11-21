@@ -12,6 +12,7 @@ router = DefaultRouter()
 router.register(r'boards', BoardViewSet, basename='board')
 router.register(r'workspaces', WorkspaceViewSet, basename='workspace')
 router.register(r'cards', CardViewSet, basename='card')
+router.register(r'lists', ListViewSet, basename='list')
 router.register(r'labels', LabelViewSet, basename='label')
 
 urlpatterns = [
@@ -22,4 +23,3 @@ urlpatterns = [
     path('me', CurrentUserAPIView.as_view()),
     path('', include(router.urls))
 ]
-
