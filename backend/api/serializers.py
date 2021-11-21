@@ -54,3 +54,8 @@ class CardCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card
         fields = '__all__'
+
+class LabelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Label
+        fields = '__all__'
