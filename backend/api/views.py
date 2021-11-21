@@ -34,14 +34,9 @@ class UserRegister(GenericAPIView):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-<<<<<<< HEAD
-        
-        res_data = json.loads(requests.post(request.build_absolute_uri(reverse('login')), json=request.data).content)
-=======
 
         res_data = json.loads(requests.post(request.build_absolute_uri(
             reverse('login')), json=request.data).content)
->>>>>>> origin/backend
 
         return Response({
             'access': res_data['access'],
