@@ -72,6 +72,21 @@ class CardCreateSerializer(serializers.ModelSerializer):
         model = Card
         fields = '__all__'
 
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = '__all__'
+
+class ChecklistSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Checklist
+        fields = '__all__'
+
+class ChecklistItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChecklistItem
+        field = '__all__'
 class LabelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Label
