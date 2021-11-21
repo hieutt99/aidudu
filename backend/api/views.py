@@ -221,17 +221,6 @@ class ListViewSet(ModelViewSet):
 
         return
 
-
-class LabelViewSet(ModelViewSet):
-    model = Label
-
-    def get_serializer_class(self):
-        return LabelSerializer
-
-    def get_queryset(self):
-
-        return
-
     def get_object(self):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
         self.check_object_permissions(self.request, obj)
@@ -317,6 +306,22 @@ class LabelViewSet(ModelViewSet):
         else:
             raise PermissionDenied(
                 detail="You do not belong to this board or this board doesn't exist.")
+
+
+class LabelViewSet(ModelViewSet):
+    model = Label
+
+    def get_serializer_class(self):
+        return LabelSerializer
+
+    def get_queryset(self):
+
+        return
+
+    def get_object(self):
+        obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
+        self.check_object_permissions(self.request, obj)
+        return obj
 
     def perform_create(self, serializer):
         board_id = parse_int_or_400(self.request.data, 'board')
