@@ -221,6 +221,17 @@ class ListViewSet(ModelViewSet):
 
         return
 
+
+class LabelViewSet(ModelViewSet):
+    model = Label
+
+    def get_serializer_class(self):
+        return LabelSerializer
+
+    def get_queryset(self):
+
+        return
+
     def get_object(self):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
         self.check_object_permissions(self.request, obj)
@@ -306,3 +317,18 @@ class ListViewSet(ModelViewSet):
         else:
             raise PermissionDenied(
                 detail="You do not belong to this board or this board doesn't exist.")
+
+    def perform_create(self, serializer):
+        board_id = parse_int_or_400(self.request.data, 'board')
+        board = Board.objects.filter(id=board_id)
+        board_membership = BoardMembership.objects.filter(
+            user_id=self.request.user, board=board)
+        if not board_membership.exists():
+            raise PermissionDenied(
+                detail="You do not belong to this board or this board doesn't exist.")
+        label = serializer.save()
+        if 'card' in self.request.data:
+            card_id = parse_int_or_400(self.request.data, 'card')
+            card_label = CardLabelRelationship.objects.create(
+                card_id=card_id, label_id=label.id)
+        return Response(status=status.HTTP_204_NO_CONTENT)
