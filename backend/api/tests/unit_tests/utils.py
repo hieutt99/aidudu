@@ -33,7 +33,6 @@ from api.serializers import (
 )
 
 def hook_init_APITestCase(this):
-	
 	this.username = "john"
 	this.email = "john@snow.com"
 	this.password = "you_know_nothing"        
