@@ -15,6 +15,8 @@ router.register(r'cards', CardViewSet, basename='card')
 router.register(r'comments', CommentViewSet, basename='comment')
 router.register(r'checklists', ChecklistViewSet, basename='checklist')
 router.register(r'checklist_items', ChecklistItemViewSet, basename='checklist_item')
+router.register(r'lists', ListViewSet, basename='list')
+router.register(r'labels', LabelViewSet, basename='label')
 
 urlpatterns = [
     path('auth/login', TokenObtainPairView.as_view(), name='login'),
@@ -24,4 +26,3 @@ urlpatterns = [
     path('me', CurrentUserAPIView.as_view()),
     path('', include(router.urls))
 ]
-
