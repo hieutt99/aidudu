@@ -308,7 +308,6 @@ class ListViewSet(ModelViewSet):
                 detail="You do not belong to this board or this board doesn't exist.")
 
 
-<<<<<<< HEAD
 class CommentViewSet(ModelViewSet):
     model = Comment
 
@@ -342,25 +341,7 @@ class ChecklistViewSet(ModelViewSet):
     def get_queryset(self):
         
         return 
-    
-=======
-class LabelViewSet(ModelViewSet):
-    model = Label
 
-    def get_serializer_class(self):
-        return LabelSerializer
-
-    def get_queryset(self):
-
-        return
-
->>>>>>> 458327ab1427010824062c116cbf111517e4e150
-    def get_object(self):
-        obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
-        self.check_object_permissions(self.request, obj)
-        return obj
-
-<<<<<<< HEAD
     @action(detail=True, methods=['get'], url_path='')
     def get_checklists_in_card(self, request):
         card_id = parse_int_or_400(request.query_params, 'card')
@@ -392,11 +373,23 @@ class ChecklistItemViewSet(ModelViewSet):
             'checklist_id': checklist_id
         }
         obj = get_object_or_404(self.model, **query_kwargs) 
-        return obj 
- 
-
+        return obj
     
-=======
+class LabelViewSet(ModelViewSet):
+    model = Label
+
+    def get_serializer_class(self):
+        return LabelSerializer
+
+    def get_queryset(self):
+
+        return
+
+    def get_object(self):
+        obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
+        self.check_object_permissions(self.request, obj)
+        return obj
+
     def perform_create(self, serializer):
         board_id = parse_int_or_400(self.request.data, 'board')
         board = Board.objects.filter(id=board_id)
@@ -411,4 +404,3 @@ class ChecklistItemViewSet(ModelViewSet):
             card_label = CardLabelRelationship.objects.create(
                 card_id=card_id, label_id=label.id)
         return Response(status=status.HTTP_204_NO_CONTENT)
->>>>>>> 458327ab1427010824062c116cbf111517e4e150
