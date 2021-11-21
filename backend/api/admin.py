@@ -16,3 +16,26 @@ class BoardAdmin(admin.ModelAdmin):
 @admin.register(List)
 class ListAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'name')
+
+@admin.register(Card)
+class CardAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'name')
+
+@admin.register(Comment)
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'name')
+
+@admin.register(Checklist)
+class ChecklistAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'name')
+
+@admin.register(ChecklistItem)
+class ChecklistItemAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'name')
+@admin.register(Label)
+class LabelAdmin(admin.ModelAdmin):
+    list_display = ('__str__',)
+
+@admin.register(CardLabelRelationship)
+class CardLabelRelationshipAdmin(admin.ModelAdmin):
+    list_display = ('__str__',)
