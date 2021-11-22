@@ -134,7 +134,7 @@ export function UserNotificationsDropdown() {
                             <span className="symbol-label">
                               <SVG
                                 src={toAbsoluteUrl(
-                                  "/media/svg/icons/home/Library.svg"
+                                  "/media/svg/icons/Home/Library.svg"
                                 )}
                                 className="svg-icon-lg svg-icon-primary"
                               ></SVG>
