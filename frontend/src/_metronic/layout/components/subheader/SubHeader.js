@@ -77,16 +77,16 @@ export function SubHeader() {
           {/* end::Heading */}
         </div>
 
-        {/* Toolbar */}
-        <div className="d-flex align-items-center">
-          <button
-            type="button"
-            className="btn btn-transparent-white font-weight-bold  py-3 px-6 mr-4"
-          >
-            Reports
-          </button>
-          <QuickActions />
-        </div>
+        {/* TODO: Sub header Toolbar */}
+        {/*<div className="d-flex align-items-center">*/}
+        {/*  <button*/}
+        {/*    type="button"*/}
+        {/*    className="btn btn-transparent-white font-weight-bold  py-3 px-6 mr-4"*/}
+        {/*  >*/}
+        {/*    Reports*/}
+        {/*  </button>*/}
+        {/*  <QuickActions />*/}
+        {/*</div>*/}
       </div>
     </div>
   );

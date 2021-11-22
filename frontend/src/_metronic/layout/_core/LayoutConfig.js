@@ -107,8 +107,8 @@ export function getInitLayoutConfig() {
       },
     },
     subheader: {
-      display: true,
-      displayDesc: false,
+      display: false,
+      displayDesc: true,
       displayDaterangepicker: true,
       breadcrumb: {
         display: true,
@@ -152,7 +152,7 @@ export function getInitLayoutConfig() {
         },
       },
       notifications: {
-        display: true,
+        display: false,
         layout: "dropdown", // offcanvas, dropdown
         dropdown: {
           style: "dark", // light, dark
@@ -162,7 +162,7 @@ export function getInitLayoutConfig() {
         },
       },
       "quick-actions": {
-        display: true,
+        display: false,
         layout: "dropdown", // offcanvas, dropdown,
         dropdown: {
           style: "dark", // light, dark
@@ -172,7 +172,7 @@ export function getInitLayoutConfig() {
         },
       },
       cart: {
-        display: true,
+        display: false,
         layout: "dropdown", // offcanvas, dropdown
         offcanvas: {
           direction: "dark", // ligth, dark
@@ -192,10 +192,10 @@ export function getInitLayoutConfig() {
         },
       },
       languages: {
-        display: true,
+        display: false,
       },
       "quick-panel": {
-        display: true,
+        display: false,
         offcanvas: {
           direction: "right",
         },

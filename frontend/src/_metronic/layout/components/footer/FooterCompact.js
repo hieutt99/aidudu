@@ -23,12 +23,12 @@ export function FooterCompact({
             </span>
             {` `}
             <a
-              href="http://keenthemes.com/metronic"
+              href="#"
               rel="noopener noreferrer"
-              target="_blank"
+              // target="_blank"
               className="text-dark-75 text-hover-primary"
             >
-              Keenthemes
+              Aidudu
             </a>
           </div>
           {/* end::Copyright */}
@@ -36,24 +36,24 @@ export function FooterCompact({
           {/* begin::Nav */}
           <div className="nav nav-dark order-1 order-md-2">
             <a
-              href="http://keenthemes.com/metronic"
-              target="_blank"
+              href="#"
+              // target="_blank"
               rel="noopener noreferrer"
               className="nav-link pr-3 pl-0"
             >
               About
             </a>
             <a
-              href="http://keenthemes.com/metronic"
-              target="_blank"
+              href="#"
+              // target="_blank"
               rel="noopener noreferrer"
               className="nav-link px-3"
             >
               Team
             </a>
             <a
-              href="http://keenthemes.com/metronic"
-              target="_blank"
+              href="#"
+              // target="_blank"
               rel="noopener noreferrer"
               className="nav-link pl-3 pr-0"
             >

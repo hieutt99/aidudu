@@ -3,6 +3,6 @@ import {
   Dashboard
 } from "../../_metronic/_partials";
 
-export function DashboardPage() {
+export function DashboardPagee() {
   return <Dashboard />;
 }
