@@ -181,7 +181,7 @@ export function QuickUser() {
           <div className="d-flex align-items-center bg-light-warning rounded p-5 gutter-b">
             <span className="svg-icon svg-icon-warning mr-5">
               <SVG
-                src={toAbsoluteUrl("/media/svg/icons/Home/Library.svg")}
+                src={toAbsoluteUrl("/media/svg/icons/home/Library.svg")}
                 className="svg-icon svg-icon-lg"
               ></SVG>
             </span>

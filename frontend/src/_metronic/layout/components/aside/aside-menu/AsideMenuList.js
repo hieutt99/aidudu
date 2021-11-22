@@ -38,7 +38,7 @@ export function AsideMenuList({ layoutProps }) {
         >
           <NavLink className="menu-link" to="/builder">
             <span className="svg-icon menu-icon">
-              <SVG src={toAbsoluteUrl("/media/svg/icons/Home/Library.svg")} />
+              <SVG src={toAbsoluteUrl("/media/svg/icons/home/Library.svg")} />
             </span>
             <span className="menu-text">Layout Builder</span>
           </NavLink>

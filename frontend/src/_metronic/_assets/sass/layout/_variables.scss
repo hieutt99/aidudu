@@ -850,7 +850,7 @@ $aside-config: (
 		width: 265px,
 	),
 
-	// Aside's Offcanvas Config(see mixin: src/sass/components/mixins/_offcanvas.scss)
+	// Aside's Offcanvas Config(see mixin: src/sass/pages/mixins/_offcanvas.scss)
 	offcanvas-mobile: (
 		width: 275px,
 		zindex: 1001,
@@ -862,7 +862,7 @@ $aside-config: (
 
 // Aside Menu
 $aside-menu-config: (
-	// Base parameters required to build the base menu(see mixin: src/sass/components/mixins/_menu-vertical.scss)
+	// Base parameters required to build the base menu(see mixin: src/sass/pages/mixins/_menu-vertical.scss)
 	base:	(
 		class: aside-menu, // Menu element class name
 		parent-class: aside, // Menu parent aside element class name

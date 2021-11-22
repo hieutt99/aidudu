@@ -11,6 +11,7 @@ import { MyCartDropdown } from "../extras/dropdowns/MyCartDropdown";
 import { LanguageSelectorDropdown } from "../extras/dropdowns/LanguageSelectorDropdown";
 import { QuickUserToggler } from "../extras/QuiclUserToggler";
 
+//TODO: header's section on the right
 export function Topbar() {
   const uiService = useHtmlClassService();
 

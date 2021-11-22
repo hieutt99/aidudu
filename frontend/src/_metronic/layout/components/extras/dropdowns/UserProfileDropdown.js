@@ -9,6 +9,7 @@ import { useHtmlClassService } from "../../../_core/MetronicLayout";
 import { toAbsoluteUrl } from "../../../../_helpers";
 import { DropdownTopbarItemToggler } from "../../../../_partials/dropdowns";
 
+// TODO: user profile drop down menu
 export function UserProfileDropdown() {
   const { user } = useSelector((state) => state.auth);
   const uiService = useHtmlClassService();
@@ -34,7 +35,7 @@ export function UserProfileDropdown() {
           <span className="text-muted font-weight-bold font-size-base d-none d-md-inline mr-1">
             Hi,
           </span>{" "}
-          <span className="text-dark-50 font-weight-bolder font-size-base d-none d-md-inline mr-3">
+          <span className="text-light-50 font-weight-bolder font-size-base d-none d-md-inline mr-3">
             {user.first_name} {user.last_name}
           </span>
           <span className="symbol symbol-35 symbol-light-success">

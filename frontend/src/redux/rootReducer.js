@@ -9,10 +9,10 @@ import {specificationsSlice} from "../app/modules/ECommerce/_redux/specification
 
 export const rootReducer = combineReducers({
   auth: auth.reducer,
-  customers: customersSlice.reducer,
-  products: productsSlice.reducer,
-  remarks: remarksSlice.reducer,
-  specifications: specificationsSlice.reducer
+  // customers: customersSlice.reducer,
+  // products: productsSlice.reducer,
+  // remarks: remarksSlice.reducer,
+  // specifications: specificationsSlice.reducer
 });
 
 export function* rootSaga() {

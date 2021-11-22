@@ -1,19 +1,19 @@
-import React, { useMemo } from "react";
-import objectPath from "object-path";
+import React, { useMemo } from 'react';
+import objectPath from 'object-path';
 // LayoutContext
-import { useHtmlClassService } from "../_core/MetronicLayout";
-// Import Layout components
-import { Header } from "./header/Header";
-import { HeaderMobile } from "./header-mobile/HeaderMobile";
-import { Aside } from "./aside/Aside";
-import { Footer } from "./footer/Footer";
-import { LayoutInit } from "./LayoutInit";
-import { SubHeader } from "./subheader/SubHeader";
-import { QuickPanel } from "./extras/offcanvas/QuickPanel";
-import { QuickUser } from "./extras/offcanvas/QuickUser";
-import { ScrollTop } from "./extras/ScrollTop";
-import { StickyToolbar } from "./extras/StickyToolbar";
-import { AnimateLoading } from "../../_partials/controls";
+import { useHtmlClassService } from '../_core/MetronicLayout';
+// Import Layout pages
+import { Header } from './header/Header';
+import { HeaderMobile } from './header-mobile/HeaderMobile';
+import { Aside } from './aside/Aside';
+import { Footer } from './footer/Footer';
+import { LayoutInit } from './LayoutInit';
+import { SubHeader } from './subheader/SubHeader';
+import { QuickPanel } from './extras/offcanvas/QuickPanel';
+import { QuickUser } from './extras/offcanvas/QuickUser';
+import { ScrollTop } from './extras/ScrollTop';
+import { StickyToolbar } from './extras/StickyToolbar';
+import { AnimateLoading } from '../../_partials/controls';
 
 export function Layout({ children }) {
   const uiService = useHtmlClassService();
@@ -89,7 +89,7 @@ export function Layout({ children }) {
                 </div>
               )}
 
-              
+
               {/*end::Entry*/}
             </div>
             {/*end::Content*/}
@@ -102,7 +102,7 @@ export function Layout({ children }) {
       <QuickUser />
       <QuickPanel />
       <ScrollTop />
-      <StickyToolbar />
+      {/*<StickyToolbar />*/}
       {/*end::Main*/}
       <LayoutInit />
     </>
