@@ -7,7 +7,7 @@ export function FooterExtended({
   footerClasses,
   footerContainerClasses,
 }) {
-  const bgStyle = toAbsoluteUrl("/media/bg/bg-2.jpg");
+  const bgStyle = toAbsoluteUrl("/media/bg/bg-10.jpg");
   return (
     <>
       {/* begin::Footer */}

@@ -87,7 +87,7 @@ export function getInitLayoutConfig() {
         self: {
           display: true,
           layout: "default", // tab/default
-          "root-arrow": false,
+          "root-arrow": true,
           "icon-style": "duotone", // duotone, line, bold, solid
         },
         desktop: {
