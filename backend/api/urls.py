@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
@@ -12,6 +12,11 @@ router = DefaultRouter()
 router.register(r'boards', BoardViewSet, basename='board')
 router.register(r'workspaces', WorkspaceViewSet, basename='workspace')
 router.register(r'cards', CardViewSet, basename='card')
+router.register(r'comments', CommentViewSet, basename='comment')
+router.register(r'checklists', ChecklistViewSet, basename='checklist')
+router.register(r'checklist_items', ChecklistItemViewSet, basename='checklist_item')
+router.register(r'lists', ListViewSet, basename='list')
+router.register(r'labels', LabelViewSet, basename='label')
 
 urlpatterns = [
     path('auth/login', TokenObtainPairView.as_view(), name='login'),
@@ -19,7 +24,5 @@ urlpatterns = [
     path('auth/register', UserRegister.as_view(), name='register'),
     path('auth/forgot-password', ForgotPasswordView.as_view()),
     path('me', CurrentUserAPIView.as_view()),
+    path('', include(router.urls))
 ]
-
-urlpatterns += router.urls
-
