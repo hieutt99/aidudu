@@ -36,7 +36,7 @@ export default function BasePage() {
         <ContentRoute path="/dashboard" component={DashboardPage} />
         {/*<ContentRoute path="/builder" component={BuilderPage} />*/}
         <ContentRoute path="/my-page" component={MyPage} />
-        <Route path="/google-material" component={GoogleMaterialPage} />
+        {/*<Route path="/google-material" component={GoogleMaterialPage} />*/}
         {/*<Route path="/react-bootstrap" component={ReactBootstrapPage} />*/}
         {/*<Route path="/e-commerce" component={ECommercePage} />*/}
         <Route path="/user-profile" component={UserProfilepage} />
