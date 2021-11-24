@@ -33,7 +33,7 @@ export function ListsWidget11({ className }) {
           <div className="d-flex align-items-center mb-9 bg-light-warning rounded p-5">
             <span className="svg-icon svg-icon-warning mr-5 svg-icon-lg">
               <SVG
-                src={toAbsoluteUrl("/media/svg/icons/home/Library.svg")}
+                src={toAbsoluteUrl("/media/svg/icons/Home/Library.svg")}
               ></SVG>
             </span>
 

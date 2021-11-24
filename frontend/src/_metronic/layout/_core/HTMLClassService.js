@@ -12,7 +12,7 @@ export class HtmlClassService {
    * @param layoutConfig
    */
   setConfig(layoutConfig) {
-    this.config = layoutConfig;
+    this.config = this.preInit(layoutConfig);
 
     // scope list of classes
     this.classes = {
@@ -36,8 +36,8 @@ export class HtmlClassService {
     };
 
     // init base layout
-    this.initLoader();
     this.initLayout();
+    this.initLoader();
 
     // init header and subheader menu
     this.initHeader();
@@ -49,6 +49,23 @@ export class HtmlClassService {
 
     // init footer
     this.initFooter();
+
+    // init theme
+    this.initTheme();
+  }
+
+  preInit(layoutConfig) {
+    const updatedConfig = Object.assign({}, layoutConfig);
+    const headerSelfFixedDesktop = objectPath.get(updatedConfig, "header.self.fixed.desktop");
+    const subheaderFixed = objectPath.get(updatedConfig, "subheader.fixed");
+    if (subheaderFixed && headerSelfFixedDesktop) {
+      // Page::setOption('layout', 'subheader/style', 'solid');
+      updatedConfig.subheader.style = "solid";      
+    } else {
+      // Page::setOption('layout', 'subheader/fixed', false);
+      updatedConfig.subheader.fixed = false;
+    }
+    return updatedConfig;
   }
 
   /**
@@ -97,10 +114,9 @@ export class HtmlClassService {
    * Init Layout
    */
   initLayout() {
-    const selfBodyBackgroundImage = objectPath.get(this.config, "self.body.backgroundImage");
+    const selfBodyBackgroundImage = objectPath.get(this.config, "self.body.background-image");
     if (selfBodyBackgroundImage) {
-      const backgroundImageUrl = `${toAbsoluteUrl("/media/" + selfBodyBackgroundImage)}`;
-      document.body.style.backgroundImage = `url("${backgroundImageUrl}")`;
+      document.body.style.backgroundImage = `url("${selfBodyBackgroundImage}'")`;
     }
 
     const _selfBodyClass = objectPath.get(this.config, "self.body.class");
@@ -146,7 +162,7 @@ export class HtmlClassService {
       const headerMenuLayoutCssClass = `header-menu-layout-${headerMenuSelfLayout}`;
       objectPath.push(this.classes, "header_menu", headerMenuLayoutCssClass);
 
-      if (objectPath.get(this.config, "header.menu.self.root-arrow")) {
+            if (objectPath.get(this.config, "header.menu.self.root-arrow")) {
         objectPath.push(this.classes, "header_menu", "header-menu-root-arrow");
       }
     }
@@ -192,6 +208,10 @@ export class HtmlClassService {
     } else {
       objectPath.push(this.classes, "subheader_container", "container");
     }
+
+    if (objectPath.get(this.config, "subheader.clear")) {
+      objectPath.push(this.classes, "subheader", "mb-0");
+    }
   }
 
   /**
@@ -225,7 +245,29 @@ export class HtmlClassService {
 
     // Enable Aside
     document.body.classList.add("aside-enabled");
-    document.body.classList.add("aside-static");
+
+    // Fixed Aside
+    const asideSelfFixed = objectPath.get(this.config, "aside.self.fixed");
+    if (asideSelfFixed) {
+      document.body.classList.add("aside-fixed");
+      objectPath.push(this.classes, "aside", "aside-fixed");
+    } else {
+      document.body.classList.add("aside-static");
+    }
+
+    // Check Aside
+    if (!asideSelfDisplay) {
+      return;
+    }
+
+    // Default fixed
+    if (objectPath.get(this.config, "aside.self.minimize.default")) {
+      document.body.classList.add("aside-minimize");
+    }
+
+    if (objectPath.get(this.config, "aside.self.minimize.hoverable")) {
+      document.body.classList.add("aside-minimize-hoverable");
+    }
 
     // Menu
     // Dropdown Submenu
@@ -253,10 +295,27 @@ export class HtmlClassService {
    * Init Footer
    */
   initFooter() {
-    if (objectPath.get(this.config, "footer.width") === "fluid") {
+    // Fixed header
+    if (objectPath.get(this.config, "footer.fixed")) {
+      document.body.classList.add("footer-fixed");
+    }
+
+    if (objectPath.get(this.config, "footer.self.width") === "fluid") {
       objectPath.push(this.classes, "footer_container", "container-fluid");
     } else {
       objectPath.push(this.classes, "footer_container", "container");
+    }
+  }
+
+  /** Init Theme */
+  initTheme() {
+    const asideSelfDisplay = objectPath.get(this.config, "aside.self.display");
+    if (!asideSelfDisplay) {
+      const headerSelfTheme = objectPath.get(this.config, "header.self.theme");
+      document.body.classList.add(`brand-${headerSelfTheme}`);
+    } else {
+      const brandSelfTheme = objectPath.get(this.config, "brand.self.theme");
+      document.body.classList.add(`brand-${brandSelfTheme}`);
     }
   }
 }

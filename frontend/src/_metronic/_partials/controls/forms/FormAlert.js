@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 
 export function FormAlert({
   isEnabled = false,
@@ -6,6 +6,9 @@ export function FormAlert({
   message = "Oh snap! Change a few things up and try submitting again.",
   icon = "flaticon-warning"
 }) {
+  useEffect(() => {
+    console.log("useEffect", isEnabled);
+  }, [isEnabled]);
   if (isEnabled) {
     return (
       <div className={`alert alert-${type}`} role="alert">

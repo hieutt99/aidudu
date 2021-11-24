@@ -2,8 +2,7 @@
 import React from "react";
 import { useLocation } from "react-router";
 import { NavLink } from "react-router-dom";
-import SVG from "react-inlinesvg";
-import { toAbsoluteUrl, checkIsActive } from "../../../../_helpers";
+import { checkIsActive } from "../../../../_helpers";
 
 export function HeaderMenu({ layoutProps }) {
     const location = useLocation();
@@ -13,7 +12,7 @@ export function HeaderMenu({ layoutProps }) {
 
     return <div
         id="kt_header_menu"
-        className={`header-menu header-menu-left header-menu-mobile ${layoutProps.ktMenuClasses}`}
+        className={`header-menu header-menu-mobile ${layoutProps.ktMenuClasses}`}
         {...layoutProps.headerMenuAttributes}
     >
         {/*begin::Header Nav*/}
@@ -27,9 +26,8 @@ export function HeaderMenu({ layoutProps }) {
             </li>
             {/*end::1 Level*/}
 
-            {/*TODO: header*/}
-            {/*Classic submenu*/}
-            {/*begin::1 Level*/}
+            {/*/!*Classic submenu*!/*/}
+            {/*/!*begin::1 Level*!/*/}
             {/*<li*/}
             {/*    data-menu-toggle={layoutProps.menuDesktopToggle}*/}
             {/*    aria-haspopup="true"*/}
@@ -919,14 +917,6 @@ export function HeaderMenu({ layoutProps }) {
             {/*            <li className={`menu-item ${getMenuItemActive('/builder')}`}>*/}
             {/*                <NavLink className="menu-link" to="/builder">*/}
             {/*                    <span className="menu-text">Layout Builder</span>*/}
-            {/*                </NavLink>*/}
-            {/*            </li>*/}
-            {/*            /!*end::3 Level*!/*/}
-
-            {/*            /!*begin::2 Level*!/*/}
-            {/*            <li className={`menu-item ${getMenuItemActive('/user-profile')}`}>*/}
-            {/*                <NavLink className="menu-link" to="/user-profile">*/}
-            {/*                    <span className="menu-text">User Profile</span>*/}
             {/*                </NavLink>*/}
             {/*            </li>*/}
             {/*            /!*end::3 Level*!/*/}

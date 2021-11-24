@@ -6,14 +6,14 @@ const LAYOUT_CONFIG_KEY =
   process.env.REACT_APP_LAYOUT_CONFIG_KEY || "LayoutConfig";
 
 function getConfig() {
-  const ls = localStorage.getItem(LAYOUT_CONFIG_KEY);
-  if (ls) {
-    try {
-      return JSON.parse(ls);
-    } catch (er) {
-      console.error(er);
-    }
-  }
+  // const ls = localStorage.getItem(LAYOUT_CONFIG_KEY);
+  // if (ls) {
+  //   try {
+  //     return JSON.parse(ls);
+  //   } catch (er) {
+  //     console.error(er);
+  //   }
+  // }
   return getInitLayoutConfig();
 }
 

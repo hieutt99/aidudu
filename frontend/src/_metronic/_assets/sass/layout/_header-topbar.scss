@@ -20,70 +20,51 @@
 	}
 }
 
-// Desktop Mode
-@include media-breakpoint-up(lg) {
-	// Fixed Header & Header Scroll Modes
-	body[data-header-scroll="on"] {
-		.topbar {
-			// Button
-			.btn.btn-icon {
-				// Icons
-				i {
-					color: $text-muted !important;
-				}
+// Tablet & Mobile Modes
+@include media-breakpoint-down(md) {
+	.topbar {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		transition: all 0.3s ease;
+		justify-content: flex-end;
+		padding: 0 get($page-padding, tablet-and-mobile);
+		height: get($header-topbar-config, tablet-and-mobile, height);
+		background-color: get($header-topbar-config, tablet-and-mobile, bg-color);
+		box-shadow: get($header-topbar-config, tablet-and-mobile, shadow);
+		border-top: 1px solid transparent;
 
-				// SVG Icons
-				.svg-icon {
-					@include svg-icon-color($text-muted, true);
-				}
+		// Fixed Mobile Header
+		.header-mobile-fixed & {
+			position: fixed;
+			z-index: get($header-config, tablet-and-mobile, fixed, zindex) - 1;
+		}
 
-				// Text
-				.text-white {
-					color: $dark-75 !important;
-				}
+		// Topbar Shown Mode
+		.topbar-mobile-on & {
+			z-index: 2;
+			transition: all 0.3s ease;
+			border-top: 1px solid get($header-topbar-config, tablet-and-mobile, border-color);
+			margin-top: get($header-config, tablet-and-mobile, default, height);
+		}
 
-				// Symbol
-				.symbol {
-					.symbol-label {
-						color: $primary !important;
-						background-color: $primary-light !important;
-					}
-				}
-			}
-
-			// Hover, Active, Focus & Dropdown Show States
-			.btn.btn-icon.active,
-			.btn.btn-icon:focus,
-			.btn.btn-icon:hover,
-			.show .btn.btn-icon {
-				background-color: $gray-100 !important;
-			}
+		// Fixed Mobile Header & Topbar Shown Modes
+		.topbar-mobile-on.header-mobile-fixed & {
+			z-index: get($header-config, tablet-and-mobile, fixed, zindex) - 1;
+			margin-top: get($header-config, tablet-and-mobile, fixed, height);
 		}
 	}
 }
 
-// Tablet & Mobile Modes
-@include media-breakpoint-down(md) {
+// Mobile View
+@include media-breakpoint-down(xs) {
 	.topbar {
-		position: relative;
-		display: flex;
-		justify-content: flex-end;
-		height: get($header-topbar-config, tablet-and-mobile, height);
-		box-shadow: get($header-topbar-config, tablet-and-mobile, shadow);
-		background-color: get($header-topbar-config, tablet-and-mobile, bg-color);
-		transition: margin-top get($header-topbar-config, tablet-and-mobile, transition);
-		margin-top: -(get($header-topbar-config, tablet-and-mobile, height));
-		z-index: 2;
-		opacity: 0;
-
-		// Topbar On Mode
-		.topbar-mobile-on & {
-			z-index: 6;
-			padding: 0 0;
-			justify-content: center;
-			margin-top: 0;
-			opacity: 1;
-			transition: margin-top get($header-topbar-config, tablet-and-mobile, transition), opacity get($header-topbar-config, tablet-and-mobile, transition);
+		.topbar-item {
+			.btn.btn-icon {
+				height:  35px;
+   				width:  35px;
+			}
 		}
 	}
 }

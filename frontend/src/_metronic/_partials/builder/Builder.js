@@ -144,10 +144,28 @@ export function Builder() {
                                                         checked={!!get(values, "header.self.fixed.desktop")}
                                                     />
                                                     <FormHelperText>
-                                                        Enable fixed header for desktop mode
+                                                        Enable fixed header for mobile mode
                                                     </FormHelperText>
                                                 </div>
                                             </div>
+
+                                            <div className="form-group row">
+                                                <label className="col-lg-3 col-form-label text-lg-right">
+                                                    Mobile Fixed Header:
+                                                </label>
+                                                <div className="col-lg-9 col-xl-4">
+                                                    <Switch
+                                                        onBlur={handleBlur}
+                                                        onChange={handleChange}
+                                                        name="header.self.fixed.mobile"
+                                                        checked={!!get(values, "header.self.fixed.mobile")}
+                                                    />
+                                                    <FormHelperText>
+                                                        Enable fixed header for mobile mode
+                                                    </FormHelperText>
+                                                </div>
+                                            </div>
+
                                             <div className="form-group row">
                                                 <label className="col-lg-3 col-form-label text-lg-right">
                                                     Header Width:
@@ -165,6 +183,42 @@ export function Builder() {
                                                     </select>
                                                     <FormHelperText>
                                                         Select header width type
+                                                    </FormHelperText>
+                                                </div>
+                                            </div>
+
+                                            <div className="form-group row">
+                                                <label className="col-lg-3 col-form-label text-lg-right">
+                                                    Display Header Menu:
+                                                </label>
+                                                <div className="col-lg-9 col-xl-4">
+                                                    <Switch
+                                                        onBlur={handleBlur}
+                                                        onChange={handleChange}
+                                                        name="header.menu.self.display"
+                                                        checked={!!get(values, "header.menu.self.display")}
+                                                    />
+                                                    <FormHelperText>Display header menu</FormHelperText>
+                                                </div>
+                                            </div>
+
+                                            <div className="form-group row">
+                                                <label className="col-lg-3 col-form-label text-lg-right">
+                                                    Header Menu Layout:
+                                                </label>
+                                                <div className="col-lg-9 col-xl-4">
+                                                    <select
+                                                        className="form-control"
+                                                        name="header.menu.self.layout"
+                                                        onBlur={handleBlur}
+                                                        value={get(values, "header.menu.self.layout")}
+                                                        onChange={handleChange}
+                                                    >
+                                                        <option value="default">Default</option>
+                                                        <option value="tab">Tab</option>
+                                                    </select>
+                                                    <FormHelperText>
+                                                        Select header menu layout style
                                                     </FormHelperText>
                                                 </div>
                                             </div>
@@ -208,6 +262,24 @@ export function Builder() {
 
                                             <div className="form-group row">
                                                 <label className="col-lg-3 col-form-label text-lg-right">
+                                                    Fixed Subheader:
+                                                </label>
+                                                <div className="col-lg-9 col-xl-4">
+                                                    <Switch
+                                                        onBlur={handleBlur}
+                                                        onChange={handleChange}
+                                                        name="subheader.fixed"
+                                                        checked={!!get(values, "subheader.fixed")}
+                                                    />
+                                                    <FormHelperText>
+                                                        Enable fixed(sticky) subheader. Requires{" "}
+                                                        <code>Solid</code> subheader style.
+                                                    </FormHelperText>
+                                                </div>
+                                            </div>
+
+                                            <div className="form-group row">
+                                                <label className="col-lg-3 col-form-label text-lg-right">
                                                     Width:
                                                 </label>
                                                 <div className="col-lg-9 col-xl-4">
@@ -223,6 +295,27 @@ export function Builder() {
                                                     </select>
                                                     <FormHelperText>
                                                         Select layout width type
+                                                    </FormHelperText>
+                                                </div>
+                                            </div>
+
+                                            <div className="form-group row">
+                                                <label className="col-lg-3 col-form-label text-lg-right">
+                                                    Subheader Style:
+                                                </label>
+                                                <div className="col-lg-9 col-xl-4">
+                                                    <select
+                                                        className="form-control"
+                                                        name="subheader.style"
+                                                        onBlur={handleBlur}
+                                                        value={get(values, "subheader.style")}
+                                                        onChange={handleChange}
+                                                    >
+                                                        <option value="transparent">Transparent</option>
+                                                        <option value="solid">Solid</option>
+                                                    </select>
+                                                    <FormHelperText>
+                                                        Select subheader style
                                                     </FormHelperText>
                                                 </div>
                                             </div>
@@ -267,6 +360,80 @@ export function Builder() {
                                             </div>
 
                                             <div className="form-group row">
+                                                <label className="col-lg-3 col-form-label text-lg-right">
+                                                    Fixed:
+                                                </label>
+                                                <div className="col-lg-9 col-xl-4">
+                                                    <Switch
+                                                        onBlur={handleBlur}
+                                                        onChange={handleChange}
+                                                        name="aside.self.fixed"
+                                                        checked={!!get(values, "aside.self.fixed")}
+                                                    />
+                                                    <FormHelperText>
+                                                        Set fixed aside layout
+                                                    </FormHelperText>
+                                                </div>
+                                            </div>
+
+                                            <div className="form-group row">
+                                                <label className="col-lg-3 col-form-label text-lg-right">
+                                                    Minimize:
+                                                </label>
+                                                <div className="col-lg-9 col-xl-4">
+                                                    <Switch
+                                                        onBlur={handleBlur}
+                                                        onChange={handleChange}
+                                                        name="aside.self.minimize.toggle"
+                                                        checked={
+                                                            !!get(values, "aside.self.minimize.toggle")
+                                                        }
+                                                    />
+                                                    <FormHelperText>
+                                                        Allow aside minimizing
+                                                    </FormHelperText>
+                                                </div>
+                                            </div>
+
+                                            <div className="form-group row">
+                                                <label className="col-lg-3 col-form-label text-lg-right">
+                                                    Hoverable:
+                                                </label>
+                                                <div className="col-lg-9 col-xl-4">
+                                                    <Switch
+                                                        onBlur={handleBlur}
+                                                        onChange={handleChange}
+                                                        name="aside.self.minimize.hoverable"
+                                                        checked={
+                                                            !!get(values, "aside.self.minimize.hoverable")
+                                                        }
+                                                    />
+                                                    <FormHelperText>
+                                                        Expand Minimized Aside on hover
+                                                    </FormHelperText>
+                                                </div>
+                                            </div>
+
+                                            <div className="form-group row">
+                                                <label className="col-lg-3 col-form-label text-lg-right">
+                                                    Default Minimize:
+                                                </label>
+                                                <div className="col-lg-9 col-xl-4">
+                                                    <Switch
+                                                        onBlur={handleBlur}
+                                                        onChange={handleChange}
+                                                        name="aside.self.minimize.default"
+                                                        checked={
+                                                            !!get(values, "aside.self.minimize.default")
+                                                        }
+                                                    />
+                                                    <FormHelperText>
+                                                        Set aside minimized by default
+                                                    </FormHelperText>
+                                                </div>
+                                            </div>
+
+                                            <div className="form-group row">
                                                 <label
                                                     className="col-lg-3 col-form-label pt-4 text-lg-right">
                                                     Submenu Toggle:
@@ -287,24 +454,19 @@ export function Builder() {
 
                                         </div>
                                         <div className={`tab-pane ${key === 4 ? "active" : ""}`}>
-                                        <div className="form-group row">
+                                            <div className="form-group row">
                                                 <label className="col-lg-3 col-form-label text-lg-right">
-                                                    Footer Layout:
+                                                    Fixed Desktop Footer:
                                                 </label>
                                                 <div className="col-lg-9 col-xl-4">
-                                                    <select
-                                                        className="form-control form-control-solid"
-                                                        name="footer.layout"
+                                                    <Switch
                                                         onBlur={handleBlur}
-                                                        value={get(values, "footer.layout")}
                                                         onChange={handleChange}
-                                                    >
-                                                        <option value="compact">Compact</option>
-                                                        <option value="extended">Extended</option>
-                                                    </select>
-                                                    <FormHelperText>
-                                                    Select footer layout
-                                                    </FormHelperText>
+                                                        name="footer.fixed"
+                                                        checked={!!get(values, "footer.fixed")}
+                                                    />
+
+                                                    <FormHelperText>Set fixed desktop footer</FormHelperText>
                                                 </div>
                                             </div>
 
@@ -315,9 +477,9 @@ export function Builder() {
                                                 <div className="col-lg-9 col-xl-4">
                                                     <select
                                                         className="form-control form-control-solid"
-                                                        name="footer.width"
+                                                        name="footer.self.width"
                                                         onBlur={handleBlur}
-                                                        value={get(values, "footer.width")}
+                                                        value={get(values, "footer.self.width")}
                                                         onChange={handleChange}
                                                     >
                                                         <option value="fluid">Fluid</option>
@@ -342,7 +504,7 @@ export function Builder() {
                                                 onClick={handleSubmit}
                                                 className={`btn btn-primary font-weight-bold mr-2`}
                                             >
-                                                <i className="la la-eye"/> Preview
+                                                <i className="fa fa-eye"/> Preview
                                             </button>
                                             {" "}
                                             <button
@@ -350,7 +512,7 @@ export function Builder() {
                                                 onClick={handleReset}
                                                 className={`btn btn-clean font-weight-bold mr-2`}
                                             >
-                                                <i className="la la-recycle"/> Reset
+                                                <i className="fa fa-recycle"/> Reset
                                             </button>
                                             {" "}
                                             <span

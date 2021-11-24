@@ -92,10 +92,10 @@ export function ProfileCard() {
                   <span className="font-weight-bold mr-2">Phone:</span>
                   <span className="text-muted">{user.phone}</span>
                 </div>
-                <div className="d-flex align-items-center justify-content-between">
-                  <span className="font-weight-bold mr-2">Location:</span>
-                  {/*<span className="text-muted">{user.address.city}</span>*/}
-                </div>
+                {/*<div className="d-flex align-items-center justify-content-between">*/}
+                {/*  <span className="font-weight-bold mr-2">Location:</span>*/}
+                {/*  <span className="text-muted">{user.address.city}</span>*/}
+                {/*</div>*/}
               </div>
               {/* end::Contact */}
               {/* begin::Nav */}
