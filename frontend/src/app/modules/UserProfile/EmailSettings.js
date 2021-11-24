@@ -58,32 +58,32 @@ function EmailSettings(props) {
   };
   // UI Helpers
   const initialValues = {
-    emailNotification: user.emailSettings.emailNotification,
-    sendCopyToPersonalEmail: user.emailSettings.sendCopyToPersonalEmail,
-    youHaveNewNotifications:
-      user.emailSettings.activityRelatesEmail.youHaveNewNotifications,
-    youAreSentADirectMessage:
-      user.emailSettings.activityRelatesEmail.youAreSentADirectMessage,
-    someoneAddsYouAsAsAConnection:
-      user.emailSettings.activityRelatesEmail.someoneAddsYouAsAsAConnection,
-    uponNewOrder: user.emailSettings.activityRelatesEmail.uponNewOrder,
-    newMembershipApproval:
-      user.emailSettings.activityRelatesEmail.newMembershipApproval,
-    memberRegistration:
-      user.emailSettings.activityRelatesEmail.memberRegistration,
-    newsAboutKeenthemesProductsAndFeatureUpdates:
-      user.emailSettings.updatesFromKeenthemes
-        .newsAboutKeenthemesProductsAndFeatureUpdates,
-    tipsOnGettingMoreOutOfKeen:
-      user.emailSettings.updatesFromKeenthemes.tipsOnGettingMoreOutOfKeen,
-    thingsYouMissedSindeYouLastLoggedIntoKeen:
-      user.emailSettings.updatesFromKeenthemes
-        .thingsYouMissedSindeYouLastLoggedIntoKeen,
-    newsAboutMetronicOnPartnerProductsAndOtherServices:
-      user.emailSettings.updatesFromKeenthemes
-        .newsAboutMetronicOnPartnerProductsAndOtherServices,
-    tipsOnMetronicBusinessProducts:
-      user.emailSettings.updatesFromKeenthemes.tipsOnMetronicBusinessProducts,
+    // emailNotification: user.emailSettings.emailNotification,
+    // sendCopyToPersonalEmail: user.emailSettings.sendCopyToPersonalEmail,
+    // youHaveNewNotifications:
+    //   user.emailSettings.activityRelatesEmail.youHaveNewNotifications,
+    // youAreSentADirectMessage:
+    //   user.emailSettings.activityRelatesEmail.youAreSentADirectMessage,
+    // someoneAddsYouAsAsAConnection:
+    //   user.emailSettings.activityRelatesEmail.someoneAddsYouAsAsAConnection,
+    // uponNewOrder: user.emailSettings.activityRelatesEmail.uponNewOrder,
+    // newMembershipApproval:
+    //   user.emailSettings.activityRelatesEmail.newMembershipApproval,
+    // memberRegistration:
+    //   user.emailSettings.activityRelatesEmail.memberRegistration,
+    // newsAboutKeenthemesProductsAndFeatureUpdates:
+    //   user.emailSettings.updatesFromKeenthemes
+    //     .newsAboutKeenthemesProductsAndFeatureUpdates,
+    // tipsOnGettingMoreOutOfKeen:
+    //   user.emailSettings.updatesFromKeenthemes.tipsOnGettingMoreOutOfKeen,
+    // thingsYouMissedSindeYouLastLoggedIntoKeen:
+    //   user.emailSettings.updatesFromKeenthemes
+    //     .thingsYouMissedSindeYouLastLoggedIntoKeen,
+    // newsAboutMetronicOnPartnerProductsAndOtherServices:
+    //   user.emailSettings.updatesFromKeenthemes
+    //     .newsAboutMetronicOnPartnerProductsAndOtherServices,
+    // tipsOnMetronicBusinessProducts:
+    //   user.emailSettings.updatesFromKeenthemes.tipsOnMetronicBusinessProducts,
   };
   const Schema = Yup.object().shape({
     emailNotification: Yup.bool(),

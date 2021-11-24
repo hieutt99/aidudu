@@ -22,11 +22,11 @@ function AccountInformation(props) {
       email: values.email,
       language: values.language,
       timeZone: values.timeZone,
-      communication: {
-        email: values.communicationEmail,
-        sms: values.communicationSMS,
-        phone: values.communicationPhone,
-      },
+      // communication: {
+      //   email: values.email,
+      //   sms: values.communicationSMS,
+      //   phone: values.communicationPhone,
+      // },
     });
     // user for update preparation
     dispatch(props.setUser(updatedUser));
@@ -51,9 +51,9 @@ function AccountInformation(props) {
     email: user.email,
     language: user.language,
     timeZone: user.timeZone,
-    communicationEmail: user.communication.email,
-    communicationSMS: user.communication.sms,
-    communicationPhone: user.communication.phone,
+    // communicationEmail: user.communication.email,
+    // communicationSMS: user.communication.sms,
+    // communicationPhone: user.communication.phone,
   };
   const Schema = Yup.object().shape({
     username: Yup.string().required("Username is required"),
@@ -62,9 +62,9 @@ function AccountInformation(props) {
       .required("Email is required"),
     language: Yup.string(),
     timeZone: Yup.string(),
-    communicationEmail: Yup.bool(),
-    communicationSMS: Yup.bool(),
-    communicationPhone: Yup.bool(),
+    // communicationEmail: Yup.bool(),
+    // communicationSMS: Yup.bool(),
+    // communicationPhone: Yup.bool(),
   });
   const getInputClasses = (fieldname) => {
     if (formik.touched[fieldname] && formik.errors[fieldname]) {
