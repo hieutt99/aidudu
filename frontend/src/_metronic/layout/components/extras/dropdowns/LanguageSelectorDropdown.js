@@ -55,16 +55,16 @@ export function LanguageSelectorDropdown() {
             <Tooltip id="language-panel-tooltip">Select Language</Tooltip>
           }
         >
-          <div className="btn btn-icon btn-hover-transparent-white btn-dropdown btn-lg mr-1">
+          <div className="btn btn-icon btn-clean btn-dropdown btn-lg mr-1">
             <img
-              className="h-20px w-20px rounded-sm"
+              className="h-25px w-25px rounded"
               src={currentLanguage.flag}
               alt={currentLanguage.name}
             />
           </div>
         </OverlayTrigger>
       </Dropdown.Toggle>
-      <Dropdown.Menu className="dropdown-menu p-0 m-0 dropdown-menu-anim-up dropdown-menu-sm dropdown-menu-right">
+      <Dropdown.Menu className="p-0 m-0 dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround">
         <ul className="navi navi-hover py-4">
           {languages.map((language) => (
             <li

@@ -11,10 +11,8 @@ import { MyCartDropdown } from "../extras/dropdowns/MyCartDropdown";
 import { LanguageSelectorDropdown } from "../extras/dropdowns/LanguageSelectorDropdown";
 import { QuickUserToggler } from "../extras/QuiclUserToggler";
 
-//TODO: header's section on the right
 export function Topbar() {
   const uiService = useHtmlClassService();
-
   const layoutProps = useMemo(() => {
     return {
       viewSearchDisplay: objectPath.get(
@@ -64,10 +62,10 @@ export function Topbar() {
             data-placement="right"
           >
             <div
-              className="btn btn-icon btn-hover-transparent-white btn-lg mr-1"
+              className="btn btn-icon btn-clean btn-lg mr-1"
               id="kt_quick_panel_toggle"
             >
-              <span className="svg-icon svg-icon-xl">
+              <span className="svg-icon svg-icon-xl svg-icon-primary">
                 <SVG
                   src={toAbsoluteUrl(
                     "/media/svg/icons/Layout/Layout-4-blocks.svg"

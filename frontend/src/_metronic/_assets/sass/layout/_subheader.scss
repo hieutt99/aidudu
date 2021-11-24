@@ -21,13 +21,13 @@
 
 	// Subheader Solid Mode
 	&.subheader-solid {
+		border-top: 1px solid get($subheader-config, default, border-color);
 		background-color: get($subheader-config, default, bg-color);
 	}
 }
 
 // Desktop Mode
 @include media-breakpoint-up(lg) {
-    // Subheader
 	.subheader {
 		// Fixed subheader mode
 		.header-fixed.subheader-fixed & {
@@ -36,7 +36,7 @@
 			top: get($header-config, desktop, fixed, height);
 			left: 0;
 			right: 0;
-			transition: all 0.3s ease;
+			transition: top 0.3s ease;
 			z-index: get($subheader-config, fixed, zindex);
 			box-shadow: get($subheader-config, fixed, shadow);
 			background-color: get($subheader-config, default, bg-color);
@@ -45,27 +45,30 @@
 		}
 
 		// Fixed header, minimized header and fixed subheader
-		.header-fixed[data-header-scroll="on"].subheader-fixed & {
+		.header-fixed.subheader-fixed.header-minimize:not(.aside-minimize-hover) & {
 			top: get($header-config, desktop, fixed, height);
 			transition: top 0.3s ease;
 		}
 
+		// Aside Enabled & Subheader Fixed Modes
 		.aside-enabled.subheader-fixed & {
 			left: get($aside-config, base, width);
 		}
+
+		// Fixed Subheader & Aside Minimize Hover Modes
+		.subheader-fixed.aside-minimize & {
+			left: get($aside-config, base, minimized-width);
+		}
 	}
 
-    // Static Subheader Mode
+    // Static Subheader
 	.subheader-enabled:not(.subheader-fixed) {
-		// Content
 		.content {
 			padding-top: 0;
 		}
 
-		// Subheader Solid Mode
+		// Subheder Solid Mode
 		.subheader.subheader-solid {
-			background-color: get($subheader-config, fixed, bg-color);
-			border-top: get($subheader-config, default, border-top);
 			margin-bottom: get($page-padding, desktop);
 		}
 	}
@@ -73,14 +76,32 @@
 
 // Tablet & Mobile Modes
 @include media-breakpoint-down(md) {
-    // Content & fixed subheader mode
-	.subheader-enabled {
-		.content {
+	// Mobile fixed subheader mode
+	.subheader {
+		.header-mobile-fixed.subheader-mobile-fixed & {
+			position: fixed;
+			height: get($subheader-config, fixed, height-mobile);
+			top: get($header-config, tablet-and-mobile, fixed, height);
+			left: 0;
+			right: 0;
+			transition: top 0.3s ease;
+			z-index: get($subheader-config, fixed, zindex);
+			box-shadow: get($subheader-config, fixed, shadow);
+			background-color: get($subheader-config, default, bg-color);
+			border-top: 1px solid get($subheader-config, default, border-color);
+			margin: 0;
+		}
+	}
+
+	// Content
+	.content {
+		.subheader-enabled:not(.subheader-mobile-fixed) & {
 			padding-top: 0;
 		}
+	}
 
-		.subheader.subheader-solid {
-			margin-bottom: get($page-padding, tablet-and-mobile);
-		}
+	// Subheder Solid Mode
+	.subheader.subheader-solid {
+		margin-bottom: get($page-padding, tablet-and-mobile);
 	}
 }

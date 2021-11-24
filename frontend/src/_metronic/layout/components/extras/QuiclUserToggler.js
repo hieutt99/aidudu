@@ -26,20 +26,22 @@ export function QuickUserToggler() {
         >
           <div className="topbar-item">
             <div
-              className="btn btn-icon btn-hover-transparent-white d-flex align-items-center btn-lg px-md-2 w-md-auto"
+              className="btn btn-icon w-auto btn-clean d-flex align-items-center btn-lg px-2"
               id="kt_quick_user_toggle"
             >
-              <span className="text-white opacity-70 font-weight-bold font-size-base d-none d-md-inline mr-1">
-                Hi,
-              </span>
-              <span className="text-white opacity-90 font-weight-bolder font-size-base d-none d-md-inline mr-4">
-                {user.firsname} {user.lastname}
-              </span>
-              <span className="symbol symbol-35">
-                <span className="symbol-label text-white font-size-h5 font-weight-bold bg-white-o-30">
-                  {user.fullname[0]}
+              <>
+                <span className="text-muted font-weight-bold font-size-base d-none d-md-inline mr-1">
+                  Hi,
                 </span>
-              </span>
+                <span className="text-dark-50 font-weight-bolder font-size-base d-none d-md-inline mr-3">
+                  {user.fullname}
+                </span>
+                <span className="symbol symbol-35 symbol-light-success">
+                  <span className="symbol-label font-size-h5 font-weight-bold">
+                    {user.fullname[0]}
+                  </span>
+                </span>
+              </>
             </div>
           </div>
         </OverlayTrigger>

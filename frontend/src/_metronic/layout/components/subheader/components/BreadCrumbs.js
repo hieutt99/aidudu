@@ -8,21 +8,19 @@ export function BreadCrumbs({ items }) {
   }
 
   return (
-    <div className="d-flex align-items-center font-weight-bold my-2">
-      <Link className="opacity-75 hover-opacity-100" to="/dashboard">
-        <i className="flaticon2-shelter text-white icon-1x" />
-      </Link>
+    <ul className="breadcrumb breadcrumb-transparent breadcrumb-dot font-weight-bold p-0 my-2">
+      <li className="breadcrumb-item">
+        <Link to="/dashboard">
+          <i className="flaticon2-shelter text-muted icon-1x" />
+        </Link>
+      </li>
       {items.map((item, index) => (
-        <React.Fragment key={index}>
-          <span className="label label-dot label-sm bg-white opacity-75 mx-3" />
-          <Link
-            className="text-white text-hover-white opacity-75 hover-opacity-100"
-            to={{ pathname: item.pathname }}
-          >
+        <li key={`bc${index}`} className="breadcrumb-item">
+          <Link className="text-muted" to={{ pathname: item.pathname }}>
             {item.title}
           </Link>
-        </React.Fragment>
+        </li>
       ))}
-    </div>
+    </ul>
   );
 }

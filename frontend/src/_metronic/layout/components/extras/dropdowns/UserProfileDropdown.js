@@ -9,7 +9,6 @@ import { useHtmlClassService } from "../../../_core/MetronicLayout";
 import { toAbsoluteUrl } from "../../../../_helpers";
 import { DropdownTopbarItemToggler } from "../../../../_partials/dropdowns";
 
-// TODO: user profile drop down menu
 export function UserProfileDropdown() {
   const { user } = useSelector((state) => state.auth);
   const uiService = useHtmlClassService();
@@ -32,15 +31,15 @@ export function UserProfileDropdown() {
             "btn btn-icon w-auto btn-clean d-flex align-items-center btn-lg px-2"
           }
         >
-          <span className="text-muted font-weight-bold font-size-base d-none d-md-inline mr-1">
+          <span className="text-light-60 font-weight-bold font-size-base d-none d-md-inline mr-1">
             Hi,
           </span>{" "}
-          <span className="text-light-50 font-weight-bolder font-size-base d-none d-md-inline mr-3">
-            {user.first_name} {user.last_name}
+          <span className="text-light font-weight-bolder font-size-base d-none d-md-inline mr-3">
+            {user.firstname} {user.lastname}
           </span>
           <span className="symbol symbol-35 symbol-light-success">
             <span className="symbol-label font-size-h5 font-weight-bold">
-              {user.first_name[0]}
+              {user.firstname[0]}
             </span>
           </span>
         </div>
@@ -55,11 +54,11 @@ export function UserProfileDropdown() {
                   <img src={toAbsoluteUrl("/media/users/300_21.jpg")} alt="" />
                 </div>
                 <div className="text-dark m-0 flex-grow-1 mr-3 font-size-h5">
-                  {user.first_name} {user.last_name}
+                  {user.firstname} {user.lastname}
                 </div>
-                <span className="label label-light-success label-lg font-weight-bold label-inline">
-                  3 messages
-                </span>
+                {/*<span className="label label-light-success label-lg font-weight-bold label-inline">*/}
+                {/*  3 messages*/}
+                {/*</span>*/}
               </div>
               <div className="separator separator-solid"></div>
             </>
@@ -76,16 +75,16 @@ export function UserProfileDropdown() {
             >
               <div className="symbol bg-white-o-15 mr-3">
                 <span className="symbol-label text-success font-weight-bold font-size-h4">
-                  {user.first_name[0]}
+                  {user.firstname[0]}
                 </span>
-                {/*<img alt="Pic" className="hidden" src={user.avatar} />*/}
+                {/*<img alt="Pic" className="hidden" src={user.pic} />*/}
               </div>
               <div className="text-white m-0 flex-grow-1 mr-3 font-size-h5">
-                {user.first_name} {user.last_name}
+                {user.firstname} {user.lastname}
               </div>
-              <span className="label label-success label-lg font-weight-bold label-inline">
-                3 messages
-              </span>
+              {/*<span className="label label-success label-lg font-weight-bold label-inline">*/}
+              {/*  3 messages*/}
+              {/*</span>*/}
             </div>
           )}
         </>
@@ -110,29 +109,29 @@ export function UserProfileDropdown() {
             </div>
           </Link>
 
-          <a className="navi-item px-8">
-            <div className="navi-link">
-              <div className="navi-icon mr-2">
-                <i className="flaticon2-mail text-warning"></i>
-              </div>
-              <div className="navi-text">
-                <div className="font-weight-bold">My Messages</div>
-                <div className="text-muted">Inbox and tasks</div>
-              </div>
-            </div>
-          </a>
+          {/*<a className="navi-item px-8">*/}
+          {/*  <div className="navi-link">*/}
+          {/*    <div className="navi-icon mr-2">*/}
+          {/*      <i className="flaticon2-mail text-warning"></i>*/}
+          {/*    </div>*/}
+          {/*    <div className="navi-text">*/}
+          {/*      <div className="font-weight-bold">My Messages</div>*/}
+          {/*      <div className="text-muted">Inbox and tasks</div>*/}
+          {/*    </div>*/}
+          {/*  </div>*/}
+          {/*</a>*/}
 
-          <a className="navi-item px-8">
-            <div className="navi-link">
-              <div className="navi-icon mr-2">
-                <i className="flaticon2-rocket-1 text-danger"></i>
-              </div>
-              <div className="navi-text">
-                <div className="font-weight-bold">My Activities</div>
-                <div className="text-muted">Logs and notifications</div>
-              </div>
-            </div>
-          </a>
+          {/*<a className="navi-item px-8">*/}
+          {/*  <div className="navi-link">*/}
+          {/*    <div className="navi-icon mr-2">*/}
+          {/*      <i className="flaticon2-rocket-1 text-danger"></i>*/}
+          {/*    </div>*/}
+          {/*    <div className="navi-text">*/}
+          {/*      <div className="font-weight-bold">My Activities</div>*/}
+          {/*      <div className="text-muted">Logs and notifications</div>*/}
+          {/*    </div>*/}
+          {/*  </div>*/}
+          {/*</a>*/}
 
           <a className="navi-item px-8">
             <div className="navi-link">
@@ -154,9 +153,9 @@ export function UserProfileDropdown() {
             >
               Sign Out
             </Link>
-            <a href="#" className="btn btn-clean font-weight-bold">
-              Upgrade Plan
-            </a>
+            {/*<a href="#" className="btn btn-clean font-weight-bold">*/}
+            {/*  Upgrade Plan*/}
+            {/*</a>*/}
           </div>
         </div>
       </Dropdown.Menu>

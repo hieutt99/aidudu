@@ -13,6 +13,22 @@
 @import "~bootstrap/scss/bootstrap";
 @import "vendors/react/material-ui/general";
 
+//
+// Main Style
+//
+
+
+////////////////////////////////////////////////////////////////
+///////////// DO NOT MODIFY BELOW INCLUDE ORDER ////////////////
+////////////////////////////////////////////////////////////////
+
+// 1: Initialize
+@import "init";
+
+// 2: Bootstrap framework includes
+@import "~bootstrap/scss/bootstrap";
+
+
 // 3: Components
 @import
     "components/utilities",
@@ -71,10 +87,11 @@
 
 // 4: Plugins
 @import
-  "vendors/plugins/dropzone",
-  "vendors/plugins/perfect-scrollbar",
-  "vendors/plugins/prismjs",
-  "vendors/plugins/react-bootstrap-table2";
+    "vendors/plugins/formvalidation",
+    "vendors/plugins/dropzone",
+    "vendors/plugins/perfect-scrollbar",
+    "vendors/plugins/prismjs",
+    "vendors/plugins/apexcharts";
 
 // 5: Layout
 @import "layout/init";

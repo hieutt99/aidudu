@@ -72,7 +72,7 @@ export function ListsWidget9({ className }) {
               </div>
 
               <div className="timeline-content font-weight-bolder font-size-lg text-dark-75 pl-3">
-                Make deposit
+                Make deposit{` `}
                 <a href="#" className="text-primary">
                   USD 700
                 </a>
@@ -104,7 +104,7 @@ export function ListsWidget9({ className }) {
               </div>
 
               <div className="timeline-content font-weight-bolder text-dark-75 pl-3 font-size-lg">
-                New order placed
+                New order placed{` `}
                 <a href="#" className="text-primary">
                   #XF-2356
                 </a>
@@ -150,7 +150,7 @@ export function ListsWidget9({ className }) {
               </div>
 
               <div className="timeline-content font-weight-bolder font-size-lg text-dark-75 pl-3">
-                New order placed
+                New order placed {` `}
                 <a href="#" className="text-primary">
                   #XF-2356
                 </a>

@@ -3,7 +3,9 @@ import {KTUtil} from "../../_assets/js/components/util";
 import KTLayoutHeader from "../../_assets/js/layout/base/header";
 import KTLayoutHeaderMenu from "../../_assets/js/layout/base/header-menu";
 import KTLayoutHeaderTopbar from "../../_assets/js/layout/base/header-topbar";
+import KTLayoutBrand from "../../_assets/js/layout/base/brand";
 import KTLayoutAside from "../../_assets/js/layout/base/aside";
+import KTLayoutAsideToggle from "../../_assets/js/layout/base/aside-toggle";
 import KTLayoutAsideMenu from "../../_assets/js/layout/base/aside-menu";
 import KTLayoutContent from "../../_assets/js/layout/base/content";
 import KTLayoutFooter from "../../_assets/js/layout/base/footer";
@@ -28,14 +30,16 @@ export function LayoutInit() {
       KTLayoutHeaderMenu.init('kt_header_menu', 'kt_header_menu_wrapper');
       // Init Header Topbar For Mobile Mode
       KTLayoutHeaderTopbar.init('kt_header_mobile_topbar_toggle');
+      // Init Brand Panel For Logo
+      KTLayoutBrand.init('kt_brand');
       // Init Aside
       KTLayoutAside.init('kt_aside');
 
+      // Init Aside Menu Toggle
+      KTLayoutAsideToggle.init('kt_aside_toggle');
+      //
       // Init Aside Menu
       KTLayoutAsideMenu.init('kt_aside_menu');
-
-      // Init subheader
-      KTLayoutSubheader.init('kt_subheader');
 
       // Init Content
       KTLayoutContent.init('kt_content');
@@ -47,7 +51,8 @@ export function LayoutInit() {
       //////////////////////////////////////////////
       // Layout Extended Partials(optional to use)//
       //////////////////////////////////////////////
-    
+      KTLayoutSubheader.init('kt_subheader');
+
       // Init Scrolltop
       KTLayoutScrolltop.init('kt_scrolltop');
 
