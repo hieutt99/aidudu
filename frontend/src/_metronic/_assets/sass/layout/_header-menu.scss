@@ -4,21 +4,31 @@
 
 // Desktop Mode
 @include menu-hor-build-layout(get($header-menu-config, desktop));
-@include menu-hor-build-theme(get($header-menu-config, desktop), default);
 
-// Tablet & Mobile Mode
+// Tablet & Mobile Modes
 @include menu-ver-build-layout(get($header-menu-config, tablet-and-mobile));
-@include menu-ver-build-theme(get($header-menu-config, tablet-and-mobile), default);
 
 // Header Menu Mobile Offcanvas
 @include offcanvas-build(header-menu-wrapper, tablet-and-mobile, get($header-menu-config, offcanvas-mobile));
 
 // Desktop Mode
 @include media-breakpoint-up(lg) {
-	// Header Menu Wrapper
+	// Header Wrapper
 	.header-menu-wrapper {
-		display: flex;
 		align-items: stretch;
+
+		body:not(.aside-enabled) & {
+			display: flex;
+			flex-direction: row;
+
+			// Logo
+			.header-logo {
+				padding: 0;
+				display: flex;
+				align-items: center;
+				margin-right: get($page-padding, desktop);
+			}
+		}
 	}
 
 	// Header Menu
@@ -35,83 +45,45 @@
 				&:first-child {
 					padding-left: 0;
 				}
+			}
+		}
 
-				> .menu-link {
-					@include border-radius($border-radius);
-					padding: 0.75rem 1.25rem;
-
-					.menu-text {
-						color: $white;
-						font-weight: 500;
-					}
-
-					.menu-arrow {
-						color: rgba($white, 0.8);
-					}
-
-					.menu-icon {
-						i {
-							color: rgba($white, 0.8);
-						}
-
-						.svg-icon {
-							@include svg-icon-color(rgba($white, 0.8));
-						}
-					}
-				}
-
-				// Active & Hover States
-				&:hover:not(.menu-item-here):not(.menu-item-active),
-				&.menu-item-hover:not(.menu-item-here):not(.menu-item-active),
-				&.menu-item-here,
-				&.menu-item-active {
+		// Layouts Options
+		&.header-menu-layout-default {
+			.menu-nav {
+				> .menu-item {
 					> .menu-link {
-						background-color: rgba($white, 0.1);
-
-						.menu-text {
-							color: $white;
-						}
-
-						.menu-arrow {
-							color: rgba($white, 0.8);
-						}
-
-						.menu-icon {
-							i {
-								color: rgba($white, 0.8);
-							}
-
-							.svg-icon {
-								@include svg-icon-color(rgba($white, 0.8));
-							}
-						}
+						padding: 0.65rem 1.1rem;
 					}
 				}
 			}
 		}
 
-		// Fixed Header & Header Scroll Modes
-		.header-fixed[data-header-scroll="on"] & {
-			// Header Nav
+		&.header-menu-layout-tab {
 			.menu-nav {
 				> .menu-item {
+					margin: 0 1rem;
+					align-items: stretch;
+					border-radius: 0;
+
 					> .menu-link {
-						.menu-text {
-							color: $dark-50;
-						}
+						align-items: stretch;
+						background-color: transparent !important;
+						padding: 0 !important;
+						border-bottom: 1px solid transparent;
+						margin-bottom: -1px;
+						border-radius: 0 !important;
 					}
 
-					// Active & hover states
-					&:hover:not(.menu-item-here):not(.menu-item-active),
-					&.menu-item-hover:not(.menu-item-here):not(.menu-item-active),
+					&:first-child {
+						margin-left: 0 !important;
+					}
+
 					&.menu-item-here,
 					&.menu-item-active {
 						> .menu-link {
-							background-color: $gray-100;
-
-							.menu-text {
-								color: $dark-50;
-							}
+							background-color: transparent !important;
+							border-bottom: 1px solid $primary !important;
 						}
 					}
 				}
@@ -125,7 +97,7 @@
 	// Header Wrapper
 	.header-menu-wrapper {
 		overflow: auto;
-		
+
 		// Logo
 		.header-logo {
 			display: none;

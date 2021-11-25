@@ -19,7 +19,7 @@ export function AsideMenu({disableScroll}) {
       <div
         id="kt_aside_menu"
         data-menu-vertical="1"
-        className={`aside-menu  min-h-lg-800px ${layoutProps.asideClassesFromConfig}`}
+        className={`aside-menu my-4 ${layoutProps.asideClassesFromConfig}`}
         {...layoutProps.asideMenuAttr}
       >
         <AsideMenuList layoutProps={layoutProps} />

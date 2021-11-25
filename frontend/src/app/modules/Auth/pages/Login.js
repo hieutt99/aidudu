@@ -18,8 +18,8 @@ import { login } from "../_redux/authCrud";
 */
 
 const initialValues = {
-  email: "admin@demo.com",
-  password: "demo",
+  email: "admin@gmail.com",
+  password: "123",
 };
 
 function Login(props) {
@@ -169,7 +169,7 @@ function Login(props) {
             className={`btn btn-primary font-weight-bold px-9 py-4 my-3`}
           >
             <span>Sign In</span>
-            {loading && <span className="ml-3 spinner spinner-white"></span>}
+            {loading && <span className='ml-3 spinner spinner-white'/>}
           </button>
         </div>
       </form>

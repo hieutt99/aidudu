@@ -56,7 +56,7 @@ class AnimateLoading extends React.Component {
         style={{ height: "3px", width: "100%" }}
       >
         {this.state.width > 0 && (
-          <ProgressBar variant="primary" now={this.state.width} style={{ height: "3px" }}  />
+          <ProgressBar variant="info" now={this.state.width} style={{ height: "3px" }}  />
         )}
       </div>
     );

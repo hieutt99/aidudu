@@ -20,10 +20,10 @@ var KTLayoutHeaderMenu = function() {
 			closeBy: 'kt_header_menu_mobile_close_btn',
 			toggleBy: {
 				target: 'kt_header_mobile_toggle',
-				state: 'burger-icon-active'
+				state: 'mobile-toggle-active'
 			}
 		});
-
+		
 		_menuObject = new KTMenu(_menuElement, {
 			submenu: {
 				desktop: 'dropdown',
