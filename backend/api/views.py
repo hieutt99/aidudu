@@ -294,7 +294,7 @@ class ListViewSet(ModelViewSet):
             raise PermissionDenied(
                 detail="You do not belong to this board or this board doesn't exist.")
 
-    @action(detail=True, methods=['post'], url_path='archive-cards')
+    @action(detail=True, methods=['post'], url_path='archive-lists')
     def archive_a_list(self, request):
         list_id = parse_int_or_400(request.data, 'id')
         list = List.objects.filter(id=list_id)
@@ -315,9 +315,9 @@ class CommentViewSet(ModelViewSet):
         return CommentSerializer
 
     def get_queryset(self):
-        
-        return 
-    
+
+        return
+
     def get_object(self):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
         self.check_object_permissions(self.request, obj)
@@ -329,8 +329,9 @@ class CommentViewSet(ModelViewSet):
         query_kwargs = {
             'card_id': card_id
         }
-        obj = get_object_or_404(self.model, **query_kwargs) 
+        obj = get_object_or_404(self.model, **query_kwargs)
         return obj
+
 
 class ChecklistViewSet(ModelViewSet):
     model = Checklist
@@ -339,8 +340,8 @@ class ChecklistViewSet(ModelViewSet):
         return ChecklistSerializer
 
     def get_queryset(self):
-        
-        return 
+
+        return
 
     @action(detail=True, methods=['get'], url_path='')
     def get_checklists_in_card(self, request):
@@ -348,8 +349,9 @@ class ChecklistViewSet(ModelViewSet):
         query_kwargs = {
             'card_id': card_id
         }
-        obj = get_object_or_404(self.model, **query_kwargs) 
+        obj = get_object_or_404(self.model, **query_kwargs)
         return obj
+
 
 class ChecklistItemViewSet(ModelViewSet):
     model = ChecklistItem
@@ -358,9 +360,9 @@ class ChecklistItemViewSet(ModelViewSet):
         return ChecklistItemSerializer
 
     def get_queryset(self):
-        
-        return 
-    
+
+        return
+
     def get_object(self):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
         self.check_object_permissions(self.request, obj)
@@ -372,9 +374,10 @@ class ChecklistItemViewSet(ModelViewSet):
         query_kwargs = {
             'checklist_id': checklist_id
         }
-        obj = get_object_or_404(self.model, **query_kwargs) 
+        obj = get_object_or_404(self.model, **query_kwargs)
         return obj
-    
+
+
 class LabelViewSet(ModelViewSet):
     model = Label
 
