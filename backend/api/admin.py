@@ -19,19 +19,19 @@ class ListAdmin(admin.ModelAdmin):
 
 @admin.register(Card)
 class CardAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'name')
+    list_display = ('__str__',)
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'name')
+    list_display = ('__str__',)
 
 @admin.register(Checklist)
 class ChecklistAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'name')
+    list_display = ('__str__',)
 
 @admin.register(ChecklistItem)
 class ChecklistItemAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'name')
+    list_display = ('__str__',)
 @admin.register(Label)
 class LabelAdmin(admin.ModelAdmin):
     list_display = ('__str__',)
