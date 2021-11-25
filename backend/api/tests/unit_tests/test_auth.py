@@ -75,6 +75,9 @@ class AuthForgotPasswordTest(APITestCase):
 	url = reverse("forgot-password")
 	def setUp(self):
 		hook_init_APITestCase(self)
+	
+	def test_success_forgot_password(self):
+		todo = False
 
 	def tearDown(self):
 		if self.me is None: return

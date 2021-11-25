@@ -114,6 +114,7 @@ class WorkspaceViewSet(ModelViewSet):
         return [wm.workspace for wm in WorkspaceMembership.objects.filter(user_id=user_id)]
 
     def perform_create(self, serializer):
+        # print(serializer);print(self.request.user)
         workspace = serializer.save()
         WorkspaceMembership.objects.create(
             workspace=workspace, user=self.request.user, role=WorkspaceMembership.ROLE.ADMIN)
