@@ -5,8 +5,8 @@ GET api/v1/boards/?workspace=[int]&recent=[bool]&starred=[bool]&limit=[int]&user
 authorization: Basic base64([username]:[password])
 
 '''
-class BoardsTest(APITestCase):
-    url = reverse("board")
+class BoardsdetailTest(APITestCase):
+    url = 'api/v1/boards/'# reverse("board-detail")
     def setUp(self):
         hook_init_APITestCase(self)
 
