@@ -91,7 +91,7 @@ class BoardViewSet(ModelViewSet):
     def perform_create(self, serializer):
         board = serializer.save()
         BoardMembership.objects.create(
-            board=board, user=self.request.user, role=WorkspaceMembership.ROLE.ADMIN)
+            board=board, user=self.request.user, role=BoardMembership.ROLE.ADMIN)
 
     def get_object(self):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
