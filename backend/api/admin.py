@@ -39,3 +39,7 @@ class LabelAdmin(admin.ModelAdmin):
 @admin.register(CardLabelRelationship)
 class CardLabelRelationshipAdmin(admin.ModelAdmin):
     list_display = ('__str__',)
+
+@admin.register(BoardMembership)
+class BoardMembershipAdmin(admin.ModelAdmin):
+    list_display = ('__str__',)
