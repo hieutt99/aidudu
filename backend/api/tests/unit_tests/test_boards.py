@@ -24,5 +24,7 @@ class BoardsTest(APITestCase):
     def test_success_get_recent_boards(self):
         todo=False
     
-    
-
+class BoardlistTest(APITestCase):
+    url = reverse("board-list")
+    def setUp(self):
+        hook_init_APITestCase(self)
