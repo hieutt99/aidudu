@@ -3,7 +3,7 @@ import {
   ME_URL,
   REGISTER_URL,
   REQUEST_PASSWORD_URL
-} from "../_redux/authCrud";
+} from '../../../../config';
 import userTableMock from "./userTableMock";
 
 export default function mockAuth(mock) {

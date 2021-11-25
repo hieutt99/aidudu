@@ -53,8 +53,8 @@ export function QuickActionsDropdown() {
                 <Tooltip id="quick-actions-tooltip">Quick actions</Tooltip>
               }
             >
-              <div className="btn btn-icon btn-hover-transparent-white btn-dropdown btn-lg mr-1">
-                <span className="svg-icon svg-icon-xl">
+              <div className="btn btn-icon btn-clean btn-dropdown btn-lg mr-1">
+                <span className="svg-icon svg-icon-xl svg-icon-primary">
                   <SVG
                     src={toAbsoluteUrl("/media/svg/icons/Media/Equalizer.svg")}
                   />
@@ -63,7 +63,7 @@ export function QuickActionsDropdown() {
             </OverlayTrigger>
           </Dropdown.Toggle>
 
-          <Dropdown.Menu className="dropdown-menu p-0 m-0 dropdown-menu-right dropdown-menu-anim-up dropdown-menu-lg">
+          <Dropdown.Menu className="p-0 m-0 dropdown-menu-right dropdown-menu-anim dropdown-menu-top-unround dropdown-menu-lg">
             <form>
               {/* begin: Head */}
               <div

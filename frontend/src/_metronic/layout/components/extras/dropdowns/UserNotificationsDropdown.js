@@ -57,14 +57,15 @@ export function UserNotificationsDropdown() {
               }
             >
               <div
-                className="btn btn-icon btn-hover-transparent-white btn-dropdown btn-lg mr-1 pulse pulse-primary"
+                className="btn btn-icon btn-clean btn-lg mr-1 pulse pulse-primary"
                 id="kt_quick_notifications_toggle"
               >
-                <span className="svg-icon svg-icon-xl">
+                <span className="svg-icon svg-icon-xl svg-icon-primary">
                   <SVG
                     src={toAbsoluteUrl("/media/svg/icons/Code/Compiling.svg")}
                   />
                 </span>
+                <span className="pulse-ring"></span>
                 <span className="pulse-ring" />
               </div>
             </OverlayTrigger>
