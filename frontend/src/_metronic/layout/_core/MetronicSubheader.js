@@ -5,6 +5,7 @@ export function getBreadcrumbsAndTitle(menuId, pathName) {
     breadcrumbs: [],
     title: "",
   };
+
   const menu = document.getElementById(menuId);
   if (!menu) {
     return result;
@@ -20,7 +21,6 @@ export function getBreadcrumbsAndTitle(menuId, pathName) {
 
   activeLinks.forEach((link) => {
     const titleSpans = link.getElementsByClassName("menu-text");
-
     if (titleSpans) {
       const titleSpan = Array.from(titleSpans).find(
         (t) => t.innerHTML && t.innerHTML.trim().length > 0

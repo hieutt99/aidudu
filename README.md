@@ -44,17 +44,33 @@ docker-compose exec backend python3 manage.py migrate
 ```
 
 ### Setup frontend: 
-// TODO: frontend team write this part
+Prerequisite: `nodejs` and `npm` installed.
 
+**1. Set up local developing environment (VSCode, ...)**
 ```bash
-# install dependencies (run once)
-npm ci
-
-# start frontend server
 cd frontend/
+
+# install dependencies (run once)
+# Note: should not try to resolve any vulnerabilities
+npm i
+```
+
+In case you do not use docker, run this command to start frontend server (port 3000) <br>
+Then open [http://localhost:3000](http://localhost:3000) to view it in the browser. You should first register an account in login page.
+```bash
+# start frontend (in case you do not use docker)
 npm run start
 ```
 
+**2. Set up docker enviroment for developing**
+```bash
+cd frontend/
+
+# start frontend server (port 3000)
+docker-compose up
+```
+
+---
 
 ## Setup on production server
 The backend server will run on port 8000 and the frontend server will run on port 3000. Please make sure these ports are available on your server.

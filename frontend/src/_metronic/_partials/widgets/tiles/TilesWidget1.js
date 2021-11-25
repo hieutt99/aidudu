@@ -55,7 +55,7 @@ export function TilesWidget1({ className, chartColor = "danger" }) {
         <div className="card-header border-0 pt-5">
           <div className="card-title">
             <div className="card-label">
-              <div className="font-weight-bolder">Weekly Sales Statsssssxsasd</div>
+              <div className="font-weight-bolder">Weekly Sales Stats</div>
               <div className="font-size-sm text-muted mt-2">890,344 Sales</div>
             </div>
           </div>

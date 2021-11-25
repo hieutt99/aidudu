@@ -11,7 +11,6 @@ import { ProfileCard } from "./components/ProfileCard";
 export default function UserProfilePage() {
   const suhbeader = useSubheader();
   suhbeader.setTitle("User profile");
-
   return (
     <div className="d-flex flex-row">
       <ProfileCard></ProfileCard>

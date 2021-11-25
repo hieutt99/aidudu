@@ -14,7 +14,7 @@ export const actionTypes = {
 
 const initialAuthState = {
   user: undefined,
-  authToken: undefined,
+  authToken: undefined
 };
 
 export const reducer = persistReducer(
