@@ -16,23 +16,22 @@ class BoardAdmin(admin.ModelAdmin):
 @admin.register(List)
 class ListAdmin(admin.ModelAdmin):
     list_display = ('__str__', 'name')
-'''
+
 @admin.register(Card) # failed
 class CardAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'name')
+    list_display = ('__str__',)
 
 @admin.register(Comment) # failed
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'name')
+    list_display = ('__str__',)
 
 @admin.register(Checklist) # failed
 class ChecklistAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'name')
+    list_display = ('__str__',)
 
 @admin.register(ChecklistItem) # failed
 class ChecklistItemAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'name')
-'''
+    list_display = ('__str__',)
 @admin.register(Label)
 class LabelAdmin(admin.ModelAdmin):
     list_display = ('__str__',)
