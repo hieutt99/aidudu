@@ -53,7 +53,6 @@ class WorkSpacesListTest(APITestCase):
         if self.workspace is not None: self.workspace.delete()
 		
 class WorkSpacesDetailTest(APITestCase):
-    url = 'api/v1/workspaces/'# reverse('workspace-detail')
     def setUp(self):
         hook_init_APITestCase(self)
         self.other_user = ['kevin bacon','lalaland@john.snow','Tremors']
@@ -80,7 +79,7 @@ class WorkSpacesDetailTest(APITestCase):
         if self.workspace is not None: self.workspace.delete()
 	
     def get_success_workspace_via_id(self):
-        resp = self.client.get(f'{self.url}/{self.workspace.id}')
+        resp = self.client.get(reverse('workspace-detail',args=[self.workspace.id]))
         self.assertEqual(200, resp.status_code)
         self.assertEqual({"id","name","visibility","logo","members"},set(resp.json()))
 

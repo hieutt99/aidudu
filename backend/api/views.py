@@ -58,13 +58,14 @@ class BoardViewSet(ModelViewSet):
         return BoardSerializer
 
     def get_queryset(self):
+        
         workspace_id = parse_int_or_400(self.request.query_params, 'workspace')
         recent = parse_bool_or_400(self.request.query_params, 'recent', False)
         starred = parse_bool_or_400(
             self.request.query_params, 'starred', False)
         limit = parse_int_or_400(self.request.query_params, 'limit', None)
         user_id = parse_int_or_400(self.request.query_params, 'user')
-
+        
         if workspace_id is not None:
             if not WorkspaceMembership.objects.filter(workspace_id=workspace_id, user_id=self.request.user.id).exists():
                 raise PermissionDenied(
