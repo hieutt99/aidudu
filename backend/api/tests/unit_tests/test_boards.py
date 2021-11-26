@@ -98,8 +98,13 @@ class BoardlistTest(APITestCase):
             "name": "Demo board"
         }
         resp = self.client.post(self.url,data)
-        # print(resp.content)
+        info_new_board = resp.json()
         self.assertEqual(201,resp.status_code)
+        self.assertEqual(info_new_board['name'],data['name'])
+        data = {'workspace':self.my_workspace.id}
+        resp = self.client.get(self.url,data=data)
+        # print(resp.content)
+        self.assertEqual(len(resp.json()),len(self.list_my_board)-1+1)
     
     def test_fail_create_board(self):
         data={
