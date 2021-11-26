@@ -382,25 +382,66 @@ class LabelViewSet(ModelViewSet):
         return LabelSerializer
 
     def get_queryset(self):
-
-        return
+        board_membership_list = BoardMembership.objects.filter(user_id=self.request.user)
+        result = list()
+        for board_membership in board_membership_list:
+            if self.request.user.id == board_membership.user.id:
+                result += Label.objects.filter(board=board_membership.board)
+        return result
 
     def get_object(self):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
-        self.check_object_permissions(self.request, obj)
-        return obj
+        board_membership_list = BoardMembership.objects.filter(board=obj.board)
+        for board_membership in board_membership_list:
+            if board_membership.user.id == self.request.user.id:
+                return obj
+        raise PermissionDenied(
+                    detail="You do not belong to this board or this board doesn't exist.")
 
     def perform_create(self, serializer):
         board_id = parse_int_or_400(self.request.data, 'board')
-        board = Board.objects.filter(id=board_id)
+        board = Board.objects.get(id=board_id)
         board_membership = BoardMembership.objects.filter(
             user_id=self.request.user, board=board)
         if not board_membership.exists():
             raise PermissionDenied(
                 detail="You do not belong to this board or this board doesn't exist.")
-        label = serializer.save()
-        if 'card' in self.request.data:
+        if 'card' not in self.request.data:
+            label = serializer.save()
+        else:
             card_id = parse_int_or_400(self.request.data, 'card')
-            card_label = CardLabelRelationship.objects.create(
+            board_of_card = get_object_or_404(Card, pk=card_id).list.board
+            if len(CardLabelRelationship.objects.filter(card=card_id)) > 0:
+                raise PermissionDenied(
+                detail="This label already has label.")
+            if board_of_card != board:
+                raise PermissionDenied(
+                detail="You can not create label for this card.")
+            label = serializer.save()
+            CardLabelRelationship.objects.create(
                 card_id=card_id, label_id=label.id)
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def perform_update(self, serializer):
+        board_id = parse_int_or_400(self.request.data, 'board')
+        board_dst = Board.objects.get(id=board_id)
+        board_src = get_object_or_404(Label, pk=self.kwargs['pk']).board
+        board_membership_dst = BoardMembership.objects.filter(
+            user_id=self.request.user, board=board_dst)
+        board_membership_src = BoardMembership.objects.filter(
+            user_id=self.request.user, board=board_src)  
+        if not board_membership_src.exists() or not board_membership_dst.exists():
+            raise PermissionDenied(
+                detail="You do not belong to these boards or these board doesn't exist.")
+        label = serializer.save()
+
+    def perform_destroy(self, serializer):
+        label = get_object_or_404(Label, pk=self.kwargs['pk'])
+        board = label.board
+        board_membership = BoardMembership.objects.filter(
+            user_id=self.request.user, board=board)
+        if not board_membership.exists():
+            raise PermissionDenied(
+                detail="You do not belong to this board or this board doesn't exist.")
+        label.delete()
+        return
