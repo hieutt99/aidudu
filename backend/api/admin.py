@@ -24,22 +24,22 @@ class ListAdmin(admin.ModelAdmin):
 
 @admin.register(Card)
 class CardAdmin(admin.ModelAdmin):
-    list_display = ('__str__', )
+    list_display = ('__str__',)
 
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('__str__', )
+    list_display = ('__str__',)
 
 
 @admin.register(Checklist)
 class ChecklistAdmin(admin.ModelAdmin):
-    list_display = ('__str__', )
+    list_display = ('__str__',)
 
 
 @admin.register(ChecklistItem)
 class ChecklistItemAdmin(admin.ModelAdmin):
-    list_display = ('__str__', )
+    list_display = ('__str__',)
 
 
 @admin.register(Label)
@@ -49,4 +49,14 @@ class LabelAdmin(admin.ModelAdmin):
 
 @admin.register(CardLabelRelationship)
 class CardLabelRelationshipAdmin(admin.ModelAdmin):
+    list_display = ('__str__',)
+
+
+@admin.register(CardMembership)
+class CardMembershipAdmin(admin.ModelAdmin):
+    list_display = ('__str__',)
+
+
+@admin.register(BoardMembership)
+class BoardMembershipAdmin(admin.ModelAdmin):
     list_display = ('__str__',)

@@ -163,15 +163,17 @@ class CardViewSet(ModelViewSet):
     @action(detail=True, methods=['post'], url_path='members')
     def add_member_to_card(self, request, pk):
         member_id = parse_int_or_400(request.data, 'id')
-        member = get_object_or_404(CustomUser, id=member_id)
 
         card_membership = CardMembership.objects.filter(
             card_id=pk, user_id=member_id)
+        card_membership_current = CardMembership.objects.get(
+            card_id=pk, user_id=request.user
+        )
         board_membership = BoardMembership.objects.filter(
-            user_id=request.user, board=card_membership.card.list.board)
+            user_id=request.user, board=card_membership_current.card.list.board)
         if board_membership.exists():
             if not card_membership.exists():
-                card_membership = CardMembership.objects.create(
+                card_membership_new = CardMembership.objects.create(
                     card_id=pk, user_id=member_id)
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
@@ -226,31 +228,32 @@ class ListViewSet(ModelViewSet):
         self.check_object_permissions(self.request, obj)
         return obj
 
-    @action(detail=True, methods=['post'])
-    def copy_a_list(self, request):
-        list_id = parse_int_or_400(request.data, 'list_id')
-        list = List.objects.filter(id=list_id)
+    # Copy a list is not currently available for local API test since related
+    # CRUD APIs haven't been deploy.
+    @action(detail=True, methods=['post'], url_path='copy-list')
+    def copy_a_list(self, request, pk):
+        list = List.objects.filter(id=pk)
         board_membership = BoardMembership.objects.filter(
-            user_id=request.user, board=list.board)
+            user_id=request.user, board=list[0].board)
         if board_membership.exists():
             new_list = List.objects.create(name=list.name, board=list.board)
+            # Create card, card membership, checklist.
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             raise PermissionDenied(
                 detail="You do not belong to this board or this board doesn't exist.")
 
-    @action(detail=True, methods=['post'], url_path='sort')
+    @action(detail=True, methods=['post'], url_path='sort-cards')
     @transaction.atomic
-    def sort_cards_in_list(self, request):
+    def sort_cards_in_list(self, request, pk):
         sort_mode = parse_int_or_400(request.data, 'mode')
         """
             Mode 1: Date created newest
             Mode 2: Date created oldest
             Mode 3: Card name (Alphabetically)
         """
-        list_id = parse_int_or_400(request.data, 'id')
-        cards = Card.objects.filter(list=list_id)
-        list = List.objects.filter(id=list_id)
+        cards = Card.objects.filter(list=pk)
+        list = List.objects.get(id=pk)
         board_membership = BoardMembership.objects.filter(
             user_id=request.user, board=list.board)
         if board_membership.exists():
@@ -258,19 +261,23 @@ class ListViewSet(ModelViewSet):
                 cards.order_by('-start')
                 pst = 0
                 for card in cards:
-                    card.update(position=pst)
+                    print(card)
+                    card.position = pst
+                    card.save()
                     pst += 1
             elif sort_mode == 2:
                 cards.order_by('start')
                 pst = 0
                 for card in cards:
-                    card.update(position=pst)
+                    card.position = pst
+                    card.save()
                     pst += 1
             elif sort_mode == 3:
                 cards.order_by('title')
                 pst = 0
                 for card in cards:
-                    card.update(position=pst)
+                    card.position = pst
+                    card.save()
                     pst += 1
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
@@ -279,27 +286,24 @@ class ListViewSet(ModelViewSet):
 
     @action(detail=True, methods=['post'], url_path='move-cards')
     @transaction.atomic
-    def move_all_cards(self, request):
-        list_id_src = parse_int_or_400(request.data, 'id')
-        list_id_dest = parse_int_or_400(request.data, 'list_id_dest')
-        cards = Card.objects.filter(list=list_id_src)
-        list = List.objects.filter(id=list_id_src)
+    def move_all_cards(self, request, pk):
+        list_id_dest = parse_int_or_400(request.data, 'id')
+        cards = Card.objects.filter(list=pk)
+        list = List.objects.get(id=pk)
         board_membership = BoardMembership.objects.filter(
             user_id=request.user, board=list.board)
         if board_membership.exists():
-            for card in cards:
-                card.update(list=list_id_dest)
+            cards.update(list=list_id_dest)
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             raise PermissionDenied(
                 detail="You do not belong to this board or this board doesn't exist.")
 
     @action(detail=True, methods=['post'], url_path='archive-lists')
-    def archive_a_list(self, request):
-        list_id = parse_int_or_400(request.data, 'id')
-        list = List.objects.filter(id=list_id)
+    def archive_a_list(self, request, pk):
+        list = List.objects.filter(id=pk)
         board_membership = BoardMembership.objects.filter(
-            user_id=request.user, board=list.board)
+            user_id=request.user, board=list[0].board)
         if board_membership.exists():
             list.update(archive=True)
             return Response(status=status.HTTP_204_NO_CONTENT)
