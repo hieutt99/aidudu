@@ -258,24 +258,22 @@ class ListViewSet(ModelViewSet):
             user_id=request.user, board=list.board)
         if board_membership.exists():
             if sort_mode == 1:
-                cards.order_by('-start')
                 pst = 0
-                for card in cards:
+                for card in cards.order_by('-start'):
                     print(card)
                     card.position = pst
                     card.save()
                     pst += 1
             elif sort_mode == 2:
-                cards.order_by('start')
                 pst = 0
-                for card in cards:
+                for card in cards.order_by('start'):
+                    print(card)
                     card.position = pst
                     card.save()
                     pst += 1
             elif sort_mode == 3:
-                cards.order_by('title')
                 pst = 0
-                for card in cards:
+                for card in cards.order_by('title'):
                     card.position = pst
                     card.save()
                     pst += 1
@@ -389,7 +387,8 @@ class LabelViewSet(ModelViewSet):
         return LabelSerializer
 
     def get_queryset(self):
-        board_membership_list = BoardMembership.objects.filter(user_id=self.request.user)
+        board_membership_list = BoardMembership.objects.filter(
+            user_id=self.request.user)
         result = list()
         for board_membership in board_membership_list:
             if self.request.user.id == board_membership.user.id:
@@ -403,7 +402,7 @@ class LabelViewSet(ModelViewSet):
             if board_membership.user.id == self.request.user.id:
                 return obj
         raise PermissionDenied(
-                    detail="You do not belong to this board or this board doesn't exist.")
+            detail="You do not belong to this board or this board doesn't exist.")
 
     def perform_create(self, serializer):
         board_id = parse_int_or_400(self.request.data, 'board')
@@ -420,10 +419,10 @@ class LabelViewSet(ModelViewSet):
             board_of_card = get_object_or_404(Card, pk=card_id).list.board
             if len(CardLabelRelationship.objects.filter(card=card_id)) > 0:
                 raise PermissionDenied(
-                detail="This label already has label.")
+                    detail="This label already has label.")
             if board_of_card != board:
                 raise PermissionDenied(
-                detail="You can not create label for this card.")
+                    detail="You can not create label for this card.")
             label = serializer.save()
             CardLabelRelationship.objects.create(
                 card_id=card_id, label_id=label.id)
@@ -436,7 +435,7 @@ class LabelViewSet(ModelViewSet):
         board_membership_dst = BoardMembership.objects.filter(
             user_id=self.request.user, board=board_dst)
         board_membership_src = BoardMembership.objects.filter(
-            user_id=self.request.user, board=board_src)  
+            user_id=self.request.user, board=board_src)
         if not board_membership_src.exists() or not board_membership_dst.exists():
             raise PermissionDenied(
                 detail="You do not belong to these boards or these board doesn't exist.")
