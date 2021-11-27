@@ -31,6 +31,18 @@ This project and everyone participating in it is governed by the [Aidudu Code of
 
 ## How Can I Contribute?
 
+### Developing Backend
+Please make sure the backend does not have any trivial bug before merging to branch `backend`. 
+- E.g: api/admin.py contains some irrelevant fields.
+- E.g: code contains syntax error, uninstalled depedencies.
+
+Do not run `makemigrations` command if you're not permitted by the team leader.
+
+
+### Developing Frontend
+// TODO
+
+
 ### Reporting Bugs
 
 This section guides you through submitting a bug report for Aidudu. Following these guidelines helps maintainers understand your report :pencil:, reproduce the behavior :computer: :computer:, and find related reports :mag_right:.
@@ -315,30 +327,6 @@ Please open an issue on `aidudu/aidudu` if you have suggestions for new labels, 
 | `encoding` | [search][search-aidudu-repo-label-encoding] | [search][search-aidudu-org-label-encoding] | Related to character encoding. |
 | `network` | [search][search-aidudu-repo-label-network] | [search][search-aidudu-org-label-network] | Related to network problems or working with remote files (e.g. on network drives). |
 | `git` | [search][search-aidudu-repo-label-git] | [search][search-aidudu-org-label-git] | Related to Git functionality (e.g. problems with gitignore files or with showing the correct file status). |
-
-#### `aidudu/aidudu` Topic Categories
-
-| Label name | `aidudu/aidudu` :mag_right: | `aidudu`‑org :mag_right: | Description |
-| --- | --- | --- | --- |
-| `editor-rendering` | [search][search-aidudu-repo-label-editor-rendering] | [search][search-aidudu-org-label-editor-rendering] | Related to language-independent aspects of rendering text (e.g. scrolling, soft wrap, and font rendering). |
-| `build-error` | [search][search-aidudu-repo-label-build-error] | [search][search-aidudu-org-label-build-error] | Related to problems with building Aidudu from source. |
-| `error-from-pathwatcher` | [search][search-aidudu-repo-label-error-from-pathwatcher] | [search][search-aidudu-org-label-error-from-pathwatcher] | Related to errors thrown by the [pathwatcher library](https://github.com/aidudu/node-pathwatcher). |
-| `error-from-save` | [search][search-aidudu-repo-label-error-from-save] | [search][search-aidudu-org-label-error-from-save] | Related to errors thrown when saving files. |
-| `error-from-open` | [search][search-aidudu-repo-label-error-from-open] | [search][search-aidudu-org-label-error-from-open] | Related to errors thrown when opening files. |
-| `installer` | [search][search-aidudu-repo-label-installer] | [search][search-aidudu-org-label-installer] | Related to the Aidudu installers for different OSes. |
-| `auto-updater` | [search][search-aidudu-repo-label-auto-updater] | [search][search-aidudu-org-label-auto-updater] | Related to the auto-updater for different OSes. |
-| `deprecation-help` | [search][search-aidudu-repo-label-deprecation-help] | [search][search-aidudu-org-label-deprecation-help] | Issues for helping package authors remove usage of deprecated APIs in packages. |
-| `electron` | [search][search-aidudu-repo-label-electron] | [search][search-aidudu-org-label-electron] | Issues that require changes to [Electron](https://electron.aidudu.io) to fix or implement. |
-
-#### Pull Request Labels
-
-| Label name | `aidudu/aidudu` :mag_right: | `aidudu`‑org :mag_right: | Description
-| --- | --- | --- | --- |
-| `work-in-progress` | [search][search-aidudu-repo-label-work-in-progress] | [search][search-aidudu-org-label-work-in-progress] | Pull requests which are still being worked on, more changes will follow. |
-| `needs-review` | [search][search-aidudu-repo-label-needs-review] | [search][search-aidudu-org-label-needs-review] | Pull requests which need code review, and approval from maintainers or Aidudu core team. |
-| `under-review` | [search][search-aidudu-repo-label-under-review] | [search][search-aidudu-org-label-under-review] | Pull requests being reviewed by maintainers or Aidudu core team. |
-| `requires-changes` | [search][search-aidudu-repo-label-requires-changes] | [search][search-aidudu-org-label-requires-changes] | Pull requests which need to be updated based on review comments and then reviewed again. |
-| `needs-testing` | [search][search-aidudu-repo-label-needs-testing] | [search][search-aidudu-org-label-needs-testing] | Pull requests which need manual testing. |
 
 [search-aidudu-repo-label-enhancement]: https://github.com/search?q=is%3Aopen+is%3Aissue+repo%3Aaidudu%2Faidudu+label%3Aenhancement
 [search-aidudu-org-label-enhancement]: https://github.com/search?q=is%3Aopen+is%3Aissue+user%3Aaidudu+label%3Aenhancement
