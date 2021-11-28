@@ -464,11 +464,9 @@ class LabelViewSet(ModelViewSet):
     model = Label
 
     def get_serializer_class(self):
-        # raise PermissionDenied(detail="get_serializer_class")
         return LabelSerializer
 
     def get_queryset(self):
-        # raise PermissionDenied(detail="get_queryset")
         board_membership_list = BoardMembership.objects.filter(
             user_id=self.request.user)
         result = list()
@@ -478,7 +476,6 @@ class LabelViewSet(ModelViewSet):
         return result
 
     def get_object(self):
-        # raise PermissionDenied(detail="get_object")
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
         board_membership_list = BoardMembership.objects.filter(board=obj.board)
         for board_membership in board_membership_list:
@@ -488,7 +485,6 @@ class LabelViewSet(ModelViewSet):
             detail="You do not belong to this board or this board doesn't exist.")
 
     def perform_create(self, serializer):
-        # raise PermissionDenied(detail="perform_create")
         board_id = parse_int_or_400(self.request.data, 'board')
         board = Board.objects.get(id=board_id)
         board_membership = BoardMembership.objects.filter(
@@ -513,7 +509,6 @@ class LabelViewSet(ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def perform_update(self, serializer):
-        # raise PermissionDenied(detail="perform_update")
         board_id = parse_int_or_400(self.request.data, 'board')
         board_dst = Board.objects.get(id=board_id)
         board_src = get_object_or_404(Label, pk=self.kwargs['pk']).board
@@ -527,7 +522,6 @@ class LabelViewSet(ModelViewSet):
         label = serializer.save()
 
     def perform_destroy(self, serializer):
-        # raise PermissionDenied(detail="perform_destroy")
         label = get_object_or_404(Label, pk=self.kwargs['pk'])
         board = label.board
         board_membership = BoardMembership.objects.filter(
