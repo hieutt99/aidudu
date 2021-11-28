@@ -60,6 +60,17 @@ class WorkspaceSerializer(serializers.ModelSerializer):
         model = Workspace
         fields = '__all__'
 
+class WorkspaceMembershipSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = WorkspaceMembership
+        fields = ['user']
+
+class WorkspaceBoardSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Workspace
+        fields = ['id', 'name', 'members', 'visibility', 'logo', 'boards']
 
 class CardSerializer(serializers.ModelSerializer):
     class Meta:
