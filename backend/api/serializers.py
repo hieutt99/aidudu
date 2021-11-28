@@ -60,12 +60,6 @@ class WorkspaceSerializer(serializers.ModelSerializer):
         model = Workspace
         fields = '__all__'
 
-class WorkspaceMembershipSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = WorkspaceMembership
-        fields = ['user']
-
 class WorkspaceBoardSerializer(serializers.ModelSerializer):
     
     class Meta:
