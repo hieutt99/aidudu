@@ -21,7 +21,7 @@ export function AuthPage() {
           <div
             className="login-aside d-flex flex-row-auto bgi-size-cover bgi-no-repeat p-10 p-lg-10"
             style={{
-              backgroundImage: `url(${toAbsoluteUrl("/media/bg/bg-4.jpg")})`,
+              backgroundImage: `url(${toAbsoluteUrl("/media/bg/bg-10.jpg")})`,
             }}
           >
             {/*begin: Aside Container*/}
@@ -31,7 +31,7 @@ export function AuthPage() {
                 <img
                   alt="Logo"
                   className="max-h-70px"
-                  src={toAbsoluteUrl("/media/logos/logo-letter-1.png")}
+                  src={toAbsoluteUrl("/media/logos/logo-letter-9.png")}
                 />
               </Link>
               {/* end:: Aside header */}
@@ -39,11 +39,11 @@ export function AuthPage() {
               {/* start:: Aside content */}
               <div className="flex-column-fluid d-flex flex-column justify-content-center">
                 <h3 className="font-size-h1 mb-5 text-white">
-                  Welcome to Metronic!
+                  Welcome to Aidudu!
                 </h3>
                 <p className="font-weight-lighter text-white opacity-80">
-                  The ultimate Bootstrap & React 16 admin theme framework for
-                  next generation web apps.
+                  An Kanban-driven platform that supports teams and organizations in planning, tracking, managing and
+                  evaluating their daily tasks or projects tasks performance.
                 </p>
               </div>
               {/* end:: Aside content */}
@@ -51,7 +51,7 @@ export function AuthPage() {
               {/* start:: Aside footer for desktop */}
               <div className="d-none flex-column-auto d-lg-flex justify-content-between mt-10">
                 <div className="opacity-70 font-weight-bold	text-white">
-                  &copy; 2020 Metronic
+                  &copy; 2020 Aidudu
                 </div>
                 <div className="d-flex">
                   <Link to="/terms" className="text-white">
@@ -109,7 +109,7 @@ export function AuthPage() {
             {/* begin::Mobile footer */}
             <div className="d-flex d-lg-none flex-column-auto flex-column flex-sm-row justify-content-between align-items-center mt-5 p-5">
               <div className="text-dark-50 font-weight-bold order-2 order-sm-1 my-2">
-                &copy; 2020 Metronic
+                &copy; 2020 Aidudu
               </div>
               <div className="d-flex order-1 order-sm-2 my-2">
                 <Link to="/terms" className="text-dark-75 text-hover-primary">
