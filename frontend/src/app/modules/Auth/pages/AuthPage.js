@@ -38,9 +38,9 @@ export function AuthPage() {
 
               {/* start:: Aside content */}
               <div className="flex-column-fluid d-flex flex-column justify-content-center">
-                <h3 className="font-size-h1 mb-5 text-white">
+                <h2 className="font-size-h1 mb-5 text-white">
                   Welcome to Aidudu!
-                </h3>
+                </h2>
                 <p className="font-weight-lighter text-white opacity-80">
                   An Kanban-driven platform that supports teams and organizations in planning, tracking, managing and
                   evaluating their daily tasks or projects tasks performance.
