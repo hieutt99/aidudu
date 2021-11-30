@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import ListSerializer
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-from utilities.request import parse_bool_or_400, parse_int_or_400
+from utilities.request import parse_bool_or_400, parse_int_or_400, parse_string_array_or_400
 
 from api.models import *
 from api.serializers import *
@@ -64,7 +64,8 @@ class BoardViewSet(ModelViewSet):
     def get_queryset(self):
         workspace_id = parse_int_or_400(self.request.query_params, 'workspace')
         recent = parse_bool_or_400(self.request.query_params, 'recent', False)
-        starred = parse_bool_or_400(self.request.query_params, 'starred', False)
+        starred = parse_bool_or_400(
+            self.request.query_params, 'starred', False)
         limit = parse_int_or_400(self.request.query_params, 'limit', None)
         user_id = parse_int_or_400(self.request.query_params, 'user')
 
@@ -82,16 +83,19 @@ class BoardViewSet(ModelViewSet):
             user_id = self.request.user.id
 
         if starred:
-            boards = [bm.board for bm in BoardMembership.objects.filter(user_id=user_id, starred=starred)]
+            boards = [bm.board for bm in BoardMembership.objects.filter(
+                user_id=user_id, starred=starred)]
             return boards[:limit] if limit is not None else boards
 
         if recent:
-            boards = [bm.board for bm in BoardMembership.objects.filter(user_id=user_id).order_by('-updated')]
+            boards = [bm.board for bm in BoardMembership.objects.filter(
+                user_id=user_id).order_by('-updated')]
             return boards[:limit] if limit is not None else boards
 
     def perform_create(self, serializer):
         board = serializer.save()
-        BoardMembership.objects.create(board=board, user=self.request.user, role=BoardMembership.ROLE.ADMIN)
+        BoardMembership.objects.create(
+            board=board, user=self.request.user, role=BoardMembership.ROLE.ADMIN)
 
     def get_object(self):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
@@ -108,36 +112,44 @@ class WorkspaceViewSet(ModelViewSet):
         return WorkspaceSerializer
 
     def get_queryset(self):
-        user_id = parse_int_or_400(self.request.query_params, 'user', self.request.user.id)
+        user_id = parse_int_or_400(
+            self.request.query_params, 'user', self.request.user.id)
         return [wm.workspace for wm in WorkspaceMembership.objects.filter(user_id=user_id)]
 
     def perform_create(self, serializer):
         workspace = serializer.save()
-        WorkspaceMembership.objects.create(workspace=workspace, user=self.request.user, role=WorkspaceMembership.ROLE.ADMIN)
+        WorkspaceMembership.objects.create(
+            workspace=workspace, user=self.request.user, role=WorkspaceMembership.ROLE.ADMIN)
 
     def get_object(self):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
-        workspace_membership_list = WorkspaceMembership.objects.filter(workspace=self.kwargs['pk'])
+        workspace_membership_list = WorkspaceMembership.objects.filter(
+            workspace=self.kwargs['pk'])
         for workspace_membership in workspace_membership_list:
             if workspace_membership.user.id == self.request.user.id:
                 return obj
-        raise PermissionDenied(detail="You do not belong to this workspace or this workspace doesn't exist.")
-            
+        raise PermissionDenied(
+            detail="You do not belong to this workspace or this workspace doesn't exist.")
+
     def perform_destroy(self, instance):
         # check permission
-        workspace_membership = WorkspaceMembership.objects.filter(user=self.request.user, workspace_id=self.kwargs['pk'])
+        workspace_membership = WorkspaceMembership.objects.filter(
+            user=self.request.user, workspace_id=self.kwargs['pk'])
         if not workspace_membership.exists() or workspace_membership.first() != WorkspaceMembership.ROLE.ADMIN:
-            raise PermissionDenied("You don't have permission to delete this workspace")
-        
+            raise PermissionDenied(
+                "You don't have permission to delete this workspace")
+
         wm = workspace_membership.first()
         object = wm.workspace
         object.delete()
 
     @action(detail=True, methods=['put'], url_path='settings')
     def update_settings_of_workspace(self, request, pk):
-        workspace_membership = WorkspaceMembership.objects.filter(user=self.request.user, workspace_id=pk)
+        workspace_membership = WorkspaceMembership.objects.filter(
+            user=self.request.user, workspace_id=pk)
         if not workspace_membership.exists() or workspace_membership.first() != WorkspaceMembership.ROLE.ADMIN:
-            raise PermissionDenied("You don't have permission to delete this workspace")
+            raise PermissionDenied(
+                "You don't have permission to delete this workspace")
         object = workspace_membership.workspace
         serializer = WorkspaceSerializer(object, request.data)
         serializer.is_valid(raise_exception=True)
@@ -153,31 +165,36 @@ class WorkspaceViewSet(ModelViewSet):
             return self.add_member_to_workspace(request, pk)
 
         raise PermissionDenied(detail="Unsupported method")
-        
+
     def add_member_to_workspace(self, request, pk):
         self.get_object()
         member_id = parse_int_or_400(request.data, 'id')
         member = get_object_or_404(CustomUser, id=member_id)
-        workspace_membership = WorkspaceMembership.objects.filter(user=member_id, workspace=pk)
-        
+        workspace_membership = WorkspaceMembership.objects.filter(
+            user=member_id, workspace=pk)
+
         if workspace_membership.exists():
             return Response({'detail': 'This user is already added to workspace'}, status=status.HTTP_400_BAD_REQUEST)
 
-        WorkspaceMembership.objects.create(user_id=member_id, workspace_id=pk, role=WorkspaceMembership.ROLE.MEMBER)
+        WorkspaceMembership.objects.create(
+            user_id=member_id, workspace_id=pk, role=WorkspaceMembership.ROLE.MEMBER)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     def get_members_of_workspace(self, request, pk):
         self.get_object()
-        result = [wm.user_id for wm in WorkspaceMembership.objects.filter(workspace=pk)]
+        result = [
+            wm.user_id for wm in WorkspaceMembership.objects.filter(workspace=pk)]
         return Response(data=result)
 
     @action(detail=False, methods=['get'], url_path='')
     def get_workspaces(self, request):
         user_id = self.request.user.id
-        result = [wm.workspace_id for wm in WorkspaceMembership.objects.filter(user_id=user_id)]
-        result = Workspace.objects.filter(id__in = result)
+        result = [wm.workspace_id for wm in WorkspaceMembership.objects.filter(
+            user_id=user_id)]
+        result = Workspace.objects.filter(id__in=result)
         serializer = WorkspaceBoardSerializer(result, many=True)
         return Response(serializer.data)
+
 
 class CardViewSet(ModelViewSet):
     model = Card
@@ -212,7 +229,8 @@ class CardViewSet(ModelViewSet):
                     card_id=pk, label_id=label_id)
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
-            raise PermissionDenied(detail="You do not belong to this board or this board doesn't exist.")
+            raise PermissionDenied(
+                detail="You do not belong to this board or this board doesn't exist.")
 
     @action(detail=True, methods=['post'], url_path='members')
     def add_member_to_card(self, request, pk):
@@ -277,6 +295,9 @@ class ListViewSet(ModelViewSet):
 
         return
 
+    def perform_create(self, serializer):
+        list = serializer.save()
+
     def get_object(self):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
         self.check_object_permissions(self.request, obj)
@@ -284,6 +305,7 @@ class ListViewSet(ModelViewSet):
 
     # Copy a list is not currently available for local API test since related
     # CRUD APIs haven't been deploy.
+
     @action(detail=True, methods=['post'], url_path='copy-list')
     def copy_a_list(self, request, pk):
         list = List.objects.filter(id=pk)
@@ -486,17 +508,22 @@ class LabelViewSet(ModelViewSet):
         board_id = parse_int_or_400(self.request.data, 'board')
         board_dst = Board.objects.get(id=board_id)
         board_src = get_object_or_404(Label, pk=self.kwargs['pk']).board
-        board_membership_dst = BoardMembership.objects.filter(user_id=self.request.user, board=board_dst)
-        board_membership_src = BoardMembership.objects.filter(user_id=self.request.user, board=board_src)
-        
+        board_membership_dst = BoardMembership.objects.filter(
+            user_id=self.request.user, board=board_dst)
+        board_membership_src = BoardMembership.objects.filter(
+            user_id=self.request.user, board=board_src)
+
         if not board_membership_src.exists() or not board_membership_dst.exists():
-            raise PermissionDenied(detail="You do not belong to these boards or these board doesn't exist.")
+            raise PermissionDenied(
+                detail="You do not belong to these boards or these board doesn't exist.")
         serializer.save()
 
     def perform_destroy(self, serializer):
         label = get_object_or_404(Label, pk=self.kwargs['pk'])
         board = label.board
-        board_membership = BoardMembership.objects.filter(user_id=self.request.user, board=board)
+        board_membership = BoardMembership.objects.filter(
+            user_id=self.request.user, board=board)
         if not board_membership.exists():
-            raise PermissionDenied(detail="You do not belong to this board or this board doesn't exist.")
+            raise PermissionDenied(
+                detail="You do not belong to this board or this board doesn't exist.")
         label.delete()
