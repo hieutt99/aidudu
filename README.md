@@ -109,3 +109,10 @@ Note: do not run this command if you're not permitted by the team leader. Otherw
 ```bash
 python3 manage.py makemigrations
 ```
+
+### Enable Docker Buildkit on your machine
+Some old versions of Docker may require setting enviroment variable `DOCKER_BUILDKIT` to 1.
+
+```bash
+DOCKER_BUILDKIT=1 docker-compose build
+```
