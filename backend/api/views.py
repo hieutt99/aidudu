@@ -388,23 +388,14 @@ class CommentViewSet(ModelViewSet):
         return CommentSerializer
 
     def get_queryset(self):
-
-        return
+        card_id = parse_int_or_400(self.request.query_params, 'card')
+        objs = [comm for comm in Comment.objects.filter(card_id=card_id)]
+        return objs
 
     def get_object(self):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
         self.check_object_permissions(self.request, obj)
         return obj
-
-    @action(detail=True, methods=['get'], url_path='')
-    def get_comments_in_card(self, request):
-        card_id = parse_int_or_400(request.query_params, 'card')
-        query_kwargs = {
-            'card_id': card_id
-        }
-        obj = get_object_or_404(self.model, **query_kwargs)
-        return obj
-
 
 class ChecklistViewSet(ModelViewSet):
     model = Checklist
@@ -413,18 +404,14 @@ class ChecklistViewSet(ModelViewSet):
         return ChecklistSerializer
 
     def get_queryset(self):
+        card_id = parse_int_or_400(self.request.query_params, 'card')
+        objs = [checklist for checklist in Checklist.objects.filter(card_id=card_id)]
+        return objs
 
-        return
-
-    @action(detail=True, methods=['get'], url_path='')
-    def get_checklists_in_card(self, request):
-        card_id = parse_int_or_400(request.query_params, 'card')
-        query_kwargs = {
-            'card_id': card_id
-        }
-        obj = get_object_or_404(self.model, **query_kwargs)
+    def get_object(self):
+        obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
+        self.check_object_permissions(self.request, obj)
         return obj
-
 
 class ChecklistItemViewSet(ModelViewSet):
     model = ChecklistItem
@@ -433,23 +420,14 @@ class ChecklistItemViewSet(ModelViewSet):
         return ChecklistItemSerializer
 
     def get_queryset(self):
-
-        return
+        checklist_id = parse_int_or_400(self.request.query_params, 'checklist')
+        objs = [item for item in Checklist.objects.filter(checklist_id=checklist_id)]
+        return objs
 
     def get_object(self):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
         self.check_object_permissions(self.request, obj)
         return obj
-
-    @action(detail=True, methods=['get'], url_path='')
-    def get_items_in_checklist(self, request):
-        checklist_id = parse_int_or_400(request.query_params, 'checklist')
-        query_kwargs = {
-            'checklist_id': checklist_id
-        }
-        obj = get_object_or_404(self.model, **query_kwargs)
-        return obj
-
 
 class LabelViewSet(ModelViewSet):
     model = Label
