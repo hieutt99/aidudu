@@ -64,16 +64,14 @@ class BoardViewSet(ModelViewSet):
     def get_queryset(self):
         workspace_id = parse_int_or_400(self.request.query_params, 'workspace')
         recent = parse_bool_or_400(self.request.query_params, 'recent', False)
-        starred = parse_bool_or_400(
-            self.request.query_params, 'starred', False)
+        starred = parse_bool_or_400(self.request.query_params, 'starred', False)
         limit = parse_int_or_400(self.request.query_params, 'limit', None)
         user_id = parse_int_or_400(self.request.query_params, 'user')
 
         # check permissions
         if workspace_id is not None:
             if not WorkspaceMembership.objects.filter(workspace_id=workspace_id, user_id=self.request.user.id).exists():
-                raise PermissionDenied(
-                    detail="You do not belong to this workspace or this workspace doesn't exist.")
+                raise PermissionDenied(detail="You do not belong to this workspace or this workspace doesn't exist.")
             return self.model.objects.filter(workspace_id=workspace_id)
 
         if user_id is not None:
@@ -83,19 +81,16 @@ class BoardViewSet(ModelViewSet):
             user_id = self.request.user.id
 
         if starred:
-            boards = [bm.board for bm in BoardMembership.objects.filter(
-                user_id=user_id, starred=starred)]
+            boards = [bm.board for bm in BoardMembership.objects.filter(user_id=user_id, starred=starred)]
             return boards[:limit] if limit is not None else boards
 
         if recent:
-            boards = [bm.board for bm in BoardMembership.objects.filter(
-                user_id=user_id).order_by('-updated')]
+            boards = [bm.board for bm in BoardMembership.objects.filter(user_id=user_id).order_by('-updated')]
             return boards[:limit] if limit is not None else boards
 
     def perform_create(self, serializer):
         board = serializer.save()
-        BoardMembership.objects.create(
-            board=board, user=self.request.user, role=BoardMembership.ROLE.ADMIN)
+        BoardMembership.objects.create(board=board, user=self.request.user, role=BoardMembership.ROLE.ADMIN)
 
     def get_object(self):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
