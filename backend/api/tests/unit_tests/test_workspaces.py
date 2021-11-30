@@ -2,6 +2,7 @@ from api.tests.unit_tests.utils import *
 
 
 class WorkSpacesTest(APITestCase):
+    url = reverse("workspace-list")
     def setUp(self):
         hook_init_APITestCase(self)
         self.other_user = ['kevin bacon','lalaland@john.snow','Tremors']
