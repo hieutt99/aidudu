@@ -115,13 +115,14 @@ class BoardViewSet(ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods=['post'], url_path='leave')
-    def leave_a_workspace(self, request, pk):
-        workspace_membership = WorkspaceMembership.objects.filter(
-            user=self.request.user, workspace_id=pk)
-        if not workspace_membership.exists():
+    def leave_a_booard(self, request, pk):
+        membership = BoardMembership.objects.filter(
+            user=self.request.user, board_id=pk)
+        if not membership.exists():
             raise PermissionDenied(
                 "You are not in this workspace!")
-        workspace_membership.delete()
+        membership.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class WorkspaceViewSet(ModelViewSet):
     model = Workspace
