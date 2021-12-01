@@ -146,7 +146,7 @@ class Label(models.Model):
         GRAPHITE = 'graphite'
         GRAPE = 'grape'
 
-    board = models.ForeignKey(Board, on_delete=models.CASCADE)
+    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='labels')
     name = models.CharField(default='', max_length=32)
     color = models.CharField(default=COLOR.TOMATO,
                              choices=COLOR.choices, max_length=16)

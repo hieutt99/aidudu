@@ -39,6 +39,12 @@ class BoardSerializer(serializers.ModelSerializer):
         model = Board
         fields = '__all__'
 
+class BoardDetailSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Board
+        fields = ['id', 'name', 'background', 'workspace', 'members', 'labels'] #list has errors 
+                                                                                #todo: #comments, checklist stat, #attach
 
 class ListSerializer(serializers.ModelSerializer):
 

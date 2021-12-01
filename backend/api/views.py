@@ -59,6 +59,8 @@ class BoardViewSet(ModelViewSet):
     model = Board
 
     def get_serializer_class(self):
+        if self.action == "retrieve":
+            return BoardDetailSerializer
         return BoardSerializer
 
     def get_queryset(self):
@@ -87,16 +89,39 @@ class BoardViewSet(ModelViewSet):
         if recent:
             boards = [bm.board for bm in BoardMembership.objects.filter(user_id=user_id).order_by('-updated')]
             return boards[:limit] if limit is not None else boards
-
+        return [bm.board for bm in BoardMembership.objects.filter(user_id=user_id)]
     def perform_create(self, serializer):
         board = serializer.save()
         BoardMembership.objects.create(board=board, user=self.request.user, role=BoardMembership.ROLE.ADMIN)
 
     def get_object(self):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
-        self.check_object_permissions(self.request, obj)
+        membership = BoardMembership.objects.filter(user_id = self.request.user.id, board = obj)
+        if not membership.exists():
+            raise PermissionDenied(
+                detail="You do not belong to this board or this board doesn't exist.")
         return obj
 
+    def perform_update(self, serializer):
+        background = None #todo: get bg
+        starred = parse_bool_or_400(self.request.query_params, 'starred', None)
+
+        if background != None:
+            #todo: update bg
+            pass
+        if starred != None:
+            obj = self.get_object()
+            BoardMembership.objects.filter(user_id=self.request.user.id, workspace = obj).update(starred=starred)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=['post'], url_path='leave')
+    def leave_a_workspace(self, request, pk):
+        workspace_membership = WorkspaceMembership.objects.filter(
+            user=self.request.user, workspace_id=pk)
+        if not workspace_membership.exists():
+            raise PermissionDenied(
+                "You are not in this workspace!")
+        workspace_membership.delete()
 
 class WorkspaceViewSet(ModelViewSet):
     model = Workspace
