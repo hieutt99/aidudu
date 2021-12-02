@@ -60,7 +60,9 @@ class BoardlistTest(APITestCase):
     url = reverse("board-list")
     def setUp(self):
         hook_init_APITestCase(self)
-        self.my_workspace = Workspace.objects.get(id=self.me.id)
+        tmp_workspacemembership = WorkspaceMembership.objects.get(user=self.me.id)
+        self.my_workspace = Workspace.objects.get(id=tmp_workspacemembership.workspace.id)
+        
         # emulate user create board 
         self.list_my_board = [Board.objects.create(name=hex(i),background='',workspace=self.my_workspace) for i in range(0x4141,0x4143)]
         # me create broard is should synchronize with BoardMembership ()
@@ -71,7 +73,8 @@ class BoardlistTest(APITestCase):
             email="reaper9@dexter.org",
             password="AAAAAAAAAAAAAAAAAAAAAAA" 
         )
-        self.other_workspace = Workspace.objects.get(id=self.other_user.id)
+        tmp_workspacemembership = WorkspaceMembership.objects.get(user=self.other_user.id)
+        self.other_workspace = Workspace.objects.get(id=tmp_workspacemembership.workspace.id)
         self.other_board = Board.objects.create(name="BBBBBB",background='',workspace=self.other_workspace)
         self.other_boardmembership = BoardMembership.objects.create(user=self.other_user,board=self.other_board)
         # emulate me join other user-board

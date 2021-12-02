@@ -5,9 +5,9 @@ ENV PYTHONUNBUFFERED 1
 
 WORKDIR /backend
 
-RUN apt-get update && apt-get install ffmpeg -y
+RUN apt-get update && apt-get install gunicorn ffmpeg -y
 
 COPY ./requirements.txt /backend/
 
-RUN pip install -r requirements.txt
+RUN --mount=type=cache,target=/root/.cache/pip pip install --default-timeout=2000 -r requirements.txt
 

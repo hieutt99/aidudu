@@ -6,7 +6,8 @@ class LabelTest(APITestCase):
     
     def setUp(self):
         hook_init_APITestCase(self)
-        self.my_workspace = Workspace.objects.get(id=self.me.id)
+        tmp_workspacemembership = WorkspaceMembership.objects.get(user=self.me.id)
+        self.my_workspace = Workspace.objects.get(id=tmp_workspacemembership.workspace.id)
         # emulate user create board 
         self.list_my_board = [Board.objects.create(name=hex(i),background='',workspace=self.my_workspace) for i in range(0x4141,0x4143)]
         # me create broard is should synchronize with BoardMembership ()
@@ -44,7 +45,8 @@ class LabelTest(APITestCase):
             email="chichi362@songo.han",
             password="FRIEZA" 
         )
-        self.other_user_workspace =  Workspace.objects.get(id=self.other_user.id)
+        tmp_workspacemembership = WorkspaceMembership.objects.get(user=self.other_user.id)
+        self.other_user_workspace =  Workspace.objects.get(id=tmp_workspacemembership.workspace.id)
         self.other_user_board = Board.objects.create(name=hex(0xdead),background='',workspace=self.other_user_workspace)
         # create label card relation 
         self.CardMember_relationship = [CardMembership.objects.create(card=card,user=self.other_user) for card in self.my_board_0_list_card] + [CardMembership.objects.create(card=card,user=self.me) for _,card in zip(range(1),self.my_board_0_list_card)]
@@ -52,13 +54,13 @@ class LabelTest(APITestCase):
         self.my_board_1_Label_list = [Label.objects.create(board=self.list_my_board[1],name=f'goku episode XXX',color=Label.COLOR.BASIL)]
         self.CardLabel_relationship = [CardLabelRelationship.objects.create(card=card,label=random.choice(self.my_board_0_Label_list)) for _,card in zip(range(2),self.my_board_0_list_card)] # + [CardLabelRelationship.objects.create(card=self.my_board_0_list_card[0],label=random.choice(self.my_board_0_Label_list))]
         
-        print(Workspace.objects.values_list())
-        print(Board.objects.values_list())
-        print(List.objects.values_list())
-        print(Card.objects.values_list())
-        print(Label.objects.values_list())
-        print(CardMembership.objects.values_list())
-        print(CardLabelRelationship.objects.values_list())
+        # print(Workspace.objects.values_list())
+        # print(Board.objects.values_list())
+        # print(List.objects.values_list())
+        # print(Card.objects.values_list())
+        # print(Label.objects.values_list())
+        # print(CardMembership.objects.values_list())
+        # print(CardLabelRelationship.objects.values_list())
     
     def test_success_get_label(self):
         resp = self.client.get(reverse("label-detail",args=[self.my_board_0_Label_list[2].id]))
@@ -69,7 +71,7 @@ class LabelTest(APITestCase):
 
     def test_success_get_labels(self):
         resp = self.client.get(reverse("label-list"))
-        print(resp.status_code,resp.content)
+        # print(resp.status_code,resp.content)
         self.assertEqual(200,resp.status_code)
         self.assertEqual(len(resp.json()),len(self.my_board_1_Label_list)+len(self.my_board_0_Label_list))
 
@@ -103,6 +105,7 @@ class LabelTest(APITestCase):
             "color":"tomato"
         }
         resp = self.client.post(reverse("label-list"),data=data)
+        # print(resp.status_code,resp.content)
         self.assertEqual(403,resp.status_code)
         self.assertEqual(resp.json(),{"detail":"You do not belong to this board or this board doesn't exist."})
 
@@ -114,18 +117,20 @@ class LabelTest(APITestCase):
             "card" : "2"
         }
         resp = self.client.post(reverse("label-list"),data=data)
+        # print(resp.status_code,resp.content)
         self.assertEqual(403,resp.status_code)
         self.assertEqual(resp.json(),{"detail":"You do not belong to this board or this board doesn't exist."})
         data = {
             "board": self.list_my_board[1].id,
             "name" : "test_create",
             "color": "tomato",
-            "card" : "2"
+            "card" : self.my_board_0_list_card[0].id
         }
         resp = self.client.post(reverse("label-list"),data=data)
+        # print(resp.status_code,resp.content)
         self.assertEqual(403,resp.status_code)
         self.assertEqual(resp.json(),{"detail":"This label already has label."})
-        # print(resp.status_code,resp.content)
+        
         data = {
             "board": self.list_my_board[1].id,
             "name" : "test_create",
@@ -133,9 +138,10 @@ class LabelTest(APITestCase):
             "card" : self.my_board_0_list_card[2].id
         }
         resp = self.client.post(reverse("label-list"),data=data)
+        # print(resp.status_code,resp.content)
         self.assertEqual(403,resp.status_code)
         self.assertEqual(resp.json(),{"detail":"You can not create label for this card."})
-        # print(resp.status_code,resp.content)
+        
 
     def test_success_create_label_for_card(self):
         data = {
