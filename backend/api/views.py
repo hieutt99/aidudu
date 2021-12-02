@@ -62,6 +62,7 @@ class BoardViewSet(ModelViewSet):
         return BoardSerializer
 
     def get_queryset(self):
+        
         workspace_id = parse_int_or_400(self.request.query_params, 'workspace')
         recent = parse_bool_or_400(self.request.query_params, 'recent', False)
         starred = parse_bool_or_400(self.request.query_params, 'starred', False)
@@ -112,6 +113,7 @@ class WorkspaceViewSet(ModelViewSet):
         return [wm.workspace for wm in WorkspaceMembership.objects.filter(user_id=user_id)]
 
     def perform_create(self, serializer):
+        # print(serializer);print(self.request.user)
         workspace = serializer.save()
         WorkspaceMembership.objects.create(
             workspace=workspace, user=self.request.user, role=WorkspaceMembership.ROLE.ADMIN)
@@ -215,6 +217,7 @@ class CardViewSet(ModelViewSet):
 
         card_label = CardLabelRelationship.objects.filter(
             card_id=pk, label_id=label_id)
+        # deploy check card_label not null then continue 
         board = card_label.card.list.board
         board_membership = BoardMembership.objects.filter(
             user_id=request.user, board=board)

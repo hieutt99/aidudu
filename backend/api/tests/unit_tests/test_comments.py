@@ -75,7 +75,7 @@ class TestComments(APITestCase):
             user=self.me,
             content='This is a comment',
         )
-
+    
     def test_get_comment_in_a_card(self):
         resp = self.client.get(reverse('comment-list') + '?card_id=' + str(self.test_card[0].id))
         self.assertEqual(resp.status_code, 200)
@@ -103,4 +103,3 @@ class TestComments(APITestCase):
     def test_delete_comment(self):
         resp = self.client.delete(reverse('comment-detail', args=[self.test_comment.id]))
         self.assertEqual(resp.status_code, 204)
-        
