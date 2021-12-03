@@ -114,7 +114,11 @@ class ChecklistsTest(APITestCase):
         }
         resp = self.client.put(reverse("checklist-detail",args=[self.my_checklist[0].id]),data=data)
         # print(resp.status_code,resp.content)
-        self.assertEqual(204,resp.status_code)
+        self.assertEqual(200,resp.status_code)
+        tmp_checklist = self.my_checklist[0]
+        tmp = {"id":tmp_checklist.id,"title":"This is a new title","position":tmp_checklist.position,"card":tmp_checklist.card.id}
+        resp = self.client.get(reverse("checklist-detail",args=[self.my_checklist[0].id]))
+        self.assertEqual(resp.json(),tmp)
 
     def test_fail_update_checklist(self):
         tmp = 0xdeadbeef
