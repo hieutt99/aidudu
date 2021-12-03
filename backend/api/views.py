@@ -397,6 +397,9 @@ class CommentViewSet(ModelViewSet):
         self.check_object_permissions(self.request, obj)
         return obj
 
+    def put(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
 class ChecklistViewSet(ModelViewSet):
     model = Checklist
 
@@ -421,7 +424,7 @@ class ChecklistItemViewSet(ModelViewSet):
 
     def get_queryset(self):
         checklist_id = parse_int_or_400(self.request.query_params, 'checklist')
-        objs = [item for item in Checklist.objects.filter(checklist_id=checklist_id)]
+        objs = [item for item in ChecklistItem.objects.filter(checklist_id=checklist_id)]
         return objs
 
     def get_object(self):
