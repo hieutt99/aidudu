@@ -6,13 +6,6 @@ class CardTest(APITestCase):
     # url = reverse('card-detail')
     def setUp(self):
         hook_init_APITestCase(self)
-        # create test objects
-        self.test_user = CustomUser.objects.create(
-            username='testuser1',
-            password='testpwd123'
-            # default value for other fields
-        )
-        self.test_user.save()
 
         self.test_workspace = Workspace.objects.create(
             name='test_workspace',
@@ -22,7 +15,7 @@ class CardTest(APITestCase):
 
         self.workspace_membership = WorkspaceMembership.objects.create(
             workspace=self.test_workspace,
-            user=self.test_user,
+            user=self.me,
             # default value for other fields
         )
         self.workspace_membership.save()
@@ -35,7 +28,7 @@ class CardTest(APITestCase):
         self.test_board.save()
 
         self.board_membership = BoardMembership.objects.create(
-            user=self.test_user,
+            user=self.me,
             board=self.test_board,
             # default value for other fields
         )
@@ -66,7 +59,7 @@ class CardTest(APITestCase):
         self.test_card = [test_card_1, test_card_2]
 
         self.card_membership = CardMembership.objects.create(
-            user=self.test_user,
+            user=self.me,
             card=self.test_card[0]
         )
 
@@ -93,8 +86,8 @@ class CardTest(APITestCase):
             self.test_board.delete()
         if self.test_workspace is not None:
             self.test_workspace.delete()
-        if self.test_user is not None:
-            self.test_user.delete()
+        if self.me is not None:
+            self.me.delete()
 
     def test_success_get_card(self):
         resp = self.client.get(reverse('card-detail', args=[self.test_card[0].id]))
@@ -130,29 +123,29 @@ class CardTest(APITestCase):
         data = {
             'id': self.test_label.id
         }
-        resp = self.client.post(reverse('card-add-label-to-card', args=[self.test_card[0].id]), data=data)
+        resp = self.client.post(reverse('card-handle-labels-in-card', args=[self.test_card[0].id]), data=data)
         self.assertEqual(204, resp.status_code)
 
     def test_success_remove_label(self):
         data = {
             'id': self.test_label.id
         }
-        resp = self.client.post(reverse('card-delete-label-from-card', args=[self.test_card[0].id]), data=data)
+        resp = self.client.post(reverse('card-handle-labels-in-card', args=[self.test_card[0].id]), data=data)
         self.assertEqual(204, resp.status_code)
 
     
     def test_success_add_member_card(self):
         data = {
-            'id': self.test_user.id
+            'id': self.me.id
         }
-        resp = self.client.post(reverse('card-add-member-to-card', args=[self.test_card[1].id]), data=data)
+        resp = self.client.post(reverse('card-handle-members-in-card', args=[self.test_card[1].id]), data=data)
         self.assertEqual(204, resp.status_code)
     
     def test_success_remove_member(self):
         data = {
-            'id': self.test_user.id
+            'id': self.me.id
         }
-        resp = self.client.post(reverse('card-delete-member-from-card', args=[self.test_card[1].id]), data=data)
+        resp = self.client.post(reverse('card-handle-members-in-card', args=[self.test_card[1].id]), data=data)
         self.assertEqual(204, resp.status_code)
 
     def test_success_delete_card(self):
