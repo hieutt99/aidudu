@@ -1,3 +1,4 @@
+from django.test.client import BOUNDARY
 from api.tests.unit_tests.utils import *
 
 
@@ -60,10 +61,6 @@ class CardTest(APITestCase):
         self.card_membership = CardMembership.objects.create(
             user=self.me,
             card=self.test_card[0]
-        )
-        CardMembership.objects.create(
-            user=self.test_user,
-            card=self.test_card[1]
         )
 
         self.test_label = Label.objects.create(
