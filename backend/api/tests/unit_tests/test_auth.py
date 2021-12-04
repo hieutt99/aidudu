@@ -82,4 +82,4 @@ class AuthForgotPasswordTest(APITestCase):
 
 	def tearDown(self):
 		if self.me is None: return
-		self.me.delete()		
+		self.me.delete()
