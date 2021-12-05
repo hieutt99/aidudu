@@ -420,9 +420,6 @@ class CommentViewSet(ModelViewSet):
         self.check_object_permissions(self.request, obj)
         return obj
 
-    def put(self, request, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)
-
 class ChecklistViewSet(ModelViewSet):
     model = Checklist
 
