@@ -95,7 +95,7 @@ class ChecklistSerializer(serializers.ModelSerializer):
 class ChecklistItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChecklistItem
-        field = '__all__'
+        fields = '__all__'
 
 
 class LabelSerializer(serializers.ModelSerializer):
