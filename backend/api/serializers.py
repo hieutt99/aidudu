@@ -85,29 +85,17 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
 
-    def __init__(self, *args, **kwargs):
-        kwargs['partial'] = True
-        super(CommentSerializer, self).__init__(*args, **kwargs)
-
 
 class ChecklistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Checklist
         fields = '__all__'
 
-    def __init__(self, *args, **kwargs):
-        kwargs['partial'] = True
-        super(ChecklistSerializer, self).__init__(*args, **kwargs)
-
 
 class ChecklistItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChecklistItem
         fields = '__all__'
-
-    def __init__(self, *args, **kwargs):
-        kwargs['partial'] = True
-        super(ChecklistItemSerializer, self).__init__(*args, **kwargs)
 
 
 class LabelSerializer(serializers.ModelSerializer):

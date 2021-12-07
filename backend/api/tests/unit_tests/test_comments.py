@@ -95,7 +95,7 @@ class TestComments(APITestCase):
         data = {
             'content': "This is a modified comment"
         }
-        resp = self.client.put(reverse('comment-detail', args=[self.test_comment.id]), data=data)
+        resp = self.client.patch(reverse('comment-detail', args=[self.test_comment.id]), data=data)
         self.assertEqual(resp.status_code, 200)
         # test if comment is modified
         resp = self.client.get(reverse('comment-detail', args=[self.test_comment.id]))
