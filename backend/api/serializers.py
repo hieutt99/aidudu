@@ -39,7 +39,6 @@ class BoardSerializer(serializers.ModelSerializer):
         model = Board
         fields = '__all__'
 
-
 class ListSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -102,3 +101,24 @@ class LabelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Label
         fields = '__all__'
+
+class BoardDetailViewCardSerializer(serializers.ModelSerializer):
+    comments = serializers.IntegerField(source='comments.count', read_only=True)
+    attachments = serializers.IntegerField(source='attachments.count', read_only=True)
+    class Meta:
+        model = Card
+        fields = ['id', 'title', 'due', 'position', 'comments', 'attachments', 'labels']
+
+class BoardDetailViewListSerializer(serializers.ModelSerializer):
+        cards = BoardDetailViewCardSerializer(many=True)
+        class Meta:
+            model = List
+            fields = ['id', 'name', 'position', 'archive', 'cards']
+                                                                              #todo: checklist stat
+class BoardDetailViewSerializer(serializers.ModelSerializer):
+
+    lists = BoardDetailViewListSerializer(many=True)
+
+    class Meta:
+        model = Board
+        fields = ['id', 'name', 'background', 'workspace', 'members', 'lists', 'labels']

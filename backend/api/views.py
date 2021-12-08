@@ -87,7 +87,7 @@ class BoardViewSet(ModelViewSet):
         if recent:
             boards = [bm.board for bm in BoardMembership.objects.filter(user_id=user_id).order_by('-updated')]
             return boards[:limit] if limit is not None else boards
-
+        return [bm.board for bm in BoardMembership.objects.filter(user_id=user_id)]
     def perform_create(self, serializer):
         board = serializer.save()
         BoardMembership.objects.create(board=board, user=self.request.user, role=BoardMembership.ROLE.ADMIN)
@@ -97,6 +97,52 @@ class BoardViewSet(ModelViewSet):
         self.check_object_permissions(self.request, obj)
         return obj
 
+    def perform_update(self, serializer):
+        data = self.request.data
+        obj = self.get_object_with_permission()
+        workspace_src = get_object_or_404(Board, pk=self.kwargs['pk']).workspace
+        if 'background' in data:
+            serializer.save(workspace_id = workspace_src.id)
+            return
+        if 'starred' in data:
+            starred_new = self.request.data['starred']
+            if starred_new.lower() == 'true':
+                starred_new = True
+            elif starred_new.lower() == 'false':
+                starred_new = False
+            else:
+                return
+            star_info = BoardMembership.objects.filter(user_id=self.request.user.id, board = obj)
+            if not star_info.exists():
+                raise PermissionDenied(
+                    detail="You do not belong to this board or this board doesn't exist.")
+            else:
+                star_info.update(starred=starred_new)
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            return
+    def get_object_with_permission(self):
+        obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
+        membership = BoardMembership.objects.filter(user_id = self.request.user.id, board = obj)
+        if not membership.exists():
+            raise PermissionDenied(
+                detail="You do not belong to this board or this board doesn't exist.")
+        return obj
+
+    @action(detail=True, methods=['get'], url_path='details')
+    def get_details_of_a_board(self, request, pk):
+        object = self.get_object_with_permission()
+        serializer = BoardDetailViewSerializer(object)
+        return Response(data=serializer.data)
+
+    @action(detail=True, methods=['post'], url_path='leave')
+    def leave_a_booard(self, request, pk):
+        membership = BoardMembership.objects.filter(
+            user=self.request.user, board_id=pk)
+        if not membership.exists():
+            raise PermissionDenied(
+                detail="You do not belong to this board or this board doesn't exist.")
+        membership.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class WorkspaceViewSet(ModelViewSet):
     model = Workspace
@@ -130,7 +176,7 @@ class WorkspaceViewSet(ModelViewSet):
         # check permission
         workspace_membership = WorkspaceMembership.objects.filter(
             user=self.request.user, workspace_id=self.kwargs['pk'])
-        if not workspace_membership.exists() or workspace_membership.first() != WorkspaceMembership.ROLE.ADMIN:
+        if not workspace_membership.exists() or workspace_membership.first().role != WorkspaceMembership.ROLE.ADMIN:
             raise PermissionDenied(
                 "You don't have permission to delete this workspace")
 
@@ -142,10 +188,13 @@ class WorkspaceViewSet(ModelViewSet):
     def update_settings_of_workspace(self, request, pk):
         workspace_membership = WorkspaceMembership.objects.filter(
             user=self.request.user, workspace_id=pk)
-        if not workspace_membership.exists() or workspace_membership.first() != WorkspaceMembership.ROLE.ADMIN:
+        if not workspace_membership.exists():
             raise PermissionDenied(
-                "You don't have permission to delete this workspace")
-        object = workspace_membership.workspace
+                "You don't belong to this workspace")
+        if workspace_membership.first().role != WorkspaceMembership.ROLE.ADMIN:
+            raise PermissionDenied(
+                "You don't have permission to update this workspace")
+        object = workspace_membership.first().workspace
         serializer = WorkspaceSerializer(object, request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
