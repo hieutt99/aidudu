@@ -50,7 +50,7 @@ class ListSerializer(serializers.ModelSerializer):
 class ListCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Board
+        model = List
         fields = '__all__'
 
 
@@ -59,6 +59,13 @@ class WorkspaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Workspace
         fields = '__all__'
+
+
+class WorkspaceBoardSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Workspace
+        fields = ['id', 'name', 'members', 'visibility', 'logo', 'boards']
 
 
 class CardSerializer(serializers.ModelSerializer):
@@ -78,15 +85,19 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
 
+
 class ChecklistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Checklist
         fields = '__all__'
 
+
 class ChecklistItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChecklistItem
-        field = '__all__'
+        fields = '__all__'
+
+
 class LabelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Label

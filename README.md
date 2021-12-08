@@ -72,7 +72,7 @@ docker-compose up
 
 ---
 
-## Setup on production server
+## Setup on production server (draft)
 The backend server will run on port 8000 and the frontend server will run on port 3000. Please make sure these ports are available on your server.
 
 ```bash
@@ -102,4 +102,17 @@ python3 manage.py createsuperuser
 ### How to migrate database
 ```bash
 python3 manage.py migrate
+```
+
+### How to make database migration
+Note: do not run this command if you're not permitted by the team leader. Otherwise, all PR include migrations changes will be rejected.
+```bash
+python3 manage.py makemigrations
+```
+
+### Enable Docker Buildkit on your machine
+Some old versions of Docker may require setting enviroment variable `DOCKER_BUILDKIT` to 1.
+
+```bash
+DOCKER_BUILDKIT=1 docker-compose build
 ```
