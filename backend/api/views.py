@@ -99,6 +99,7 @@ class BoardViewSet(ModelViewSet):
 
     def perform_update(self, serializer):
         data = self.request.data
+        obj = self.get_object_with_permission()
         workspace_src = get_object_or_404(Board, pk=self.kwargs['pk']).workspace
         if 'background' in data:
             serializer.save(workspace_id = workspace_src.id)
@@ -111,7 +112,6 @@ class BoardViewSet(ModelViewSet):
                 starred_new = False
             else:
                 return
-            obj = self.get_object_with_permission()
             star_info = BoardMembership.objects.filter(user_id=self.request.user.id, board = obj)
             if not star_info.exists():
                 raise PermissionDenied(
