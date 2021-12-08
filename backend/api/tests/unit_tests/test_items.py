@@ -1,10 +1,7 @@
-from functools import partial
-from re import S
-
-from django.test.client import Client
+from django.test import Client
 from api.tests.unit_tests.utils import *
 
-class TestComments(APITestCase):
+class TestItems(APITestCase):
     def setUp(self):
         hook_init_APITestCase(self)
 
@@ -64,44 +61,42 @@ class TestComments(APITestCase):
             card=self.test_card[0]
         )
 
-        self.test_label = Label.objects.create(
-            board=self.test_board,
-            name='test label'
-            # default value for other fields
-        ) 
-        self.test_label.save()
-
-        self.test_comment = Comment.objects.create(
+        self.test_checklist = Checklist.objects.create(
             card=self.test_card[0],
-            user=self.me,
-            content='This is a comment',
+            title='This is a checklist',
         )
-    
-    def test_get_comment_in_a_card(self):
-        resp = self.client.get(reverse('comment-list') + '?card=' + str(self.test_card[0].id))
-        self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.data[0]['content'], self.test_comment.content)
 
-    def test_create_comment(self):
+        self.test_item = ChecklistItem.objects.create(
+            checklist=self.test_checklist,
+            content='This is an item'
+        )
+
+    def test_get_items_in_checklist(self):
+        resp = self.client.get(reverse('checklist_item-list') + '?checklist=' + str(self.test_checklist.id))
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.data[0]['content'], self.test_item.content)
+        self.assertEqual(resp.data[0]['checklist'], self.test_checklist.id)
+
+    def test_create_item(self):
         data = {
-            'card': self.test_card[0].id,
-            'user': self.me.id,
-            'content': "This is a new comment"
+            'checklist': self.test_checklist.id,
+            'content': 'new item'
         }
-        resp = self.client.post(reverse('comment-list'), data=data)
+        resp = self.client.post(reverse('checklist_item-list'), data=data)
         self.assertEqual(resp.status_code, 201)
 
-    def test_update_comment(self):
+    def test_update_item(self):
         data = {
-            'content': "This is a modified comment"
-        }
-        resp = self.client.patch(reverse('comment-detail', args=[self.test_comment.id]), data=data)
+            'content': 'modified content',
+            'checked': True
+        }       
+        resp = self.client.patch(reverse('checklist_item-detail', args=[self.test_item.id]), data=data)
         self.assertEqual(resp.status_code, 200)
-        # test if comment is modified
-        resp = self.client.get(reverse('comment-detail', args=[self.test_comment.id]))
+        resp = self.client.get(reverse('checklist_item-detail', args=[self.test_item.id]))
         self.assertEqual(resp.status_code, 200)
-        self.assertEqual(resp.data['content'], "This is a modified comment")
+        self.assertEqual(resp.data['content'], 'modified content')
+        self.assertEqual(resp.data['checked'], True)
 
-    def test_delete_comment(self):
-        resp = self.client.delete(reverse('comment-detail', args=[self.test_comment.id]))
+    def test_delete_item(self):
+        resp = self.client.delete(reverse('checklist_item-detail', args=[self.test_item.id]))
         self.assertEqual(resp.status_code, 204)
