@@ -60,3 +60,7 @@ class CardMembershipAdmin(admin.ModelAdmin):
 @admin.register(BoardMembership)
 class BoardMembershipAdmin(admin.ModelAdmin):
     list_display = ('__str__',)
+
+@admin.register(WorkspaceMembership)
+class WorkspaceMembershipAdmin(admin.ModelAdmin):
+    list_display = ('__str__',)
