@@ -82,7 +82,7 @@ docker-compose -f docker-compose.prod.yml up -d
 
 If this the first time you setup the production server, you need to run the migrate command inside the backend container:
 ```
-docker-compose exec -f docker-compose.prod.yml backend python3 manage.py migrate
+docker-compose -f docker-compose.prod.yml exec backend python3 manage.py migrate
 ```
 
 
