@@ -451,7 +451,7 @@ class ListViewSet(ModelViewSet):
         else:
             raise PermissionDenied(
                 detail="You do not belong to this board or this board doesn't exist.")
-
+                
 
 class CommentViewSet(ModelViewSet):
     model = Comment

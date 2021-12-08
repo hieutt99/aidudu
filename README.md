@@ -110,6 +110,12 @@ Note: do not run this command if you're not permitted by the team leader. Otherw
 python3 manage.py makemigrations
 ```
 
+### How to test
+```bash
+python3 manage.py test api.tests.unit_tests
+```
+
+
 ### Enable Docker Buildkit on your machine
 Some old versions of Docker may require setting enviroment variable `DOCKER_BUILDKIT` to 1.
 
