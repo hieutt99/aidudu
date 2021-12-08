@@ -121,4 +121,4 @@ class BoardDetailViewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Board
-        fields = ['id', 'name', 'background', 'workspace', 'members', 'lists']
+        fields = ['id', 'name', 'background', 'workspace', 'members', 'lists', 'labels']
