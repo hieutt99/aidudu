@@ -90,7 +90,7 @@ class TestItems(APITestCase):
             'content': 'modified content',
             'checked': True
         }       
-        resp = self.client.put(reverse('checklist_item-detail', args=[self.test_item.id]), data=data)
+        resp = self.client.patch(reverse('checklist_item-detail', args=[self.test_item.id]), data=data)
         self.assertEqual(resp.status_code, 200)
         resp = self.client.get(reverse('checklist_item-detail', args=[self.test_item.id]))
         self.assertEqual(resp.status_code, 200)

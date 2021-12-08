@@ -62,7 +62,6 @@ class BoardViewSet(ModelViewSet):
         return BoardSerializer
 
     def get_queryset(self):
-        
         workspace_id = parse_int_or_400(self.request.query_params, 'workspace')
         recent = parse_bool_or_400(self.request.query_params, 'recent', False)
         starred = parse_bool_or_400(self.request.query_params, 'starred', False)
@@ -88,7 +87,7 @@ class BoardViewSet(ModelViewSet):
         if recent:
             boards = [bm.board for bm in BoardMembership.objects.filter(user_id=user_id).order_by('-updated')]
             return boards[:limit] if limit is not None else boards
-
+        return [bm.board for bm in BoardMembership.objects.filter(user_id=user_id)]
     def perform_create(self, serializer):
         board = serializer.save()
         BoardMembership.objects.create(board=board, user=self.request.user, role=BoardMembership.ROLE.ADMIN)
@@ -98,6 +97,52 @@ class BoardViewSet(ModelViewSet):
         self.check_object_permissions(self.request, obj)
         return obj
 
+    def perform_update(self, serializer):
+        data = self.request.data
+        obj = self.get_object_with_permission()
+        workspace_src = get_object_or_404(Board, pk=self.kwargs['pk']).workspace
+        if 'background' in data:
+            serializer.save(workspace_id = workspace_src.id)
+            return
+        if 'starred' in data:
+            starred_new = self.request.data['starred']
+            if starred_new.lower() == 'true':
+                starred_new = True
+            elif starred_new.lower() == 'false':
+                starred_new = False
+            else:
+                return
+            star_info = BoardMembership.objects.filter(user_id=self.request.user.id, board = obj)
+            if not star_info.exists():
+                raise PermissionDenied(
+                    detail="You do not belong to this board or this board doesn't exist.")
+            else:
+                star_info.update(starred=starred_new)
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            return
+    def get_object_with_permission(self):
+        obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
+        membership = BoardMembership.objects.filter(user_id = self.request.user.id, board = obj)
+        if not membership.exists():
+            raise PermissionDenied(
+                detail="You do not belong to this board or this board doesn't exist.")
+        return obj
+
+    @action(detail=True, methods=['get'], url_path='details')
+    def get_details_of_a_board(self, request, pk):
+        object = self.get_object_with_permission()
+        serializer = BoardDetailViewSerializer(object)
+        return Response(data=serializer.data)
+
+    @action(detail=True, methods=['post'], url_path='leave')
+    def leave_a_booard(self, request, pk):
+        membership = BoardMembership.objects.filter(
+            user=self.request.user, board_id=pk)
+        if not membership.exists():
+            raise PermissionDenied(
+                detail="You do not belong to this board or this board doesn't exist.")
+        membership.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class WorkspaceViewSet(ModelViewSet):
     model = Workspace
@@ -113,7 +158,6 @@ class WorkspaceViewSet(ModelViewSet):
         return [wm.workspace for wm in WorkspaceMembership.objects.filter(user_id=user_id)]
 
     def perform_create(self, serializer):
-        # print(serializer);print(self.request.user)
         workspace = serializer.save()
         WorkspaceMembership.objects.create(
             workspace=workspace, user=self.request.user, role=WorkspaceMembership.ROLE.ADMIN)
@@ -132,7 +176,7 @@ class WorkspaceViewSet(ModelViewSet):
         # check permission
         workspace_membership = WorkspaceMembership.objects.filter(
             user=self.request.user, workspace_id=self.kwargs['pk'])
-        if not workspace_membership.exists() or workspace_membership.first() != WorkspaceMembership.ROLE.ADMIN:
+        if not workspace_membership.exists() or workspace_membership.first().role != WorkspaceMembership.ROLE.ADMIN:
             raise PermissionDenied(
                 "You don't have permission to delete this workspace")
 
@@ -144,10 +188,13 @@ class WorkspaceViewSet(ModelViewSet):
     def update_settings_of_workspace(self, request, pk):
         workspace_membership = WorkspaceMembership.objects.filter(
             user=self.request.user, workspace_id=pk)
-        if not workspace_membership.exists() or workspace_membership.first() != WorkspaceMembership.ROLE.ADMIN:
+        if not workspace_membership.exists():
             raise PermissionDenied(
-                "You don't have permission to delete this workspace")
-        object = workspace_membership.workspace
+                "You don't belong to this workspace")
+        if workspace_membership.first().role != WorkspaceMembership.ROLE.ADMIN:
+            raise PermissionDenied(
+                "You don't have permission to update this workspace")
+        object = workspace_membership.first().workspace
         serializer = WorkspaceSerializer(object, request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -210,15 +257,14 @@ class CardViewSet(ModelViewSet):
         self.check_object_permissions(self.request, obj)
         return obj
 
-    @action(detail=True, methods=['post'], url_path='labels')
     def add_label_to_card(self, request, pk):
         label_id = parse_int_or_400(request.data, 'id')
         label = get_object_or_404(Label, id=label_id)
-
+        
+        card = get_object_or_404(Card, id=pk)
         card_label = CardLabelRelationship.objects.filter(
             card_id=pk, label_id=label_id)
-        # deploy check card_label not null then continue 
-        board = card_label.card.list.board
+        board = card.list.board
         board_membership = BoardMembership.objects.filter(
             user_id=request.user, board=board)
         if board_membership.exists() and label.board.id == board.id:
@@ -229,57 +275,80 @@ class CardViewSet(ModelViewSet):
         else:
             raise PermissionDenied(
                 detail="You do not belong to this board or this board doesn't exist.")
-
-    @action(detail=True, methods=['post'], url_path='members')
+ 
     def add_member_to_card(self, request, pk):
         member_id = parse_int_or_400(request.data, 'id')
+        card = get_object_or_404(Card, id=pk)
 
-        card_membership = CardMembership.objects.filter(
-            card_id=pk, user_id=member_id)
-        card_membership_current = CardMembership.objects.get(
-            card_id=pk, user_id=request.user
-        )
         board_membership = BoardMembership.objects.filter(
-            user_id=request.user, board=card_membership_current.card.list.board)
-        if board_membership.exists():
+            board_id=card.list.board.id, user_id=member_id)
+        board_membership_current = BoardMembership.objects.filter(
+            board_id=card.list.board.id, user_id=request.user
+        )
+        card_membership = CardMembership.objects.filter(
+            card_id=pk, user_id=member_id
+        )
+        if not board_membership_current.exists():
+            raise PermissionDenied(
+                detail="You do not belong to this board.")
+        elif not board_membership.exists():
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
             if not card_membership.exists():
-                card_membership_new = CardMembership.objects.create(
+                card_membership = CardMembership.objects.create(
                     card_id=pk, user_id=member_id)
             return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            raise PermissionDenied(
-                detail="You do not belong to this board or this board doesn't exist.")
-
-    @action(detail=True, methods=['delete'], url_path='labels')
+            
     def delete_label_from_card(self, request, pk):
         label_id = parse_int_or_400(request.data, 'id')
         card_label = CardLabelRelationship.objects.filter(
             card_id=pk, label_id=label_id)
-        board_membership = BoardMembership.objects.filter(
-            user_id=request.user, board=card_label.card.list.board)
-        if board_membership.exists():
-            if card_label.exists():
-                card_label.delete()
+        if not card_label.exists():
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
-            raise PermissionDenied(
-                detail="You do not belong to this board or this board doesn't exist.")
+            card_label = card_label.first()
+            board_membership = BoardMembership.objects.filter(
+                user_id=request.user, board=card_label.card.list.board)
+            if board_membership.exists():
+                card_label.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            else:
+                raise PermissionDenied(
+                    detail="You do not belong to this board or this board doesn't exist.")
 
-    @action(detail=True, methods=['delete'], url_path='members')
     def delete_member_from_card(self, request, pk):
         member_id = parse_int_or_400(request.data, 'id')
         card_membership = CardMembership.objects.filter(
             card_id=pk, user_id=member_id)
-        board_membership = BoardMembership.objects.filter(
-            user_id=request.user, board=card_membership.card.list.board)
-        if board_membership.exists():
-            if card_membership.exists():
-                card_membership.delete()
+        # print(card_membership)
+        if not card_membership.exists():
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
-            raise PermissionDenied(
-                detail="You do not belong to this board or this board doesn't exist.")
+            card_membership = card_membership.first()
+            board_membership = BoardMembership.objects.filter(
+                user_id=request.user, board=card_membership.card.list.board)
+            if board_membership.exists():
+                card_membership.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            else:
+                raise PermissionDenied(
+                    detail="You do not belong to this board or this board doesn't exist.")
 
+    @action(detail=True, methods=['post', 'delete'], url_path='labels')
+    def handle_labels_in_card(self, request, pk):
+        if self.request.method == 'POST':
+            return self.add_label_to_card(request, pk)
+        if self.request.method == 'DELETE':
+            return self.delete_label_from_card(request, pk)
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    @action(detail=True, methods=['post', 'delete'], url_path='members')
+    def handle_members_in_card(self, request, pk):
+        if self.request.method == 'POST':
+            return self.add_member_to_card(request, pk)
+        if self.request.method == 'DELETE':
+            return self.delete_member_from_card(request, pk)
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 class ListViewSet(ModelViewSet):
     model = List
@@ -382,7 +451,7 @@ class ListViewSet(ModelViewSet):
         else:
             raise PermissionDenied(
                 detail="You do not belong to this board or this board doesn't exist.")
-
+                
 
 class CommentViewSet(ModelViewSet):
     model = Comment
@@ -399,9 +468,6 @@ class CommentViewSet(ModelViewSet):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
         self.check_object_permissions(self.request, obj)
         return obj
-
-    def put(self, request, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)
 
 class ChecklistViewSet(ModelViewSet):
     model = Checklist
