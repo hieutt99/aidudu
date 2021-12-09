@@ -227,11 +227,9 @@ class WorkspaceViewSet(ModelViewSet):
 
     def get_members_of_workspace(self, request, pk):
         self.get_object()
-        memberships = WorkspaceMembership.objects.filter(workspace=pk)
-        serializer = WorkspaceMembershipSerializer(memberships, many=True)
-        # result = [
-        #     wm.user_id for wm in )]
-        return Response(data=serializer.data)
+        result = [
+            wm.user_id for wm in WorkspaceMembership.objects.filter(workspace=pk)]
+        return Response(data=result)
 
     @action(detail=False, methods=['get'], url_path='')
     def get_workspaces(self, request):
