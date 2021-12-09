@@ -66,10 +66,10 @@ class WorkspaceMembershipSerializer(serializers.ModelSerializer):
 class WorkspaceBoardSerializer(serializers.ModelSerializer):
 
     # admin = serializers.SerializerMethodField('get_admin_of_workspace')
-    workspaces = WorkspaceMembershipSerializer(many=True);
+    members = WorkspaceMembershipSerializer(source='workspaces', many=True);
     class Meta:
         model = Workspace
-        fields = ['id', 'name', 'workspaces', 'visibility', 'logo', 'boards']
+        fields = ['id', 'name', 'members', 'visibility', 'logo', 'boards']
     
     def get_admin_of_workspace(self, workspace_src):
         admim_membership = WorkspaceMembership.objects.filter(workspace=workspace_src, role=WorkspaceMembership.ROLE.ADMIN).first()
