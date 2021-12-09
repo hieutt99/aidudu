@@ -58,10 +58,24 @@ class WorkspaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Workspace
         fields = '__all__'
+
+class UserDisplaySerializer(serializers.ModelSerializer):
+
+    fullname = serializers.SerializerMethodField('get_full_name_of_user')
+
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'fullname', 'avatar']
+
+    def get_full_name_of_user(self, user):
+        return user.get_full_name()
+
+
 class WorkspaceMembershipSerializer(serializers.ModelSerializer):
+    user = UserDisplaySerializer()
     class Meta:
         model = WorkspaceMembership
-        fields = ['user_id', 'role']
+        fields = ['user', 'role']
 
 class WorkspaceBoardSerializer(serializers.ModelSerializer):
 
