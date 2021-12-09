@@ -59,12 +59,35 @@ class WorkspaceSerializer(serializers.ModelSerializer):
         model = Workspace
         fields = '__all__'
 
+class UserDisplaySerializer(serializers.ModelSerializer):
+
+    fullname = serializers.SerializerMethodField('get_full_name_of_user')
+
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'fullname', 'avatar']
+
+    def get_full_name_of_user(self, user):
+        return user.get_full_name()
+
+
+class WorkspaceMembershipSerializer(serializers.ModelSerializer):
+    user = UserDisplaySerializer()
+    class Meta:
+        model = WorkspaceMembership
+        fields = ['user', 'role']
 
 class WorkspaceBoardSerializer(serializers.ModelSerializer):
 
+    # admin = serializers.SerializerMethodField('get_admin_of_workspace')
+    members = WorkspaceMembershipSerializer(source='workspaces', many=True);
     class Meta:
         model = Workspace
         fields = ['id', 'name', 'members', 'visibility', 'logo', 'boards']
+    
+    def get_admin_of_workspace(self, workspace_src):
+        admim_membership = WorkspaceMembership.objects.filter(workspace=workspace_src, role=WorkspaceMembership.ROLE.ADMIN).first()
+        return admim_membership.user.id
 
 
 class CardSerializer(serializers.ModelSerializer):
