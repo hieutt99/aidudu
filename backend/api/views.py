@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
 from django.shortcuts import get_list_or_404, get_object_or_404
 from django.db import transaction
 import requests
@@ -369,18 +370,62 @@ class ListViewSet(ModelViewSet):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
         self.check_object_permissions(self.request, obj)
         return obj
-
-    # Copy a list is not currently available for local API test since related
-    # CRUD APIs haven't been deploy.
-
+        
     @action(detail=True, methods=['post'], url_path='copy-list')
     def copy_a_list(self, request, pk):
-        list = List.objects.filter(id=pk)
+        list = List.objects.get(id=pk)
         board_membership = BoardMembership.objects.filter(
-            user_id=request.user, board=list[0].board)
+            user_id=request.user, board=list.board)
         if board_membership.exists():
-            new_list = List.objects.create(name=list.name, board=list.board)
-            # Create card, card membership, checklist.
+            list_pk = list.pk
+            #Clone the list
+            copy_list = list
+            copy_list.pk = None
+            copy_list.save()
+            #Clone all card in that list
+            cards = Card.objects.filter(list=List.objects.get(id=list_pk))
+            for card in cards:
+                card_pk = card.pk
+                copy_card = card
+                copy_card.pk = None
+                copy_card.list = copy_list
+                copy_card.save()
+                #Clone all card memberships
+                cardmems = CardMembership.objects.filter(card=Card.objects.get(id=card_pk))
+                for cardmem in cardmems:
+                    copy_cardmem = cardmem
+                    copy_cardmem.pk = None
+                    copy_cardmem.card = copy_card
+                    copy_cardmem.save()
+                #Clone all card-label relationship
+                clrelas = CardLabelRelationship.objects.filter(card=Card.objects.get(id=card_pk))
+                for clrela in clrelas:
+                    copy_clrela = clrela
+                    copy_clrela.pk = None
+                    copy_clrela.card = copy_card
+                    copy_clrela.save()
+                #Clone checklists of each card
+                checklists = Checklist.objects.filter(card=Card.objects.get(id=card_pk))
+                for checklist in checklists:
+                    checklist_pk = checklist.pk
+                    copy_checklist = checklist
+                    copy_checklist.pk = None
+                    copy_checklist.card = copy_card
+                    copy_checklist.save()
+                    #Clone checklist items of each checklist
+                    ckls = ChecklistItem.objects.filter(checklist=Checklist.objects.get(id=checklist_pk))
+                    for ckl in ckls:
+                        copy_ckl = ckl
+                        copy_ckl.pk = None
+                        copy_ckl.checklist = copy_checklist
+                        copy_ckl.save()
+                #Clone comments of each card
+                cmts = Comment.objects.filter(card=Card.objects.get(id=card_pk))
+                for cmt in cmts:
+                    copy_cmt = cmt
+                    copy_cmt.pk = None
+                    copy_cmt.card = copy_card
+                    copy_cmt.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             raise PermissionDenied(
