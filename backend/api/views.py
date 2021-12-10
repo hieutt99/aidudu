@@ -1,24 +1,37 @@
+import json
+
+import requests
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
-from django.shortcuts import get_list_or_404, get_object_or_404
 from django.db import transaction
-import requests
+from django.db.models import Q
+from django.db.models import Value as V
+from django.db.models.functions import Concat   
+from django.shortcuts import get_list_or_404, get_object_or_404
 from django.urls import reverse
-import json
 from rest_framework import status
-from rest_framework.generics import GenericAPIView
+from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.generics import GenericAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.permissions import AllowAny, BasePermission
 from rest_framework.response import Response
 from rest_framework.serializers import ListSerializer
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-from utilities.request import parse_bool_or_400, parse_int_or_400, parse_string_array_or_400
+from utilities.request import (parse_bool_or_400, parse_int_or_400,
+                               parse_string_array_or_400)
 
 from api.models import *
 from api.serializers import *
-from rest_framework.decorators import action
+
+
+class CustomPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'limit'
+    max_page_size = 50
+    page_query_param = 'page'
 
 
 class CurrentUserAPIView(APIView):
@@ -545,6 +558,26 @@ class ChecklistItemViewSet(ModelViewSet):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
         self.check_object_permissions(self.request, obj)
         return obj
+
+class UserViewSet(ModelViewSet):
+    model = get_user_model()
+    pagination_class = CustomPagination
+
+    def get_serializer_class(self):
+        return UserSerializer
+    
+    def get_queryset(self):
+        query_string = self.request.query_params.get('query')
+
+        if query_string is None:
+            return Response({'detail': 'Missing required parameter "query".'}, status=status.HTTP_400_BAD_REQUEST)
+
+        q = Q(is_active=True) & (Q(email__icontains=query_string)\
+            | Q(username__icontains=query_string))\
+            | Q(full_name__icontains=query_string)
+        
+        return self.model.objects.annotate(full_name=Concat('first_name', V(' '), 'last_name')).filter(q)
+            
 
 class LabelViewSet(ModelViewSet):
     model = Label

@@ -14,6 +14,7 @@ router.register(r'checklists', ChecklistViewSet, basename='checklist')
 router.register(r'checklist_items', ChecklistItemViewSet, basename='checklist_item')
 router.register(r'lists', ListViewSet, basename='list')
 router.register(r'labels', LabelViewSet, basename='label')
+router.register(r'users', UserViewSet, basename='user')
 
 urlpatterns = [
     path('auth/login', TokenObtainPairView.as_view(), name='login'),
