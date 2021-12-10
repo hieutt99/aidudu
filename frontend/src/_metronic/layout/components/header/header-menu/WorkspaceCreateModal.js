@@ -2,14 +2,10 @@ import React from 'react';
 import { Modal } from 'react-bootstrap';
 import { Button } from '@material-ui/core';
 
-function WorkspaceCreateModal({ openWorkspace, setOpenWorkspace }) {
-
-  const handleWorkspaceClose = () => {
-    setOpenWorkspace(false);
-  }
+function WorkspaceCreateModal({ openWorkspace, handleWorkspaceModalClose }) {
 
   return (
-    <Modal show={openWorkspace} onHide={handleWorkspaceClose}>
+    <Modal show={openWorkspace} onHide={handleWorkspaceModalClose}>
       <Modal.Header closeButton>
         <Modal.Title>Create workspace</Modal.Title>
       </Modal.Header>
@@ -18,7 +14,7 @@ function WorkspaceCreateModal({ openWorkspace, setOpenWorkspace }) {
         Woohoo, you're reading this text in a modal!
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="primary" onClick={handleWorkspaceClose}>
+        <Button variant="primary" onClick={handleWorkspaceModalClose}>
           Save Changes
         </Button>
       </Modal.Footer>

@@ -48,10 +48,6 @@ export function HeaderMenu({ layoutProps }) {
       });
   }, [updateStarredBoardFlag]);
 
-  const getMenuItemActive = (url) => {
-    return checkIsActive(location, url) ? 'menu-item-active' : '';
-  };
-
   const removeStarredBoard = (bid, wid) => {
     const data = {
       starred: 'false',
@@ -67,7 +63,15 @@ export function HeaderMenu({ layoutProps }) {
     setOpenBoard(true);
   };
 
+  const handleBoardClose = () => {
+    setOpenBoard(false);
+  };
+
   const handleWorkspaceOpen = () => {
+    setOpenWorkspace(true);
+  };
+
+  const handleWorkspaceClose = () => {
     setOpenWorkspace(true);
   };
 
@@ -235,9 +239,9 @@ export function HeaderMenu({ layoutProps }) {
       {/*end::Header Nav*/}
 
       {/*Modal to create board*/}
-      <BoardCreateModal openBoard={openBoard} setOpenBoard={setOpenBoard} workspaces={workspaces} />
+      <BoardCreateModal openBoard={openBoard} handleBoardModalClose={handleBoardClose} workspaces={workspaces} />
       {/*Modal to create workspace*/}
-      <WorkspaceCreateModal openWorkspace={openWorkspace} setOpenWorkspace={setOpenWorkspace} />
+      <WorkspaceCreateModal openWorkspace={openWorkspace} handleWorkspaceModalClose={handleWorkspaceClose} />
     </div>
   );
 }

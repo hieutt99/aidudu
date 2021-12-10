@@ -11,7 +11,7 @@ import { toast } from 'react-toastify';
 export const POST_CREATE_BOARD_URL = BACKEND_ORIGIN + 'api/v1/boards/';
 
 // TODO: add success toast
-function BoardCreateModal({ openBoard, setOpenBoard, workspaces }) {
+function BoardCreateModal({ openBoard, handleBoardModalClose, workspaces }) {
   const location = useLocation();
   const user = useSelector((state) => state.auth.user);
 
@@ -48,15 +48,11 @@ function BoardCreateModal({ openBoard, setOpenBoard, workspaces }) {
           hideProgressBar: false,
           closeOnClick: true,
         });
-        handleBoardClose();
+        handleBoardModalClose();
       })
       .catch((err) => {
         console.log(err);
       });
-  };
-
-  const handleBoardClose = () => {
-    setOpenBoard(false);
   };
 
   const schema = Yup.object().shape({
@@ -67,7 +63,7 @@ function BoardCreateModal({ openBoard, setOpenBoard, workspaces }) {
 
   return (
     <>
-      <Modal show={openBoard} onHide={handleBoardClose}>
+      <Modal show={openBoard} onHide={handleBoardModalClose}>
         <Modal.Header closeButton>
           <Modal.Title>Create Board</Modal.Title>
         </Modal.Header>
@@ -135,10 +131,9 @@ function BoardCreateModal({ openBoard, setOpenBoard, workspaces }) {
                     </Form.Control>
                   </Form.Group>
                   <Button type='submit' className={'mr-5'}>
-                    <span>Submit</span>
-                    {loading && <span className='ml-2 spinner spinner-white' />}
+                    {loading ? <span className='ml-2 spinner spinner-white' /> : <span>Submit</span>}
                   </Button>
-                  <Button variant={'light'} onClick={handleBoardClose}>Cancel</Button>
+                  <Button variant={'light'} onClick={handleBoardModalClose}>Cancel</Button>
                 </Form>
               )}
           </Formik>
