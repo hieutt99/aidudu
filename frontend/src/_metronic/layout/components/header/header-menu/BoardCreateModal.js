@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import { Formik } from 'formik';
 import axios from 'axios';
 import { BACKEND_ORIGIN } from '../../../../../config';
+import { toast } from 'react-toastify';
 
 export const POST_CREATE_BOARD_URL = BACKEND_ORIGIN + 'api/v1/boards/';
 
@@ -29,7 +30,7 @@ function BoardCreateModal({ openBoard, setOpenBoard, workspaces }) {
     formData.append('name', values.title);
     formData.append('workspace', values.workspace);
 
-    console.log("formData");
+    console.log('formData');
     console.log(formData);
 
     setLoading(true);
@@ -41,6 +42,12 @@ function BoardCreateModal({ openBoard, setOpenBoard, workspaces }) {
       .then((response) => {
         console.log(response); //fixme
         setLoading(false);
+        toast.success('Create board success!', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+        });
         handleBoardClose();
       })
       .catch((err) => {
@@ -59,83 +66,85 @@ function BoardCreateModal({ openBoard, setOpenBoard, workspaces }) {
   });
 
   return (
-    <Modal show={openBoard} onHide={handleBoardClose}>
-      <Modal.Header closeButton>
-        <Modal.Title>Create Board</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <Formik
-          validationSchema={schema}
-          onSubmit={handleBoardSubmit}
-          initialValues={{
-            title: '',
-            background: null,
-            workspace: workspaces.length > 0 ? workspaces[0].id : ''
-          }}
-        >
-          {
-            ({ // formik obj
-               handleSubmit,
-               handleChange,
-               handleBlur,
-               values,
-               touched,
-               isValid,
-               errors,
-               setFieldValue
-             }) => (
-              <Form noValidate onSubmit={handleSubmit}>
-                <Form.Group>
-                  <Form.Label>Title</Form.Label>
-                  <Form.Control
-                    type='text'
-                    placeholder='Board title'
-                    name='title'
-                    value={values.title}
-                    onChange={handleChange}
-                    isInvalid={!!errors.title}
-                  />
-                  <Form.Control.Feedback type='invalid'>
-                    {errors.title}
-                  </Form.Control.Feedback>
-                </Form.Group>
-                <Form.Group>
-                  <Form.Label>Background</Form.Label>
-                  <Form.Control
-                    type={'file'}
-                    name={'background'}
-                    // value={values.background}
-                    onChange={(e) => {
-                      setFieldValue('background', e.currentTarget.files[0]);
-                    }}
-                  />
-                </Form.Group>
-                <Form.Group>
-                  <Form.Label>Choose workspace</Form.Label>
-                  <Form.Control
-                    as='select'
-                    name='workspace'
-                    onBlur={handleBlur}
-                    value={values.workspace}
-                    onChange={handleChange}
-                  >
-                    {
-                      workspaces.map((w, key) => (
-                        <option key={key} value={w.id}>{w.name}</option>
-                      ))
-                    }
-                  </Form.Control>
-                </Form.Group>
-                <Button type='submit' className={'mr-5'}>
-                  <span>Submit</span>
-                  {loading && <span className='ml-2 spinner spinner-white'/>}
-                </Button>
-                <Button variant={'light'} onClick={handleBoardClose}>Cancel</Button>
-              </Form>
-            )}
-        </Formik>
-      </Modal.Body>
-    </Modal>
+    <>
+      <Modal show={openBoard} onHide={handleBoardClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Create Board</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Formik
+            validationSchema={schema}
+            onSubmit={handleBoardSubmit}
+            initialValues={{
+              title: '',
+              background: null,
+              workspace: workspaces.length > 0 ? workspaces[0].id : ''
+            }}
+          >
+            {
+              ({ // formik obj
+                 handleSubmit,
+                 handleChange,
+                 handleBlur,
+                 values,
+                 touched,
+                 isValid,
+                 errors,
+                 setFieldValue
+               }) => (
+                <Form noValidate onSubmit={handleSubmit}>
+                  <Form.Group>
+                    <Form.Label>Title</Form.Label>
+                    <Form.Control
+                      type='text'
+                      placeholder='Board title'
+                      name='title'
+                      value={values.title}
+                      onChange={handleChange}
+                      isInvalid={!!errors.title}
+                    />
+                    <Form.Control.Feedback type='invalid'>
+                      {errors.title}
+                    </Form.Control.Feedback>
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Background</Form.Label>
+                    <Form.Control
+                      type={'file'}
+                      name={'background'}
+                      // value={values.background}
+                      onChange={(e) => {
+                        setFieldValue('background', e.currentTarget.files[0]);
+                      }}
+                    />
+                  </Form.Group>
+                  <Form.Group>
+                    <Form.Label>Choose workspace</Form.Label>
+                    <Form.Control
+                      as='select'
+                      name='workspace'
+                      onBlur={handleBlur}
+                      value={values.workspace}
+                      onChange={handleChange}
+                    >
+                      {
+                        workspaces.map((w, key) => (
+                          <option key={key} value={w.id}>{w.name}</option>
+                        ))
+                      }
+                    </Form.Control>
+                  </Form.Group>
+                  <Button type='submit' className={'mr-5'}>
+                    <span>Submit</span>
+                    {loading && <span className='ml-2 spinner spinner-white' />}
+                  </Button>
+                  <Button variant={'light'} onClick={handleBoardClose}>Cancel</Button>
+                </Form>
+              )}
+          </Formik>
+        </Modal.Body>
+      </Modal>
+    </>
   );
 }
 

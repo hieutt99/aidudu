@@ -5,7 +5,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { checkIsActive } from '../../../../_helpers';
 import { Card } from 'react-bootstrap';
 import AddIcon from '@material-ui/icons/Add';
-import { Avatar, Button, Typography } from '@material-ui/core';
+import { Avatar, Button, Divider, Typography } from '@material-ui/core';
 import axios from 'axios';
 import { BACKEND_ORIGIN } from '../../../../../config';
 import { Rating } from '@material-ui/lab';
@@ -65,7 +65,7 @@ export function HeaderMenu({ layoutProps }) {
 
   const handleBoardOpen = () => {
     setOpenBoard(true);
-  }
+  };
 
   const handleWorkspaceOpen = () => {
     setOpenWorkspace(true);
@@ -90,47 +90,46 @@ export function HeaderMenu({ layoutProps }) {
           </NavLink>
           <div className='menu-submenu w-auto bg-light'>
             <Card style={{ width: '25rem' }}>
-              <Card.Header>
-                <Typography variant={'h6'} align={'center'}>Workspaces</Typography>
-              </Card.Header>
               <Card.Body>
+                <Typography variant={'h6'} align={'center'}>Workspaces</Typography>
+                <Divider className={'mt-2 mb-5'}/>
                 <p className={'text-black-50 font-size-lg mb-1'}>Your workspaces</p>
                 {
                   workspaces
                     .filter(w => w.members.filter(u => u.role === 'admin' && u.id === user.id).length > 0) //get user's workspace
                     .map((w, key) => (
-                    <Button
-                      key={key}
-                      // startIcon={<ArrowForwardIos style={{ fill: '#4960ab' }} />}
-                      fullWidth
-                      style={{ justifyContent: 'flex-start', paddingLeft: 0 }}
-                    >
-                      <Link to={`/workspace/${w.id}`} className='navi-item cursor-pointer'>
-                        <div className='text-dark font-size-lg cursor-pointer'>
-                          {w.name}
-                        </div>
-                      </Link>
-                    </Button>
-                  ))
+                      <Button
+                        key={key}
+                        // startIcon={<ArrowForwardIos style={{ fill: '#4960ab' }} />}
+                        fullWidth
+                        style={{ justifyContent: 'flex-start', paddingLeft: 0 }}
+                      >
+                        <Link to={`/workspace/${w.id}`} className='navi-item cursor-pointer'>
+                          <div className='text-dark font-size-lg cursor-pointer'>
+                            {w.name}
+                          </div>
+                        </Link>
+                      </Button>
+                    ))
                 }
                 <p className={'text-black-50 font-size-lg mt-4 mb-1'}>Guest workspaces</p>
                 {
                   workspaces
                     .filter(w => w.members.filter(u => u.role !== 'admin' && u.id === user.id).length > 0) //get user's guest workspace
                     .map((w, key) => (
-                    <Button
-                      key={key}
-                      // startIcon={<ArrowForwardIos style={{ fill: '#4960ab' }} />}
-                      fullWidth
-                      style={{ justifyContent: 'flex-start', paddingLeft: 0 }}
-                    >
-                      <Link to={`/workspace/${w.id}`} className='navi-item cursor-pointer'>
-                        <div className='text-dark font-size-lg cursor-pointer'>
-                          {w.name}
-                        </div>
-                      </Link>
-                    </Button>
-                  ))
+                      <Button
+                        key={key}
+                        // startIcon={<ArrowForwardIos style={{ fill: '#4960ab' }} />}
+                        fullWidth
+                        style={{ justifyContent: 'flex-start', paddingLeft: 0 }}
+                      >
+                        <Link to={`/workspace/${w.id}`} className='navi-item cursor-pointer'>
+                          <div className='text-dark font-size-lg cursor-pointer'>
+                            {w.name}
+                          </div>
+                        </Link>
+                      </Button>
+                    ))
                 }
               </Card.Body>
             </Card>
@@ -149,37 +148,34 @@ export function HeaderMenu({ layoutProps }) {
           </NavLink>
           <div className='menu-submenu w-auto bg-light'>
             <Card style={{ width: '25rem' }}>
-              <Card style={{ width: '25rem' }}>
-                <Card.Header>
-                  <Typography variant={'h6'} align={'center'}>Starred boards</Typography>
-                </Card.Header>
-                <Card.Body>
-                  <Card.Text>
-                    {
-                      starredBoards.map((b, key) => (
-                        <Button
-                          key={key}
-                          fullWidth
-                          style={{ justifyContent: 'flex-start', paddingLeft: 0 }}
-                          startIcon={<Avatar src={b.background} />}
-                          className={'pl-2'}
-                        >
-                          <Link to={`/workspace/${b.id}`} className='navi-item cursor-pointer'>
-                            <div className='text-dark font-size-lg cursor-pointer pl-1'>
-                              {b.name}
-                            </div>
-                          </Link>
-                          <Rating name='customized-10' defaultValue={1} max={1} className={'ml-auto mr-0 mb-0'}
-                                  onChange={(event, newValue) => {
-                                    removeStarredBoard(b.id, b.workspace);
-                                  }}
-                          />
-                        </Button>
-                      ))
-                    }
-                  </Card.Text>
-                </Card.Body>
-              </Card>
+              <Card.Body>
+                <Typography variant={'h6'} align={'center'}>Starred boards</Typography>
+                <Divider className={'mt-2 mb-5'}/>
+                <Card.Text>
+                  {
+                    starredBoards.map((b, key) => (
+                      <Button
+                        key={key}
+                        fullWidth
+                        style={{ justifyContent: 'flex-start', paddingLeft: 0 }}
+                        startIcon={<Avatar src={b.background} />}
+                        className={'pl-2'}
+                      >
+                        <Link to={`/workspace/${b.id}`} className='navi-item cursor-pointer'>
+                          <div className='text-dark font-size-lg cursor-pointer pl-1'>
+                            {b.name}
+                          </div>
+                        </Link>
+                        <Rating name='customized-10' defaultValue={1} max={1} className={'ml-auto mr-0 mb-0'}
+                                onChange={(event, newValue) => {
+                                  removeStarredBoard(b.id, b.workspace);
+                                }}
+                        />
+                      </Button>
+                    ))
+                  }
+                </Card.Text>
+              </Card.Body>
             </Card>
           </div>
         </li>
@@ -194,46 +190,43 @@ export function HeaderMenu({ layoutProps }) {
             <AddIcon className='ml-2' htmlColor='#ffffff' />
           </Button>
           <div className='menu-submenu w-auto bg-light'>
-            <Card style={{ width: '25rem' }}>
-              <Card style={{ width: '25rem' }}>
-                <Card.Header>
-                  <Typography variant={'h6'} align={'center'}>Create</Typography>
-                </Card.Header>
-                <Card.Body>
-                  <Button
-                    fullWidth
-                    style={{ justifyContent: 'flex-start', paddingLeft: 0 }}
-                    className={'text-left'}
-                    onClick={handleBoardOpen}
-                  >
-                    <div>
-                      <div className='text-dark font-size-lg cursor-pointer pl-0 ml-0 mr-auto'>
-                        Create board
-                      </div>
-                      <div className={'text-dark-50 font-size-xs text-lowercase text-justify'}>
-                        A board is made up of cards ordered on lists.
-                        Use it to manage projects, track information, or organize anything
-                      </div>
+            <Card style={{ width: '29rem' }}>
+              <Card.Body>
+                <Typography variant={'h6'} align={'center'}>Create</Typography>
+                <Divider className={'mt-2 mb-4'}/>
+                <Button
+                  fullWidth
+                  style={{ justifyContent: 'flex-start', paddingLeft: 0 }}
+                  className={'text-left'}
+                  onClick={handleBoardOpen}
+                >
+                  <div>
+                    <div className='text-dark font-size-lg cursor-pointer pl-0 ml-0 mr-auto'>
+                      Create board
                     </div>
-                  </Button>
-                  <Button
-                    fullWidth
-                    style={{ justifyContent: 'flex-start', paddingLeft: 0 }}
-                    className={'text-left'}
-                    onClick={handleWorkspaceOpen}
-                  >
-                    <div>
-                      <div className='text-dark font-size-lg cursor-pointer pl-0 ml-0 mr-auto'>
-                        Create workspace
-                      </div>
-                      <div className={'text-dark-50 font-size-xs text-lowercase text-justify'}>
-                        A Workspace is a group of boards and people.
-                        Use it to organize your company, side hustle, family, or friends.
-                      </div>
+                    <div className={'text-dark-50 font-size-xs text-lowercase text-justify'}>
+                      A board is made up of cards ordered on lists.
+                      Use it to manage projects, track information, or organize anything
                     </div>
-                  </Button>
-                </Card.Body>
-              </Card>
+                  </div>
+                </Button>
+                <Button
+                  fullWidth
+                  style={{ justifyContent: 'flex-start', paddingLeft: 0 }}
+                  className={'text-left'}
+                  onClick={handleWorkspaceOpen}
+                >
+                  <div>
+                    <div className='text-dark font-size-lg cursor-pointer pl-0 ml-0 mr-auto'>
+                      Create workspace
+                    </div>
+                    <div className={'text-dark-50 font-size-xs text-lowercase text-justify'}>
+                      A Workspace is a group of boards and people.
+                      Use it to organize your company, side hustle, family, or friends.
+                    </div>
+                  </div>
+                </Button>
+              </Card.Body>
             </Card>
           </div>
         </li>
@@ -242,9 +235,9 @@ export function HeaderMenu({ layoutProps }) {
       {/*end::Header Nav*/}
 
       {/*Modal to create board*/}
-      <BoardCreateModal openBoard={openBoard} setOpenBoard={setOpenBoard} workspaces={workspaces}/>
+      <BoardCreateModal openBoard={openBoard} setOpenBoard={setOpenBoard} workspaces={workspaces} />
       {/*Modal to create workspace*/}
-      <WorkspaceCreateModal openWorkspace={openWorkspace} setOpenWorkspace={setOpenWorkspace}/>
+      <WorkspaceCreateModal openWorkspace={openWorkspace} setOpenWorkspace={setOpenWorkspace} />
     </div>
   );
 }
