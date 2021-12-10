@@ -6,7 +6,6 @@ function MyDashBoard(props) {
 
   return (
     <>
-      <Typography variant={'h1'}>Hello World</Typography>
     </>
   );
 }
