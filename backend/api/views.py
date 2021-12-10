@@ -1,23 +1,37 @@
-from django.contrib.auth import get_user_model
-from django.shortcuts import get_list_or_404, get_object_or_404
-from django.db import transaction
-import requests
-from django.urls import reverse
 import json
+
+import requests
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import User
+from django.db import transaction
+from django.db.models import Q
+from django.db.models import Value as V
+from django.db.models.functions import Concat   
+from django.shortcuts import get_list_or_404, get_object_or_404
+from django.urls import reverse
 from rest_framework import status
-from rest_framework.generics import GenericAPIView
+from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.generics import GenericAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
 from rest_framework.permissions import AllowAny, BasePermission
 from rest_framework.response import Response
 from rest_framework.serializers import ListSerializer
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-from utilities.request import parse_bool_or_400, parse_int_or_400, parse_string_array_or_400
+from utilities.request import (parse_bool_or_400, parse_int_or_400,
+                               parse_string_array_or_400)
 
 from api.models import *
 from api.serializers import *
-from rest_framework.decorators import action
+
+
+class CustomPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'limit'
+    max_page_size = 50
+    page_query_param = 'page'
 
 
 class CurrentUserAPIView(APIView):
@@ -87,7 +101,7 @@ class BoardViewSet(ModelViewSet):
         if recent:
             boards = [bm.board for bm in BoardMembership.objects.filter(user_id=user_id).order_by('-updated')]
             return boards[:limit] if limit is not None else boards
-
+        return [bm.board for bm in BoardMembership.objects.filter(user_id=user_id)]
     def perform_create(self, serializer):
         board = serializer.save()
         BoardMembership.objects.create(board=board, user=self.request.user, role=BoardMembership.ROLE.ADMIN)
@@ -97,6 +111,52 @@ class BoardViewSet(ModelViewSet):
         self.check_object_permissions(self.request, obj)
         return obj
 
+    def perform_update(self, serializer):
+        data = self.request.data
+        obj = self.get_object_with_permission()
+        workspace_src = get_object_or_404(Board, pk=self.kwargs['pk']).workspace
+        if 'background' in data:
+            serializer.save(workspace_id = workspace_src.id)
+            return
+        if 'starred' in data:
+            starred_new = self.request.data['starred']
+            if starred_new.lower() == 'true':
+                starred_new = True
+            elif starred_new.lower() == 'false':
+                starred_new = False
+            else:
+                return
+            star_info = BoardMembership.objects.filter(user_id=self.request.user.id, board = obj)
+            if not star_info.exists():
+                raise PermissionDenied(
+                    detail="You do not belong to this board or this board doesn't exist.")
+            else:
+                star_info.update(starred=starred_new)
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            return
+    def get_object_with_permission(self):
+        obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
+        membership = BoardMembership.objects.filter(user_id = self.request.user.id, board = obj)
+        if not membership.exists():
+            raise PermissionDenied(
+                detail="You do not belong to this board or this board doesn't exist.")
+        return obj
+
+    @action(detail=True, methods=['get'], url_path='details')
+    def get_details_of_a_board(self, request, pk):
+        object = self.get_object_with_permission()
+        serializer = BoardDetailViewSerializer(object)
+        return Response(data=serializer.data)
+
+    @action(detail=True, methods=['post'], url_path='leave')
+    def leave_a_booard(self, request, pk):
+        membership = BoardMembership.objects.filter(
+            user=self.request.user, board_id=pk)
+        if not membership.exists():
+            raise PermissionDenied(
+                detail="You do not belong to this board or this board doesn't exist.")
+        membership.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class WorkspaceViewSet(ModelViewSet):
     model = Workspace
@@ -130,7 +190,7 @@ class WorkspaceViewSet(ModelViewSet):
         # check permission
         workspace_membership = WorkspaceMembership.objects.filter(
             user=self.request.user, workspace_id=self.kwargs['pk'])
-        if not workspace_membership.exists() or workspace_membership.first() != WorkspaceMembership.ROLE.ADMIN:
+        if not workspace_membership.exists() or workspace_membership.first().role != WorkspaceMembership.ROLE.ADMIN:
             raise PermissionDenied(
                 "You don't have permission to delete this workspace")
 
@@ -142,10 +202,13 @@ class WorkspaceViewSet(ModelViewSet):
     def update_settings_of_workspace(self, request, pk):
         workspace_membership = WorkspaceMembership.objects.filter(
             user=self.request.user, workspace_id=pk)
-        if not workspace_membership.exists() or workspace_membership.first() != WorkspaceMembership.ROLE.ADMIN:
+        if not workspace_membership.exists():
             raise PermissionDenied(
-                "You don't have permission to delete this workspace")
-        object = workspace_membership.workspace
+                "You don't belong to this workspace")
+        if workspace_membership.first().role != WorkspaceMembership.ROLE.ADMIN:
+            raise PermissionDenied(
+                "You don't have permission to update this workspace")
+        object = workspace_membership.first().workspace
         serializer = WorkspaceSerializer(object, request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
@@ -177,9 +240,9 @@ class WorkspaceViewSet(ModelViewSet):
 
     def get_members_of_workspace(self, request, pk):
         self.get_object()
-        result = [
-            wm.user_id for wm in WorkspaceMembership.objects.filter(workspace=pk)]
-        return Response(data=result)
+        memberships = WorkspaceMembership.objects.filter(workspace=pk)
+        serializer = WorkspaceMembershipSerializer(memberships, many=True)
+        return Response(data=serializer.data)
 
     @action(detail=False, methods=['get'], url_path='')
     def get_workspaces(self, request):
@@ -320,18 +383,62 @@ class ListViewSet(ModelViewSet):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
         self.check_object_permissions(self.request, obj)
         return obj
-
-    # Copy a list is not currently available for local API test since related
-    # CRUD APIs haven't been deploy.
-
+        
     @action(detail=True, methods=['post'], url_path='copy-list')
     def copy_a_list(self, request, pk):
-        list = List.objects.filter(id=pk)
+        list = List.objects.get(id=pk)
         board_membership = BoardMembership.objects.filter(
-            user_id=request.user, board=list[0].board)
+            user_id=request.user, board=list.board)
         if board_membership.exists():
-            new_list = List.objects.create(name=list.name, board=list.board)
-            # Create card, card membership, checklist.
+            list_pk = list.pk
+            #Clone the list
+            copy_list = list
+            copy_list.pk = None
+            copy_list.save()
+            #Clone all card in that list
+            cards = Card.objects.filter(list=List.objects.get(id=list_pk))
+            for card in cards:
+                card_pk = card.pk
+                copy_card = card
+                copy_card.pk = None
+                copy_card.list = copy_list
+                copy_card.save()
+                #Clone all card memberships
+                cardmems = CardMembership.objects.filter(card=Card.objects.get(id=card_pk))
+                for cardmem in cardmems:
+                    copy_cardmem = cardmem
+                    copy_cardmem.pk = None
+                    copy_cardmem.card = copy_card
+                    copy_cardmem.save()
+                #Clone all card-label relationship
+                clrelas = CardLabelRelationship.objects.filter(card=Card.objects.get(id=card_pk))
+                for clrela in clrelas:
+                    copy_clrela = clrela
+                    copy_clrela.pk = None
+                    copy_clrela.card = copy_card
+                    copy_clrela.save()
+                #Clone checklists of each card
+                checklists = Checklist.objects.filter(card=Card.objects.get(id=card_pk))
+                for checklist in checklists:
+                    checklist_pk = checklist.pk
+                    copy_checklist = checklist
+                    copy_checklist.pk = None
+                    copy_checklist.card = copy_card
+                    copy_checklist.save()
+                    #Clone checklist items of each checklist
+                    ckls = ChecklistItem.objects.filter(checklist=Checklist.objects.get(id=checklist_pk))
+                    for ckl in ckls:
+                        copy_ckl = ckl
+                        copy_ckl.pk = None
+                        copy_ckl.checklist = copy_checklist
+                        copy_ckl.save()
+                #Clone comments of each card
+                cmts = Comment.objects.filter(card=Card.objects.get(id=card_pk))
+                for cmt in cmts:
+                    copy_cmt = cmt
+                    copy_cmt.pk = None
+                    copy_cmt.card = copy_card
+                    copy_cmt.save()
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             raise PermissionDenied(
@@ -402,7 +509,7 @@ class ListViewSet(ModelViewSet):
         else:
             raise PermissionDenied(
                 detail="You do not belong to this board or this board doesn't exist.")
-
+                
 
 class CommentViewSet(ModelViewSet):
     model = Comment
@@ -451,6 +558,26 @@ class ChecklistItemViewSet(ModelViewSet):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
         self.check_object_permissions(self.request, obj)
         return obj
+
+class UserViewSet(ModelViewSet):
+    model = get_user_model()
+    pagination_class = CustomPagination
+
+    def get_serializer_class(self):
+        return UserSerializer
+    
+    def get_queryset(self):
+        query_string = self.request.query_params.get('query')
+
+        if query_string is None:
+            return Response({'detail': 'Missing required parameter "query".'}, status=status.HTTP_400_BAD_REQUEST)
+
+        q = Q(is_active=True) & (Q(email__icontains=query_string)\
+            | Q(username__icontains=query_string))\
+            | Q(full_name__icontains=query_string)
+        
+        return self.model.objects.annotate(full_name=Concat('first_name', V(' '), 'last_name')).filter(q)
+            
 
 class LabelViewSet(ModelViewSet):
     model = Label
