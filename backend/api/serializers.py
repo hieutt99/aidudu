@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        exclude = ('password', )
+        exclude = ('password', 'groups', 'user_permissions', 'is_superuser', 'is_staff', 'is_active')
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
@@ -39,7 +39,6 @@ class BoardSerializer(serializers.ModelSerializer):
         model = Board
         fields = '__all__'
 
-
 class ListSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -50,7 +49,7 @@ class ListSerializer(serializers.ModelSerializer):
 class ListCreateSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = Board
+        model = List
         fields = '__all__'
 
 
@@ -59,6 +58,48 @@ class WorkspaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Workspace
         fields = '__all__'
+
+class UserDisplaySerializer(serializers.ModelSerializer):
+
+    fullname = serializers.SerializerMethodField('get_full_name_of_user')
+
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'fullname', 'avatar']
+
+    def get_full_name_of_user(self, user):
+        return user.get_full_name()
+
+
+class WorkspaceMembershipSerializer(serializers.ModelSerializer):
+    
+    id = serializers.SerializerMethodField('get_user_id_of_workspacemembership')
+    fullname = serializers.SerializerMethodField('get_user_fullname_of_workspacemembership')
+    avatar = serializers.SerializerMethodField('get_user_avatar_of_workspacemembership')
+    class Meta:
+        model = WorkspaceMembership
+        fields = ['id', 'fullname', 'avatar', 'role']
+
+    def get_user_id_of_workspacemembership(self, workspace_src):
+        return workspace_src.user.id
+
+    def get_user_fullname_of_workspacemembership(self, workspace_src):
+        return workspace_src.user.get_full_name()
+    
+    def get_user_avatar_of_workspacemembership(self, workspace_src):
+        return workspace_src.user.avatar.url
+
+class WorkspaceBoardSerializer(serializers.ModelSerializer):
+
+    # admin = serializers.SerializerMethodField('get_admin_of_workspace')
+    members = WorkspaceMembershipSerializer(source='workspaces', many=True);
+    class Meta:
+        model = Workspace
+        fields = ['id', 'name', 'members', 'visibility', 'logo', 'boards']
+    
+    def get_admin_of_workspace(self, workspace_src):
+        admim_membership = WorkspaceMembership.objects.filter(workspace=workspace_src, role=WorkspaceMembership.ROLE.ADMIN).first()
+        return admim_membership.user.id
 
 
 class CardSerializer(serializers.ModelSerializer):
@@ -78,16 +119,41 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
 
+
 class ChecklistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Checklist
         fields = '__all__'
 
+
 class ChecklistItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChecklistItem
-        field = '__all__'
+        fields = '__all__'
+
+
 class LabelSerializer(serializers.ModelSerializer):
     class Meta:
         model = Label
         fields = '__all__'
+
+class BoardDetailViewCardSerializer(serializers.ModelSerializer):
+    comments = serializers.IntegerField(source='comments.count', read_only=True)
+    attachments = serializers.IntegerField(source='attachments.count', read_only=True)
+    class Meta:
+        model = Card
+        fields = ['id', 'title', 'due', 'position', 'comments', 'attachments', 'labels']
+
+class BoardDetailViewListSerializer(serializers.ModelSerializer):
+        cards = BoardDetailViewCardSerializer(many=True)
+        class Meta:
+            model = List
+            fields = ['id', 'name', 'position', 'archive', 'cards']
+                                                                              #todo: checklist stat
+class BoardDetailViewSerializer(serializers.ModelSerializer):
+
+    lists = BoardDetailViewListSerializer(many=True)
+
+    class Meta:
+        model = Board
+        fields = ['id', 'name', 'background', 'workspace', 'members', 'lists', 'labels']

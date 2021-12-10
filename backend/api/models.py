@@ -70,12 +70,9 @@ class WorkspaceMembership(models.Model):
         ADMIN = 'admin'
         MEMBER = 'member'
 
-    user = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE, related_name='workspace_members')
-    workspace = models.ForeignKey(
-        Workspace, on_delete=models.CASCADE, related_name='workspaces')
-    role = models.CharField(
-        max_length=16, default=ROLE.ADMIN, choices=ROLE.choices)
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='workspace_members')
+    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name='workspaces')
+    role = models.CharField(max_length=16, default=ROLE.ADMIN, choices=ROLE.choices)
     joined = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -89,10 +86,8 @@ class Board(models.Model):
     """Represent board"""
 
     name = models.CharField(default='', max_length=128)
-    background = models.ImageField(
-        upload_to=dynamic_board_background_filepath, null=True, blank=True)
-    workspace = models.ForeignKey(
-        Workspace, on_delete=models.CASCADE, related_name='boards')
+    background = models.ImageField(upload_to=dynamic_board_background_filepath, null=True, blank=True)
+    workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name='boards')
     members = models.ManyToManyField(CustomUser, through='BoardMembership')
 
     def __str__(self):
@@ -151,7 +146,7 @@ class Label(models.Model):
         GRAPHITE = 'graphite'
         GRAPE = 'grape'
 
-    board = models.ForeignKey(Board, on_delete=models.CASCADE)
+    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='labels')
     name = models.CharField(default='', max_length=32)
     color = models.CharField(default=COLOR.TOMATO,
                              choices=COLOR.choices, max_length=16)
