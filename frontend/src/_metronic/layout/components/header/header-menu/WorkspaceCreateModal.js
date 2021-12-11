@@ -72,7 +72,7 @@ function WorkspaceCreateModal({ openWorkspace, handleWorkspaceModalClose }) {
                   Boost your productivity by making it easier for everyone to access boards in one location.
                 </div>
               </Row>
-              <br/>
+              <br />
               <Row className={''}>
                 <Formik
                   validationSchema={schema}
@@ -138,7 +138,7 @@ function WorkspaceCreateModal({ openWorkspace, handleWorkspaceModalClose }) {
                             }}
                           />
                         </Form.Group>
-                        <br/>
+                        <br />
                         <Button type='submit' className={'mr-5'}>
                           {loading ? <span className='ml-2 spinner spinner-white' /> : <span>Create</span>}
                         </Button>
@@ -148,10 +148,12 @@ function WorkspaceCreateModal({ openWorkspace, handleWorkspaceModalClose }) {
                 </Formik>
               </Row>
             </Col>
-            <Col lg={6} md={5} className={'text-center align-middle'}>
-              <Image fluid
-                     src='https://a.trellocdn.com/prgb/dist/images/organization/empty-board.d1f066971350650d3346.svg'
-                     rounded />
+            <Col lg={6} md={5} className={'text-center mr-0 justify-content-center align-self-center'}>
+              <Image
+                style={{marginLeft: "3rem"}}
+                fluid
+                src='https://a.trellocdn.com/prgb/dist/images/organization/empty-board.d1f066971350650d3346.svg'
+                rounded />
             </Col>
           </Row>
         </Container>
