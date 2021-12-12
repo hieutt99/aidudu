@@ -161,7 +161,7 @@ class LabelTest(APITestCase):
             "name":"testasd asdsad update hehe",
             "color":"tomato"
         } 
-        resp = self.client.put(reverse("label-detail",args=[self.my_board_0_Label_list[1].id]),data=data)
+        resp = self.client.patch(reverse("label-detail",args=[self.my_board_0_Label_list[1].id]),data=data)
         # print(resp.status_code,resp.content)
         self.assertEqual(200,resp.status_code)
         data['id']=self.my_board_0_Label_list[1].id
@@ -179,7 +179,7 @@ class LabelTest(APITestCase):
             "name":"testasd asdsad update hehe",
             "color":"tomato"
         } 
-        resp = self.client.put(reverse("label-detail",args=[0xdeadbeef]),data=data)
+        resp = self.client.patch(reverse("label-detail",args=[0xdeadbeef]),data=data)
         # print(resp.status_code,resp.content)
         self.assertEqual(404,resp.status_code)
         self.assertEqual(resp.json(),{"detail":"Not found."})
@@ -189,7 +189,7 @@ class LabelTest(APITestCase):
             "name":"testasd asdsad update hehe",
             "color":"tomato"
         } 
-        resp = self.client.put(reverse("label-detail",args=[self.my_board_0_Label_list[1].id]),data=data)        
+        resp = self.client.patch(reverse("label-detail",args=[self.my_board_0_Label_list[1].id]),data=data)        
         self.assertEqual(400,resp.status_code)
         self.assertEqual(resp.json(),{"board":[f'Invalid pk "{0xdeadbeef}" - object does not exist.']})
         # print(resp.status_code,resp.content)
@@ -200,7 +200,7 @@ class LabelTest(APITestCase):
             "name":"testasd asdsad update hehe",
             "color":color
         } 
-        resp = self.client.put(reverse("label-detail",args=[self.my_board_0_Label_list[1].id]),data=data)        
+        resp = self.client.patch(reverse("label-detail",args=[self.my_board_0_Label_list[1].id]),data=data)        
         # print(resp.status_code,resp.content)
         self.assertEqual(400,resp.status_code)
         self.assertEqual(resp.json(),{"color":[f'"{color}" is not a valid choice.']})
