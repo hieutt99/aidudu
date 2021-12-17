@@ -5,3 +5,8 @@ export const REGISTER_URL = BACKEND_ORIGIN + 'api/v1/auth/register';
 export const REQUEST_PASSWORD_URL = BACKEND_ORIGIN + 'api/v1/auth/forgot-password';
 export const ME_URL = BACKEND_ORIGIN + 'api/v1/me';
 
+export const WORKSPACE_VISIBILITY = [
+  'private',
+  'public'
+]
+
