@@ -1,6 +1,6 @@
 import React, {useMemo} from "react";
 import {HomeAsideMenuList} from "./HomeAsideMenuList";
-import {useHtmlClassService} from "../../../../../../_metronic/layout/_core/MetronicLayout";
+import {useHtmlClassService} from "../../../../../../../_metronic/layout/_core/MetronicLayout";
 
 export function HomeAsideMenu({disableScroll}) {
   const uiService = useHtmlClassService();
