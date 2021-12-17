@@ -72,7 +72,7 @@ export function HeaderMenu({ layoutProps }) {
   };
 
   const handleWorkspaceClose = () => {
-    setOpenWorkspace(true);
+    setOpenWorkspace(false);
   };
 
   return (

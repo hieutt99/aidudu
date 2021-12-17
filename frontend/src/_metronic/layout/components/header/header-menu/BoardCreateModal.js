@@ -10,7 +10,6 @@ import { toast } from 'react-toastify';
 
 export const POST_CREATE_BOARD_URL = BACKEND_ORIGIN + 'api/v1/boards/';
 
-// TODO: add success toast
 function BoardCreateModal({ openBoard, handleBoardModalClose, workspaces }) {
   const location = useLocation();
   const user = useSelector((state) => state.auth.user);
@@ -43,10 +42,10 @@ function BoardCreateModal({ openBoard, handleBoardModalClose, workspaces }) {
         console.log(response); //fixme
         setLoading(false);
         toast.success('Create board success!', {
-          position: "top-right",
+          position: 'top-right',
           autoClose: 5000,
           hideProgressBar: false,
-          closeOnClick: true,
+          closeOnClick: true
         });
         handleBoardModalClose();
       })
@@ -131,7 +130,7 @@ function BoardCreateModal({ openBoard, handleBoardModalClose, workspaces }) {
                     </Form.Control>
                   </Form.Group>
                   <Button type='submit' className={'mr-5'}>
-                    {loading ? <span className='ml-2 spinner spinner-white' /> : <span>Submit</span>}
+                    {loading ? <span className='ml-2 spinner spinner-white' /> : <span>Create</span>}
                   </Button>
                   <Button variant={'light'} onClick={handleBoardModalClose}>Cancel</Button>
                 </Form>
