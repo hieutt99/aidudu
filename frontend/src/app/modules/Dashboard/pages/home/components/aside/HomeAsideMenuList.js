@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 import SVG from "react-inlinesvg";
 import { toAbsoluteUrl, checkIsActive } from "../../../../../../../_metronic/_helpers";
 
-export function AsideMenuList({ layoutProps }) {
+export function HomeAsideMenuList({ layoutProps }) {
   const location = useLocation();
   const getMenuItemActive = (url, hasSubmenu = false) => {
     return checkIsActive(location, url)
@@ -42,6 +42,20 @@ export function AsideMenuList({ layoutProps }) {
             </span>
             <span className="menu-text">Layout Builder</span>
           </NavLink>
+        </li>
+        <li className="menu-section ">
+          <h4 className="menu-text">Workspaces</h4>
+          <i className="menu-icon flaticon-more-v2"></i>
+        </li>
+        <li
+          className={`menu-item menu-item-submenu ${getMenuItemActive(
+            "/workspaces",
+            true
+          )}`}
+          aria-haspopup="true"
+          data-menu-toggle="hover"
+        >
+
         </li>
         {/*end::1 Level*/}
     </ul>

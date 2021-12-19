@@ -6,11 +6,11 @@ import {customersSlice} from "../app/modules/ECommerce/_redux/customers/customer
 import {productsSlice} from "../app/modules/ECommerce/_redux/products/productsSlice";
 import {remarksSlice} from "../app/modules/ECommerce/_redux/remarks/remarksSlice";
 import {specificationsSlice} from "../app/modules/ECommerce/_redux/specifications/specificationsSlice";
-import { homeSlice } from "../app/modules/Dashboard/_redux/home/homeSlice";
+import * as workspaces from "../app/modules/Dashboard/_redux/home/workspaceRedux"
 
 export const rootReducer = combineReducers({
   auth: auth.reducer,
-  home: homeSlice.reducer
+  workspaces: workspaces.reducer
   // customers: customersSlice.reducer,
   // products: productsSlice.reducer,
   // remarks: remarksSlice.reducer,

@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import { LayoutSplashScreen } from '../../../../../_metronic/layout';
 import { Switch } from 'react-router-dom';
-import { HomeAsideMenu } from './components/aside/HomeAsideMenu';
+import { HomeAside } from './components/aside/HomeAside';
 
 function HomePage(props) {
 
@@ -9,7 +9,7 @@ function HomePage(props) {
 
   return (
       <>
-      <HomeAsideMenu />
+      <HomeAside />
       <Switch>
         {/*{*/}
         {/*  <Redirect*/}
