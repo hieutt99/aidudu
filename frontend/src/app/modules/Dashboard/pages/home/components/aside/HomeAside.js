@@ -5,9 +5,8 @@ import objectPath from "object-path";
 import {HomeAsideMenu} from "./HomeAsideMenu";
 import {useHtmlClassService} from "../../../../../../../_metronic/layout/_core/MetronicLayout";
 
-export function HomeAside() {
+export function HomeAside(workspaces) {
   const uiService = useHtmlClassService();
-
   const layoutProps = useMemo(() => {
     return {
       disableScroll:
@@ -24,12 +23,12 @@ export function HomeAside() {
       <>
         {/* begin::Aside */}
         <div id="kt_aside"
-             className={`aside aside-left  ${layoutProps.asideClassesFromConfig} d-flex flex-column flex-row-auto`}>
+             className={`aside aside-left aside-fixed d-flex flex-column flex-row-auto`}>
           {/* <Brand/> */}
 
           {/* begin::Aside Menu */}
           <div id="kt_aside_menu_wrapper" className="aside-menu-wrapper flex-column-fluid">
-            <HomeAsideMenu disableScroll={layoutProps.disableScroll}/>
+            <HomeAsideMenu disableScroll={layoutProps.disableScroll} workspaces={workspaces}/>
           </div>
           {/* end::Aside Menu */}
         </div>

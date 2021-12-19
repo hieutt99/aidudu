@@ -18,7 +18,7 @@ const InitialState = {
 }
 
 export const reducer = persistReducer(
-    {storage, key: "v1-homepage-workspaces", whitelist=['workspaces', 'personalWorkspaces']},
+    {storage, key: "v1-homepage-workspaces", whitelist: ['workspaces', 'personalWorkspaces']},
     (state = InitialState, action) => {
         switch (action.type) {
             case actionTypes.AddWorkspace: {
@@ -39,8 +39,8 @@ export const reducer = persistReducer(
                 return {workspaces, ...state}
             }
             case actionTypes.SetWorkspaces: {
-                const { workspace } = action.payload
-                return {...state, workspaces: workspace}
+                const { workspaces } = action.payload
+                return {...state, workspaces}
             }
             case actionTypes.setOwnerWorkspace: {
                 const { workspace } = action.payload

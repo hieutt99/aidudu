@@ -14,6 +14,7 @@ import { ProductEdit } from '../../ECommerce/pages/products/product-edit/Product
 import { ProductsPage } from '../../ECommerce/pages/products/ProductsPage';
 import BoardPage from './board/BoardPage';
 import HomePage from './home/HomePage'
+import WorkspacePage from './workspace/WorkspacePage';
 
 //TODO: add routes to inner components
 export function DashboardPage() {
