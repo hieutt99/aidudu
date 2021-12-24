@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { useSelector } from 'react-redux';
 import { Formik } from 'formik';
 import axios from 'axios';
-import { BACKEND_ORIGIN } from '../../../../../config';
+import { BACKEND_ORIGIN } from '../../../../../../config';
 import { toast } from 'react-toastify';
 
 export const POST_CREATE_BOARD_URL = BACKEND_ORIGIN + 'api/v1/boards/';

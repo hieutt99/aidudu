@@ -7,7 +7,7 @@ import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { BACKEND_ORIGIN, WORKSPACE_VISIBILITY } from '../../../../../config';
+import { BACKEND_ORIGIN, WORKSPACE_VISIBILITY } from '../../../../../../config';
 
 export const POST_CREATE_WORKSPACE_URL = BACKEND_ORIGIN + 'api/v1/workspaces/';
 
