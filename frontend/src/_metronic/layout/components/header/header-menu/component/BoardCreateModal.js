@@ -7,6 +7,7 @@ import { Formik } from 'formik';
 import axios from 'axios';
 import { BACKEND_ORIGIN } from '../../../../../../config';
 import { toast } from 'react-toastify';
+import ImageThumb from './ImageThumb';
 
 export const POST_CREATE_BOARD_URL = BACKEND_ORIGIN + 'api/v1/boards/';
 
@@ -112,6 +113,7 @@ function BoardCreateModal({ openBoard, handleBoardModalClose, workspaces }) {
                         setFieldValue('background', e.currentTarget.files[0]);
                       }}
                     />
+                    <ImageThumb file={values.background}/>
                   </Form.Group>
                   <Form.Group>
                     <Form.Label>Choose workspace</Form.Label>

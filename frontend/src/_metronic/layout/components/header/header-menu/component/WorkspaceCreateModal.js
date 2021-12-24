@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Col, Container, Form, Image, Modal, Row } from 'react-bootstrap';
-import { Divider } from '@material-ui/core';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { useLocation } from 'react-router-dom';
@@ -8,6 +7,13 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { BACKEND_ORIGIN, WORKSPACE_VISIBILITY } from '../../../../../../config';
+import ImageThumb from './ImageThumb';
+
+const modalStyle = {
+  backgroundImage: `url('https://a.trellocdn.com/prgb/dist/images/create-team/wavy-border.df0d81969c6394b61c0d.svg')`,
+  backgroundRepeat: 'no-repeat',
+  backgroundPosition: `150%`,
+}
 
 export const POST_CREATE_WORKSPACE_URL = BACKEND_ORIGIN + 'api/v1/workspaces/';
 
@@ -62,7 +68,7 @@ function WorkspaceCreateModal({ openWorkspace, handleWorkspaceModalClose }) {
 
   return (
     <Modal size={'xl'} show={openWorkspace} onHide={handleWorkspaceModalClose} centered>
-      <Modal.Body>
+      <Modal.Body style={modalStyle}>
         <Container className={'mt-5 mx-5 mb-5'}>
           <Row>
             <Col lg={6} md={7}>
@@ -137,6 +143,7 @@ function WorkspaceCreateModal({ openWorkspace, handleWorkspaceModalClose }) {
                               setFieldValue('logo', e.currentTarget.files[0]);
                             }}
                           />
+                          <ImageThumb file={values.logo}/>
                         </Form.Group>
                         <br />
                         <Button type='submit' className={'mr-5'}>
