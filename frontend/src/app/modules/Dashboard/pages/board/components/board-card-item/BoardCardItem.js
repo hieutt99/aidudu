@@ -5,37 +5,37 @@ import { BiMenuAltLeft } from "react-icons/bi";
 import { MdAttachFile } from "react-icons/md";
 import { GoCommentDiscussion } from "react-icons/go";
 
+const iconSize24 = {
+    width: "24px",
+    height: "24px",
+};
+
+const iconSize20Grey = {
+    width: "20px",
+    height: "20px",
+    color: "#b8b8b8",
+};
+
+const label = {
+    flexWrap: "wrap",
+    gap: "5px 5px",
+};
+
+const memberAvatarContainer = {
+    flexWrap: "wrap",
+    gap: "5px 10px",
+};
+
 const BoardCardItem = (props) => {
 
-    const iconSize24 = {
-        width: "24px",
-        height: "24px",
-    };
-
-    const iconSize20Grey = {
-        width: "20px",
-        height: "20px",
-        color: "#b8b8b8",
-    };
-
-    const label = {
-        flexWrap: "wrap",
-        gap: "5px 5px",
-    };
-
-    const iconContainer = {
-        flexWrap: "wrap",
-        gap: "5px 10px",
-    };
-
     return (
-        <Draggable draggableId={1} index={0} key={1}>
+        <Draggable draggableId={'1'} index={0} key={1}>
             {(provided) => (
                 <div
-                    className='card-body rounded bg-white shadow-2 mb-2'
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
-                    innerRef={provided.innerRef}
+                    ref={provided.innerRef}
+                    className='card-body rounded bg-white shadow-2 mb-2'
                 >
                     {/* Label items */}
                     <div className='d-flex align-items-start justify-content-start mb-3' style={label}>
@@ -60,20 +60,20 @@ const BoardCardItem = (props) => {
                     </div>
 
                     {/* Icon items */}
-                    <div className='d-flex align-items-center justify-content-start mt-3' style={iconContainer}>
+                    <div className='d-flex align-items-center justify-content-start mt-3' style={memberAvatarContainer}>
                         <BiMenuAltLeft style={iconSize20Grey} />
                         <MdAttachFile style={iconSize20Grey} />
                         <GoCommentDiscussion style={iconSize20Grey} />
                         <BsCheck2Square style={iconSize20Grey} />
                     </div>
 
-                    {/* Members */}
+                    {/* Member's avatar */}
                     <div className='d-flex align-items-center justify-content-end mt-3'>
                         <img className={"rounded-circle bg-success"} style={iconSize24} />
                         <img className={"rounded-circle bg-dark"} style={iconSize24} />
                         <img className={"rounded-circle bg-warning"} style={iconSize24} />
                     </div>
-                    
+
                 </div>
             )}
 
