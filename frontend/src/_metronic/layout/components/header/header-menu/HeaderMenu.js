@@ -9,8 +9,8 @@ import { Avatar, Button, Divider, Typography } from '@material-ui/core';
 import axios from 'axios';
 import { BACKEND_ORIGIN } from '../../../../../config';
 import { Rating } from '@material-ui/lab';
-import WorkspaceCreateModal from './WorkspaceCreateModal';
-import BoardCreateModal from './BoardCreateModal';
+import WorkspaceCreateModal from './component/WorkspaceCreateModal';
+import BoardCreateModal from './component/BoardCreateModal';
 import { useSelector } from 'react-redux';
 
 export const GET_WORKSPACES_URL = BACKEND_ORIGIN + 'api/v1/workspaces/';
@@ -23,7 +23,7 @@ export function HeaderMenu({ layoutProps }) {
   // todo: to redux if needed
   const [workspaces, setWorkspaces] = useState([]);
   const [starredBoards, setStarredBoards] = useState([]);
-  //
+  // todo: rf & centralize CRUD operations later
   const [updateStarredBoardFlag, setUpdateStarredBoardFlag] = useState(true);
   const [openBoard, setOpenBoard] = useState(false);
   const [openWorkspace, setOpenWorkspace] = useState(false);
