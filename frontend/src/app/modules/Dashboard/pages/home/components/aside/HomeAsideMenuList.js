@@ -40,17 +40,6 @@ export function HomeAsideMenuList({ layoutProps, workspaces }) {
         {/*end::1 Level*/}
 
         {/*begin::1 Level*/}
-        <li
-          className={`menu-item ${getMenuItemActive("/builder", false)}`}
-          aria-haspopup="true"
-        >
-          <NavLink className="menu-link" to="/builder">
-            <span className="svg-icon menu-icon">
-              <SVG src={toAbsoluteUrl("/media/svg/icons/Home/Library.svg")} />
-            </span>
-            <span className="menu-text">Layout Builder</span>
-          </NavLink>
-        </li>
         <li className="menu-section ">
           <h4 className="menu-text text-white">Workspaces</h4>
           <i className="menu-icon flaticon-more-v2"></i>
@@ -68,7 +57,7 @@ export function HomeAsideMenuList({ layoutProps, workspaces }) {
                     <span className="svg-icon menu-icon">
                         <SVG src={toAbsoluteUrl("/media/svg/icons/Home/Library.svg")} />
                     </span>
-                    <span className="menu-text">{workspace.name}</span>
+                    <span className="menu-text text-white">{workspace.name}</span>
                     <i className="menu-arrow" />
                 </NavLink>
                 <div className="menu-submenu ">
@@ -85,7 +74,7 @@ export function HomeAsideMenuList({ layoutProps, workspaces }) {
                             <span className="svg-icon menu-icon">
                                 <SVG src={toAbsoluteUrl("/media/svg/icons/Home/Library.svg")} />
                             </span>
-                            <span className="menu-text">Boards</span>
+                            <span className="menu-text text-white">Boards</span>
                             </NavLink>
                         </li>
                         <li
@@ -99,7 +88,7 @@ export function HomeAsideMenuList({ layoutProps, workspaces }) {
                             <span className="svg-icon menu-icon">
                                 <SVG src={toAbsoluteUrl("/media/svg/icons/Home/Library.svg")} />
                             </span>
-                            <span className="menu-text">Members</span>
+                            <span className="menu-text text-white">Members</span>
                             </NavLink>
                         </li>
                     </ul>
