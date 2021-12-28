@@ -1,9 +1,10 @@
 import React, {useMemo} from "react";
 import {HomeAsideMenuList} from "./HomeAsideMenuList";
-import {useHtmlClassService} from "../../../../../../_metronic/layout/_core/MetronicLayout";
+import {useHtmlClassService} from "../../../../../../../_metronic/layout/_core/MetronicLayout";
 
-export function HomeAsideMenu({disableScroll}) {
+export function HomeAsideMenu({disableScroll, workspaces}) {
   const uiService = useHtmlClassService();
+  console.log(workspaces)
   const layoutProps = useMemo(() => {
     return {
       layoutConfig: uiService.config,
@@ -22,7 +23,7 @@ export function HomeAsideMenu({disableScroll}) {
         className={`aside-menu my-4 ${layoutProps.asideClassesFromConfig}`}
         {...layoutProps.asideMenuAttr}
       >
-        <HomeAsideMenuList layoutProps={layoutProps} />
+        <HomeAsideMenuList layoutProps={layoutProps} workspaces={workspaces} />
       </div>
       {/* end::Menu Container */}
     </>

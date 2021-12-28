@@ -13,6 +13,8 @@ import { CustomersPage } from '../../ECommerce/pages/customers/CustomersPage';
 import { ProductEdit } from '../../ECommerce/pages/products/product-edit/ProductEdit';
 import { ProductsPage } from '../../ECommerce/pages/products/ProductsPage';
 import BoardPage from './board/BoardPage';
+import HomePage from './home/HomePage'
+import WorkspacePage from './workspace/WorkspacePage';
 
 //TODO: add routes to inner components
 export function DashboardPage() {
@@ -20,7 +22,8 @@ export function DashboardPage() {
   return (
     <Suspense fallback={<LayoutSplashScreen />}>
       <Switch>
-        <ContentRoute path="/" component={BoardPage} />
+        <ContentRoute path="/" component={HomePage}/>
+        <ContentRoute path="/board" component={BoardPage} />
         {/*{*/}
         {/*  <Redirect*/}
         {/*    exact={true}*/}
