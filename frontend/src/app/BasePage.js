@@ -5,6 +5,8 @@ import { BuilderPage } from "./pages/BuilderPage";
 import { MyPage } from "./pages/MyPage";
 import { DashboardPage } from './modules/Dashboard/pages/DashboardPage';
 import WorkspacePage from "./modules/Dashboard/pages/workspace/WorkspacePage";
+import BoardPage from "./modules/Dashboard/pages/board/BoardPage";
+import Board from "./modules/Dashboard/pages/board/components/Board";
 // import { DashboardPage } from "./modules/Dashboard/pages/DashboardPage";
 
 const GoogleMaterialPage = lazy(() =>
@@ -35,6 +37,7 @@ export default function BasePage() {
           <Redirect exact from="/" to="/dashboard" />
         }
         <ContentRoute path="/dashboard" component={DashboardPage} />
+        <Route path="/board" component={BoardPage} />
         <Route path="/workspaces/:workspaceid" component={WorkspacePage}/>
         <Route path="/workspaces/:workspaceid/boards" component={WorkspacePage}/>
         <Route path="/workspaces/:workspaceid/members" component={WorkspacePage}/>

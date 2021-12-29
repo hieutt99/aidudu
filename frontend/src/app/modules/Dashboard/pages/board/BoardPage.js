@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { LayoutSplashScreen } from '../../../../../_metronic/layout';
+import { ContentRoute, LayoutSplashScreen } from '../../../../../_metronic/layout';
 import { Route, Switch } from 'react-router-dom';
 import MyDashBoard from './components/Board';
 import Board from './components/Board';
@@ -9,8 +9,9 @@ function BoardPage(props) {
   // TODO: add route
 
   return (
+    <Suspense fallback={<LayoutSplashScreen />}>
       <Switch>
-        <Route path="/" component={Board} />
+        <ContentRoute path="/" component={Board} />
         {/*{*/}
         {/*  <Redirect*/}
         {/*    exact={true}*/}
@@ -20,6 +21,7 @@ function BoardPage(props) {
         {/*}*/}
         {/*<ContentRoute path="/" component={} />*/}
       </Switch>
+    </Suspense>
   );
 }
 
