@@ -34,6 +34,9 @@ export default function BasePage() {
           <Redirect exact from="/" to="/dashboard" />
         }
         <ContentRoute path="/dashboard" component={DashboardPage} />
+        <Route path="/workspaces/:workspaceid" component={WorkspacePage}/>
+        <Route path="/workspaces/:workspaceid/boards" component={WorkspacePage}/>
+        <Route path="/workspaces/:workspaceid/members" component={WorkspacePage}/>
         {/*<ContentRoute path="/builder" component={BuilderPage} />*/}
         <ContentRoute path="/my-page" component={MyPage} />
         <ContentRoute path="/workspace" component={WorkspacePage} />

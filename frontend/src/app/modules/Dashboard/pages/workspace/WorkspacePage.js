@@ -3,6 +3,7 @@ import { LayoutSplashScreen, useSubheader } from '../../../../../_metronic/layou
 import { WorkspaceCard } from './WorkspaceCard';
 import { Redirect, Route, Switch } from "react-router-dom";
 import { WorkspaceBoard } from './WorkspaceBoard';
+import { ContentRoute, LayoutSplashScreen, useSubheader } from '../../../../../_metronic/layout';import { Switch } from 'react-router-dom';
 
 
 export function WorkspacePage() {
