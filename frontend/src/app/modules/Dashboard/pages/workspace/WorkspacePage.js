@@ -1,22 +1,32 @@
 import React, { Suspense } from 'react';
-import { LayoutSplashScreen } from '../../../../../_metronic/layout';
-import { Switch } from 'react-router-dom';
+import { LayoutSplashScreen, useSubheader } from '../../../../../_metronic/layout';
+import { WorkspaceCard } from './WorkspaceCard';
+import { Redirect, Route, Switch } from "react-router-dom";
+import { WorkspaceBoard } from './WorkspaceBoard';
 
-function WorkspacePage(props) {
 
+export function WorkspacePage() {
+  const subheader = useSubheader();
+  subheader.setTitle("Workspace");
   //TODO: add route
 
   return (
-      <Switch>
-        {/*{*/}
-        {/*  <Redirect*/}
-        {/*    exact={true}*/}
-        {/*    from="/"*/}
-        {/*    to="/"*/}
-        {/*  />*/}
-        {/*}*/}
-        {/*<ContentRoute path="/" component={} />*/}
-      </Switch>
+    <div className="d-flex flex-row">
+      <WorkspaceCard></WorkspaceCard>
+      <div className="flex-row-fluid ml-lg-8">
+        <Switch>
+        <Redirect
+            from="/workspace"
+            exact={true}
+            to="/workspace/board"
+        />
+        <Route
+            path="/workspace/board"
+            component={WorkspaceBoard}
+        />
+        </Switch>
+      </div>
+    </div>
   );
 }
 
