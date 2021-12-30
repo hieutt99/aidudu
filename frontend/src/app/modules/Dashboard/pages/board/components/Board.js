@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { Button, Container, Popover, Row, Overlay } from 'react-bootstrap';
 import { FiStar } from "react-icons/fi";
@@ -8,70 +8,64 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { MdClose, MdOutlineDashboard, MdLockOutline, MdCorporateFare } from "react-icons/md";
 import { GrGroup } from "react-icons/gr";
 import BoardList from './board-list/BoardList';
+import { BACKEND_ORIGIN } from '../../../../../../config';
+import axios from 'axios';
 
+// APIs
+export const BASE_URL = 'http://127.0.0.1:8000';
+export const WORK_API = '/api/v1';
+export const GET_BOARD_DETAILS = BASE_URL + WORK_API + '/boards/2/details';
+export const CREATE_A_LIST = BASE_URL + WORK_API + '/lists/';
+
+// Styles
 const lightGreyColor = {
   color: "#b8b8b8",
 };
-
 const lightGreyBackground = {
   backgroundColor: "#e3e4e8",
 };
-
 const iconSize24 = {
   width: "24px",
   height: "24px",
 };
-
 const iconSize20 = {
   width: "20px",
   height: "20px",
 };
-
 const iconSize34 = {
   width: "34px",
   height: "34px",
 };
-
-const contentBackgroundImage = {
-  backgroundImage: "url('https://i.pinimg.com/originals/ef/7f/b1/ef7fb1b37078b6a2aef8e40710446bfa.jpg')",
-  height: "100vh",
-};
-
 const contentBackgroundMask = {
   backgroundColor: "rgba(0,0,0,0.5)",
   width: "100%",
   height: "100%",
   position: "relative",
 };
-
 const menuContainer = {
   width: "0px",
   height: "100%",
   backgroundColor: "white",
   position: "fixed",
-  zIndex: "1",
+  zIndex: "2",
   top: "0",
   right: "0",
   overflowX: "hidden",
-  transition: "0.5s",
+  transition: "0.8s",
 };
-
 const menuDescription = {
   resize: "none",
   backgroundColor: "#e3e4e8",
 };
-
 const listContainer = {
   minWidth: "300px",
   maxWidth: "300px",
   height: "auto",
   backgroundColor: "#0000001a",
 };
-
 const backgroundAddNewList = {
   backgroundColor: "#c7886dcc",
 };
-
 const popoverDialogContainer = {
   width: "400px",
   height: "auto",
@@ -79,16 +73,41 @@ const popoverDialogContainer = {
 
 function Board(props) {
 
-  const onDragEnd = (result) => {
-    // TODO: 
+  const [board, setBoard] = useState({});
+  const [lists, setLists] = useState([]);
+  const [onTextChangedNewListTitle, setTextChangedNewListTitle] = useState('');
+
+  useEffect(() => {
+    getBoardDetails();
+  }, []);
+
+  const getBoardDetails = () => {
+    axios.get(GET_BOARD_DETAILS)
+      .then(response => {
+        console.log("Board details: " + response.data["name"]);
+        setBoard(response.data);
+        setLists(response.data["lists"])
+      })
+      .catch(error => {
+        console.log("Error get board details: " + error);
+      })
   };
 
-  // Open/close menu sidebar
-  const openMenuSidebar = () => {
-    document.getElementById("menuSidebar").style.width = "350px";
-  };
-  const closeMenuSidebar = () => {
-    document.getElementById("menuSidebar").style.width = "0";
+  const addNewList = () => {
+    if (onTextChangedNewListTitle !== '') {
+      axios.post(CREATE_A_LIST, {
+        name: onTextChangedNewListTitle,
+        board: board.id,
+      })
+        .then(response => {
+          console.log("Successfully create new list: " + response.data["name"]);
+          getBoardDetails();
+        });
+    }
+  }
+
+  const onDragEnd = (result) => {
+    // TODO: 
   };
 
   // Toggle add new list
@@ -101,7 +120,15 @@ function Board(props) {
     }
   };
 
-  // Popover dialog invite member
+  // Open/close menu sidebar
+  const openMenuSidebar = () => {
+    document.getElementById("menuSidebar").style.width = "350px";
+  };
+  const closeMenuSidebar = () => {
+    document.getElementById("menuSidebar").style.width = "0";
+  };
+
+  // Open/close dialog invite member
   const dialogInviteMemberTarget = useRef(null);
   const [isDialogInviteMemberOpen, setDialogInviteMember] = useState(false);
   const onInviteMemberButtonClicked = () => {
@@ -112,7 +139,7 @@ function Board(props) {
     }
   };
 
-  // Popover dialog workspace visibility
+  // Open/close dialog workspace visibility
   const dialogWorkspaceVisibilityTarget = useRef(null);
   const [isDialogWorkspaceVisibilityOpen, setDialogWorkspaceVisibility] = useState(false);
   const onWorkspaceVisibleButtonClicked = () => {
@@ -124,101 +151,108 @@ function Board(props) {
   };
 
   return (
-    <>
+    <Container fluid className='p-0 m-0'>
       <DragDropContext onDragEnd={onDragEnd}>
-        <Container fluid className={"p-0"}>
+        <Container fluid className='p-0 m-0'>
 
           {/* Toolbar */}
-          <Row>
-            <div className={"d-flex justify-content-between align-items-center flex-row bg-white text-black"}>
-              <div className={"d-flex justify-content-start align-items-center flex-row px-3 py-2"}>
+          <div className={"d-flex justify-content-between align-items-center bg-white text-black"}>
+            <div className={"d-flex justify-content-start align-items-center px-3 py-3"}>
 
-                {/* Board name */}
-                <h3 className={"my-0 mx-4 p-2"}>Board Name</h3>
+              {/* Board name */}
+              <h3 className={"my-0 mx-4 p-2"}>{board["name"]}</h3>
 
-                {/* Icon button star */}
-                <div className={"btn mx-3 p-2 rounded"} style={lightGreyBackground}>
-                  <FiStar style={iconSize20} />
-                </div>
-
-                {/* Workspace visible */}
-                <div
-                  className={"btn mx-2 p-2 rounded d-flex align-items-center"} style={lightGreyBackground}
-                  ref={dialogWorkspaceVisibilityTarget} onClick={onWorkspaceVisibleButtonClicked}
-                >
-                  <BsPeople style={iconSize20} />
-                  <h6 className='my-1 mx-2'>Workspace Visible</h6>
-                </div>
-
-                {/* List of members */}
-                <div className={"mx-2 p-2 d-flex align-items-center"}>
-                  <img className={"rounded-circle bg-success"} style={iconSize24} />
-                  <img className={"rounded-circle bg-dark"} style={iconSize24} />
-                  <img className={"rounded-circle bg-warning"} style={iconSize24} />
-                </div>
-
-                {/* Button invite member */}
-                <Button
-                  variant='primary' className='mx-2'
-                  ref={dialogInviteMemberTarget} onClick={onInviteMemberButtonClicked}
-                >
-                  <div className='px-2 align-items-center d-flex'>
-                    <BsPersonPlus style={iconSize20} className='mx-1' />
-                    <h6 className='m-1'>Invite</h6>
-                  </div>
-                </Button>
-
+              {/* Icon button star */}
+              <div className={"btn mx-3 p-3 rounded"} style={lightGreyBackground}>
+                <FiStar style={iconSize20} />
               </div>
 
-              {/* Open menu button */}
-              <div className={"btn mx-3"} >
-                <BiArrowToLeft style={iconSize24} onClick={openMenuSidebar} />
+              {/* Workspace visible */}
+              <div
+                className={"btn mx-2 p-3 rounded d-flex align-items-center"} style={lightGreyBackground}
+                ref={dialogWorkspaceVisibilityTarget} onClick={onWorkspaceVisibleButtonClicked}
+              >
+                <BsPeople style={iconSize20} />
+                <h6 className='my-0 mx-2'>Workspace Visible</h6>
               </div>
+
+              {/* List of members */}
+              <div className={"mx-2 p-2 d-flex align-items-center"}>
+                <img className={"rounded-circle bg-success"} style={iconSize24} />
+                <img className={"rounded-circle bg-dark"} style={iconSize24} />
+                <img className={"rounded-circle bg-warning"} style={iconSize24} />
+              </div>
+
+              {/* Button invite member */}
+              <Button
+                variant='primary' className='mx-2'
+                ref={dialogInviteMemberTarget} onClick={onInviteMemberButtonClicked}
+              >
+                <div className='px-2 py-0 align-items-center d-flex'>
+                  <BsPersonPlus style={iconSize20} className='mx-1' />
+                  <h6 className='mx-2 my-0'>Invite</h6>
+                </div>
+              </Button>
 
             </div>
-          </Row>
+
+            {/* Open menu button */}
+            <div className={"btn mx-3"} >
+              <BiArrowToLeft style={iconSize24} onClick={openMenuSidebar} />
+            </div>
+
+          </div>
 
           {/* Main content */}
-          <Row>
-            <div className='p-0 bg-image' style={contentBackgroundImage}>
-              <div style={contentBackgroundMask}>
-                <div className='px-5 pb-3 d-flex align-items-start h-100' style={{ overflowX: "auto" }}>
+          <div className='p-0 bg-image' style={{ height: "100vh", backgroundImage: "url('" + BASE_URL + board.background + "')" }}>
+            <div style={contentBackgroundMask}>
+              <div className='px-5 pb-3 d-flex align-items-start h-100' style={{ overflowX: "auto" }}>
 
-                  {/* List */}
-                  <BoardList />
+                {/* Lists */}
+                {
+                  lists.map((list, index) => {
+                    return <BoardList
+                      list={list}
+                      getBoardDetails={getBoardDetails}
+                    />
+                  })
+                }
 
-                  {/* Add new list */}
-                  <div className='card mx-1 p-2 border-0' style={listContainer} >
-                    {/* Button add new list */}
-                    {!isAddingNewList &&
-                      <div
-                        className='btn btn-block text-reset d-flex justify-content-start align-items-center py-2 px-3 rounded'
-                        style={backgroundAddNewList}
-                        onClick={toggleAddNewList}
-                      >
-                        <AiOutlinePlus className='text-white' style={iconSize20} />
-                        <p className='mx-3 my-0 text-white'>Add new list</p>
-                      </div>
-                    }
+                {/* Add new list */}
+                <div className='card mx-1 p-2 border-0' style={listContainer} >
+                  {/* Button add new list */}
+                  {!isAddingNewList &&
+                    <div
+                      className='btn btn-block text-reset d-flex justify-content-start align-items-center py-2 px-3 rounded'
+                      style={backgroundAddNewList}
+                      onClick={toggleAddNewList}
+                    >
+                      <AiOutlinePlus className='text-white' style={iconSize20} />
+                      <p className='mx-3 my-0 text-white'>Add new list</p>
+                    </div>
+                  }
 
-                    {/* Text area add new list */}
-                    {isAddingNewList &&
-                      <div className='rounded bg-white p-0 d-flex flex-column'>
-                        <input type="text" className="form-control" aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default" placeholder='Enter list title...' />
-                        <div className='d-flex align-items-center p-2'>
-                          <Button variant='primary'>Add list</Button>
-                          <div className='btn p-0 mx-3' onClick={toggleAddNewList}>
-                            <MdClose style={iconSize24} />
-                          </div>
+                  {/* Text area add new list */}
+                  {isAddingNewList &&
+                    <div className='rounded bg-white p-0 d-flex flex-column'>
+                      <input
+                        type="text" className="form-control" placeholder='Enter list title...'
+                        aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default"
+                        onChange={string => setTextChangedNewListTitle(string.target.value)}
+                      />
+                      <div className='d-flex align-items-center p-2'>
+                        <Button variant='primary' className='py-1' onClick={addNewList}>Add list</Button>
+                        <div className='btn p-0 mx-3' onClick={toggleAddNewList}>
+                          <MdClose style={iconSize24} />
                         </div>
                       </div>
-                    }
-                  </div>
-
+                    </div>
+                  }
                 </div>
+
               </div>
             </div>
-          </Row>
+          </div>
 
           {/* Menu */}
           <div className='card p-0 border-0' style={menuContainer} id='menuSidebar'>
@@ -259,26 +293,26 @@ function Board(props) {
             <hr className='my-2' />
 
             {/* Change background */}
-            <div className='px-4 py-3 d-flex align-items-center'>
+            <div className='p-4 d-flex align-items-center'>
               <img className={"rounded-circle bg-warning"} style={iconSize24} />
               <h6 className='my-0 mx-3'>Change background</h6>
             </div>
 
             {/* Labels */}
-            <div className='px-4 py-3 d-flex align-items-center'>
+            <div className='p-4 d-flex align-items-center'>
               <BsTags style={iconSize24} />
               <h6 className='my-0 mx-3'>Labels</h6>
             </div>
 
             {/* Archived items */}
-            <div className='px-4 py-3 d-flex align-items-center'>
+            <div className='p-4 d-flex align-items-center'>
               <BsInboxes style={iconSize24} />
               <h6 className='my-0 mx-3'>Archived items</h6>
             </div>
 
             {/* Leave board */}
             <div className='position-absolute fixed-bottom w-100 p-3'>
-              <Button variant='danger' className='w-100'>
+              <Button variant='danger' className='w-100 py-2'>
                 <div className='d-flex align-items-center justify-content-center py-1'>
                   <h6 className='m-0'>Leave board</h6>
                 </div>
@@ -293,9 +327,9 @@ function Board(props) {
                 <div className='rounded bg-white p-0 d-flex flex-column' style={popoverDialogContainer} >
 
                   {/* Header */}
-                  <div className='d-flex justify-content-between align-items-center p-2'>
-                    <div>
-                      <MdClose style={iconSize20} className='opacity-0' />
+                  <div className='d-flex justify-content-between align-items-center p-3'>
+                    <div className='btn p-0' onClick={() => { setDialogInviteMember(false) }}>
+                      <MdClose style={iconSize20} />
                     </div>
                     <h6 className='m-0'>Invite to board</h6>
                     <div className='btn p-0' onClick={() => { setDialogInviteMember(false) }}>
@@ -327,9 +361,9 @@ function Board(props) {
                 <div className='rounded bg-white p-0 d-flex flex-column' style={popoverDialogContainer} >
 
                   {/* Header */}
-                  <div className='d-flex justify-content-between align-items-center p-2'>
-                    <div>
-                      <MdClose style={iconSize20} className='opacity-0' />
+                  <div className='d-flex justify-content-between align-items-center p-3'>
+                    <div className='btn p-0' onClick={() => { setDialogWorkspaceVisibility(false) }}>
+                      <MdClose style={iconSize20} />
                     </div>
                     <h6 className='m-0'>Workspace visibility</h6>
                     <div className='btn p-0' onClick={() => { setDialogWorkspaceVisibility(false) }}>
@@ -340,7 +374,7 @@ function Board(props) {
                   <hr className='m-0' />
 
                   {/* Private */}
-                  <div className='d-flex py-2 px-3'>
+                  <div className='d-flex p-3'>
                     <div>
                       <MdLockOutline style={iconSize20} />
                     </div>
@@ -351,7 +385,7 @@ function Board(props) {
                   </div>
 
                   {/* Workspace */}
-                  <div className='d-flex py-2 px-3'>
+                  <div className='d-flex p-3'>
                     <div>
                       <GrGroup style={iconSize20} />
                     </div>
@@ -362,7 +396,7 @@ function Board(props) {
                   </div>
 
                   {/* Organization */}
-                  <div className='d-flex py-2 px-3'>
+                  <div className='d-flex p-3'>
                     <div>
                       <MdCorporateFare style={iconSize20} />
                     </div>
@@ -373,7 +407,7 @@ function Board(props) {
                   </div>
 
                   {/* Public */}
-                  <div className='d-flex py-2 px-3'>
+                  <div className='d-flex p-3'>
                     <div>
                       <BiWorld style={iconSize20} />
                     </div>
@@ -388,9 +422,9 @@ function Board(props) {
             )}
           </Overlay>
 
-        </Container >
+        </Container>
       </DragDropContext >
-    </>
+    </Container >
 
   );
 }

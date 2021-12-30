@@ -5,22 +5,20 @@ import { BiMenuAltLeft } from "react-icons/bi";
 import { MdAttachFile } from "react-icons/md";
 import { GoCommentDiscussion } from "react-icons/go";
 
+// Styles
 const iconSize24 = {
     width: "24px",
     height: "24px",
 };
-
 const iconSize20Grey = {
     width: "20px",
     height: "20px",
     color: "#b8b8b8",
 };
-
 const label = {
     flexWrap: "wrap",
     gap: "5px 5px",
 };
-
 const memberAvatarContainer = {
     flexWrap: "wrap",
     gap: "5px 10px",
@@ -35,7 +33,7 @@ const BoardCardItem = (props) => {
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     ref={provided.innerRef}
-                    className='card-body rounded bg-white shadow-2 mb-2'
+                    className='card-body rounded bg-white shadow-2 mb-2 p-3'
                 >
                     {/* Label items */}
                     <div className='d-flex align-items-start justify-content-start mb-3' style={label}>
