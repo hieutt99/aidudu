@@ -7,43 +7,13 @@ import { BiMove } from "react-icons/bi";
 import { BsSortDown } from "react-icons/bs";
 import BoardCardItem from '../board-card-item/BoardCardItem';
 import { Button, Overlay, Popover } from 'react-bootstrap';
-import Board, { BASE_URL, WORK_API } from '../Board';
 import axios from 'axios';
 import { BACKEND_ORIGIN } from '../../../../../../../config';
+import { iconSize20, iconSize24, listContainer, primaryBackground, backgroundAddNewCard, popoverDialogContainer } from '../BoardStyles';
 
 // APIs
 export const CREATE_A_CARD = BACKEND_ORIGIN + 'api/v1/cards/';
-export const DELETE_A_LIST = BASE_URL + WORK_API + '/lists/';
-
-// Styles
-const iconSize20 = {
-    width: "20px",
-    height: "20px",
-};
-const iconSize24 = {
-    width: "24px",
-    height: "24px",
-};
-const listContainer = {
-    minWidth: "300px",
-    maxWidth: "300px",
-    height: "auto",
-    backgroundColor: "#0000001a",
-};
-const primaryBackground = {
-    backgroundColor: "#1976D2",
-};
-const backgroundAddNewCard = {
-    backgroundColor: "#181c1480",
-};
-const popoverDialogContainer = {
-    width: "400px",
-    height: "auto",
-};
-
-const headers = {
-    'Content-Type': 'application/json'
-}
+export const DELETE_A_LIST = BACKEND_ORIGIN + 'api/v1/lists/';
 
 const BoardList = (props) => {
 
@@ -52,22 +22,19 @@ const BoardList = (props) => {
     const cards = list["cards"];
 
     const [onTextChangedNewCardTitle, setTextChangedNewCardTitle] = useState('');
-    
+
     const addNewCard = () => {
         if (onTextChangedNewCardTitle !== '') {
-            console.log({
-                title: onTextChangedNewCardTitle,
-                description: '',
-                list: list.id,
-            });
-            axios.post(CREATE_A_CARD, {
-                title: onTextChangedNewCardTitle,
-                description: '',
-                list: list.id,
-            }, {headers: headers})
+            axios
+                .post(CREATE_A_CARD, {
+                    title: onTextChangedNewCardTitle,
+                    description: 'Description',
+                    list: list.id,
+                })
                 .then(response => {
                     console.log("Successfully create new card: " + response.data["title"]);
-                    //getBoardDetails();
+                    toggleAddNewCard();
+                    getBoardDetails();
                 })
         }
     }
@@ -77,7 +44,8 @@ const BoardList = (props) => {
             .delete(DELETE_A_LIST + list["id"] + "/")
             .then(() => {
                 console.log("Successfully deleted!");
-                //getBoardDetails();
+                onListActionsClicked();
+                getBoardDetails();
             });
     }
 
@@ -174,11 +142,11 @@ const BoardList = (props) => {
 
                             {/* Header */}
                             <div className='d-flex justify-content-between align-items-center p-3'>
-                                <div className='btn p-0' onClick={() => { setDialogListActions(false) }}>
+                                <div className='btn p-0' onClick={onListActionsClicked}>
                                     <MdClose style={iconSize20} />
                                 </div>
                                 <h6 className='m-0'>List actions</h6>
-                                <div className='btn p-0' onClick={() => { setDialogListActions(false) }}>
+                                <div className='btn p-0' onClick={onListActionsClicked}>
                                     <MdClose style={iconSize20} />
                                 </div>
                             </div>

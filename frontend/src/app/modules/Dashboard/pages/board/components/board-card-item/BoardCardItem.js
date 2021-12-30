@@ -4,27 +4,11 @@ import { BsCheck2Square } from "react-icons/bs";
 import { BiMenuAltLeft } from "react-icons/bi";
 import { MdAttachFile } from "react-icons/md";
 import { GoCommentDiscussion } from "react-icons/go";
-
-// Styles
-const iconSize24 = {
-    width: "24px",
-    height: "24px",
-};
-const iconSize20Grey = {
-    width: "20px",
-    height: "20px",
-    color: "#b8b8b8",
-};
-const label = {
-    flexWrap: "wrap",
-    gap: "5px 5px",
-};
-const memberAvatarContainer = {
-    flexWrap: "wrap",
-    gap: "5px 10px",
-};
+import { iconSize24, iconSize20Grey, label, memberAvatarContainer } from '../BoardStyles';
 
 const BoardCardItem = (props) => {
+
+    const card = props.card;
 
     return (
         <Draggable draggableId={'1'} index={0} key={1}>
@@ -35,34 +19,31 @@ const BoardCardItem = (props) => {
                     ref={provided.innerRef}
                     className='card-body rounded bg-white shadow-2 mb-2 p-3'
                 >
-                    {/* Label items */}
-                    <div className='d-flex align-items-start justify-content-start mb-3' style={label}>
-                        {/* Label */}
-                        <div className='btn btn-primary text-white px-2 py-1'>
-                            Henlo
+
+                    {/* Labels */}
+                    {card["labels"] !== undefined && card["labels"].length > 0 &&
+                        <div className='d-flex align-items-start justify-content-start mb-3' style={label}>
+                            {
+                                card["labels"].map((label, index) => {
+                                    return <div className='btn btn-primary text-white px-2 py-1'>{label["id"]}</div>
+                                })
+                            }
                         </div>
-                        <div className='btn btn-success text-white px-2 py-1'>
-                            J label
-                        </div>
-                        <div className='btn btn-danger text-white px-2 py-1'>
-                            Label cheems
-                        </div>
-                        <div className='btn btn-info text-white px-2 py-1'>
-                            cate
-                        </div>
-                    </div>
+                    }
 
                     {/* Content */}
-                    <div>
-                        Do something
-                    </div>
+                    <div>{card["title"]}</div>
 
                     {/* Icon items */}
                     <div className='d-flex align-items-center justify-content-start mt-3' style={memberAvatarContainer}>
                         <BiMenuAltLeft style={iconSize20Grey} />
-                        <MdAttachFile style={iconSize20Grey} />
-                        <GoCommentDiscussion style={iconSize20Grey} />
-                        <BsCheck2Square style={iconSize20Grey} />
+                        {card["attachments"] > 0 &&
+                            <MdAttachFile style={iconSize20Grey} />
+                        }
+                        {card["comments"] > 0 &&
+                            <GoCommentDiscussion style={iconSize20Grey} />
+                        }
+                        {/* <BsCheck2Square style={iconSize20Grey} /> */}
                     </div>
 
                     {/* Member's avatar */}

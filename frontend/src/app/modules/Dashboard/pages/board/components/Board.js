@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { Button, Container, Popover, Row, Overlay } from 'react-bootstrap';
+import { Button, Container, Popover, Overlay } from 'react-bootstrap';
 import { FiStar } from "react-icons/fi";
 import { BsPeople, BsPersonPlus, BsTags, BsInboxes } from "react-icons/bs";
 import { BiArrowToLeft, BiWorld } from "react-icons/bi";
@@ -8,68 +8,16 @@ import { AiOutlinePlus } from "react-icons/ai";
 import { MdClose, MdOutlineDashboard, MdLockOutline, MdCorporateFare } from "react-icons/md";
 import { GrGroup } from "react-icons/gr";
 import BoardList from './board-list/BoardList';
-import { BACKEND_ORIGIN } from '../../../../../../config';
 import axios from 'axios';
+import { lightGreyColor, lightGreyBackground, iconSize24, iconSize20, iconSize34, 
+  contentBackgroundMask, menuContainer, menuDescription, listContainer, backgroundAddNewList, popoverDialogContainer
+} from './BoardStyles';
 
 // APIs
 export const BASE_URL = 'http://127.0.0.1:8000';
 export const WORK_API = '/api/v1';
 export const GET_BOARD_DETAILS = BASE_URL + WORK_API + '/boards/2/details';
 export const CREATE_A_LIST = BASE_URL + WORK_API + '/lists/';
-
-// Styles
-const lightGreyColor = {
-  color: "#b8b8b8",
-};
-const lightGreyBackground = {
-  backgroundColor: "#e3e4e8",
-};
-const iconSize24 = {
-  width: "24px",
-  height: "24px",
-};
-const iconSize20 = {
-  width: "20px",
-  height: "20px",
-};
-const iconSize34 = {
-  width: "34px",
-  height: "34px",
-};
-const contentBackgroundMask = {
-  backgroundColor: "rgba(0,0,0,0.5)",
-  width: "100%",
-  height: "100%",
-  position: "relative",
-};
-const menuContainer = {
-  width: "0px",
-  height: "100%",
-  backgroundColor: "white",
-  position: "fixed",
-  zIndex: "2",
-  top: "0",
-  right: "0",
-  overflowX: "hidden",
-  transition: "0.8s",
-};
-const menuDescription = {
-  resize: "none",
-  backgroundColor: "#e3e4e8",
-};
-const listContainer = {
-  minWidth: "300px",
-  maxWidth: "300px",
-  height: "auto",
-  backgroundColor: "#0000001a",
-};
-const backgroundAddNewList = {
-  backgroundColor: "#c7886dcc",
-};
-const popoverDialogContainer = {
-  width: "400px",
-  height: "auto",
-};
 
 function Board(props) {
 
@@ -101,6 +49,7 @@ function Board(props) {
       })
         .then(response => {
           console.log("Successfully create new list: " + response.data["name"]);
+          toggleAddNewList();
           getBoardDetails();
         });
     }
