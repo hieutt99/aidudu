@@ -137,12 +137,32 @@ class LabelSerializer(serializers.ModelSerializer):
         model = Label
         fields = '__all__'
 
+class CardMembershipSerializer(serializers.ModelSerializer):
+    
+    id = serializers.SerializerMethodField('get_user_id_of_cardmembership')
+    fullname = serializers.SerializerMethodField('get_user_fullname_of_cardmembership')
+    avatar = serializers.SerializerMethodField('get_user_avatar_of_cardmembership')
+    
+    class Meta:
+        model = CardMembership
+        fields = ['id', 'fullname', 'avatar']
+
+    def get_user_id_of_cardmembership(self, card_src):
+        return card_src.user.id
+
+    def get_user_fullname_of_cardmembership(self, card_src):
+        return card_src.user.get_full_name()
+    
+    def get_user_avatar_of_cardmembership(self, card_src):
+        return card_src.user.avatar.url
+
 class BoardDetailViewCardSerializer(serializers.ModelSerializer):
     comments = serializers.IntegerField(source='comments.count', read_only=True)
     attachments = serializers.IntegerField(source='attachments.count', read_only=True)
+    members = CardMembershipSerializer(source='user_cards', many=True)
     class Meta:
         model = Card
-        fields = ['id', 'title', 'due', 'position', 'comments', 'attachments', 'labels']
+        fields = ['id', 'title', 'due', 'position', 'comments', 'attachments', 'labels', 'members']
 
 class BoardDetailViewListSerializer(serializers.ModelSerializer):
         cards = BoardDetailViewCardSerializer(many=True)
