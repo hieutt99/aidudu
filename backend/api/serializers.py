@@ -1,6 +1,7 @@
 from rest_framework import fields, serializers
 from django.contrib.auth import get_user_model
 from api.models import *
+from django.db.models import Count
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -137,12 +138,51 @@ class LabelSerializer(serializers.ModelSerializer):
         model = Label
         fields = '__all__'
 
+class CardMembershipSerializer(serializers.ModelSerializer):
+    
+    id = serializers.SerializerMethodField('get_user_id_of_cardmembership')
+    fullname = serializers.SerializerMethodField('get_user_fullname_of_cardmembership')
+    avatar = serializers.SerializerMethodField('get_user_avatar_of_cardmembership')
+    
+    class Meta:
+        model = CardMembership
+        fields = ['id', 'fullname', 'avatar']
+
+    def get_user_id_of_cardmembership(self, card_src):
+        return card_src.user.id
+
+    def get_user_fullname_of_cardmembership(self, card_src):
+        return card_src.user.get_full_name()
+    
+    def get_user_avatar_of_cardmembership(self, card_src):
+        return card_src.user.avatar.url
+
+class ChecklistStatSerializer(serializers.ModelSerializer):
+
+    stats = serializers.SerializerMethodField('get_stat')
+
+    class Meta:
+        model = Checklist
+        fields = ['id', 'stats']
+
+    def get_stat(self, checklist_src):
+        stats = checklist_src.items.order_by('id').values('checked').annotate(count=Count('id'))
+        return stats
+
+class ChecklistDetailSerializer(serializers.ModelSerializer):
+    items = ChecklistItemSerializer('items', many=True)
+    class Meta:
+        model = Checklist
+        fields = ['id', 'items']
+
 class BoardDetailViewCardSerializer(serializers.ModelSerializer):
     comments = serializers.IntegerField(source='comments.count', read_only=True)
     attachments = serializers.IntegerField(source='attachments.count', read_only=True)
+    members = CardMembershipSerializer(source='user_cards', many=True)
+    checklists = ChecklistStatSerializer('checklists', many=True)
     class Meta:
         model = Card
-        fields = ['id', 'title', 'due', 'position', 'comments', 'attachments', 'labels']
+        fields = ['id', 'title', 'due', 'position', 'comments', 'attachments', 'labels', 'members', 'checklists']
 
 class BoardDetailViewListSerializer(serializers.ModelSerializer):
         cards = BoardDetailViewCardSerializer(many=True)
@@ -157,3 +197,12 @@ class BoardDetailViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Board
         fields = ['id', 'name', 'background', 'workspace', 'members', 'lists', 'labels']
+
+class CardDetailViewSerailizer(serializers.ModelSerializer):
+    checklists = ChecklistDetailSerializer('checklists', many=True)
+    labels = LabelSerializer('labels', many=True)
+    comments = CommentSerializer('comments', many=True)
+    class Meta:
+        model = Card 
+        fields = ['id', 'title', 'description', 'start', 'due',
+                'position', 'list', 'labels', 'comments', 'checklists']
