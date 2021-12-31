@@ -298,6 +298,9 @@ def parse_int_array_or_400(data, key, default=None, delimiter=','):
     """
     if key not in data:
         return default
+
+    if isinstance(data[key], list):
+        return data[key]
     
     try:
         return [int(_) for _ in data[key].split(delimiter)]
