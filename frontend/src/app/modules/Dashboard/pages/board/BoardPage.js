@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { LayoutSplashScreen } from '../../../../../_metronic/layout';
-import { Switch } from 'react-router-dom';
+import { Route, Switch } from 'react-router-dom';
+import MyDashBoard from './components/MyDashBoard';
 
 function BoardPage(props) {
 
@@ -8,6 +9,7 @@ function BoardPage(props) {
 
   return (
       <Switch>
+        <Route path="/" component={MyDashBoard} />
         {/*{*/}
         {/*  <Redirect*/}
         {/*    exact={true}*/}
