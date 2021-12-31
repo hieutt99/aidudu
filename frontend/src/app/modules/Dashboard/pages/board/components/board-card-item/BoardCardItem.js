@@ -9,9 +9,10 @@ import { iconSize24, iconSize20Grey, label, memberAvatarContainer } from '../Boa
 const BoardCardItem = (props) => {
 
     const card = props.card;
+    const index = props.index;
 
     return (
-        <Draggable draggableId={'1'} index={0} key={1}>
+        <Draggable draggableId={'' + card["id"]} index={index} key={card["id"]}>
             {(provided) => (
                 <div
                     {...provided.draggableProps}
@@ -32,7 +33,7 @@ const BoardCardItem = (props) => {
                     }
 
                     {/* Content */}
-                    <div>{card["title"]}</div>
+                    <div>{card["title"]} - {card["id"]}</div>
 
                     {/* Icon items */}
                     <div className='d-flex align-items-center justify-content-start mt-3' style={memberAvatarContainer}>
@@ -43,15 +44,21 @@ const BoardCardItem = (props) => {
                         {card["comments"] > 0 &&
                             <GoCommentDiscussion style={iconSize20Grey} />
                         }
-                        {/* <BsCheck2Square style={iconSize20Grey} /> */}
+                        {card["checklists"].length > 0 &&
+                            <BsCheck2Square style={iconSize20Grey} />
+                        }
                     </div>
 
                     {/* Member's avatar */}
-                    <div className='d-flex align-items-center justify-content-end mt-3'>
-                        <img className={"rounded-circle bg-success"} style={iconSize24} />
-                        <img className={"rounded-circle bg-dark"} style={iconSize24} />
-                        <img className={"rounded-circle bg-warning"} style={iconSize24} />
-                    </div>
+                    {card["members"] !== undefined && card["members"].length > 0 &&
+                        <div className='d-flex align-items-center justify-content-end mt-3'>
+                            {
+                                card["members"].map((member, index) => {
+                                    return <img key={member.id} className={"rounded-circle"} style={iconSize24} src={member.avatar}/>
+                                })
+                            }
+                        </div>
+                    }
 
                 </div>
             )}

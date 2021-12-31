@@ -30,6 +30,7 @@ const BoardList = (props) => {
                     title: onTextChangedNewCardTitle,
                     description: 'Description',
                     list: list.id,
+                    position: cards.length,
                 })
                 .then(response => {
                     console.log("Successfully create new card: " + response.data["title"]);
@@ -75,7 +76,7 @@ const BoardList = (props) => {
 
             {/* Title */}
             <div className='card-header d-flex justify-content-between align-items-center py-2 px-3 mb-3 border-0 rounded text-white' style={primaryBackground}>
-                <p className='my-0 mx-2'>{list["name"]}</p>
+                <p className='my-0 mx-2'>{list["name"]} - {list["id"]}</p>
                 <div
                     className='btn btn-link text-reset m-0 py-0 px-0'
                     ref={dialogListActionsTarget} onClick={onListActionsClicked}
@@ -85,7 +86,7 @@ const BoardList = (props) => {
             </div>
 
             {/* Card items */}
-            <Droppable droppableId={'1'} key={1}>
+            <Droppable droppableId={'' + list["id"]} key={list["id"]}>
                 {(provided) => (
                     <div
                         {...provided.droppableProps}
@@ -96,7 +97,7 @@ const BoardList = (props) => {
                         {/* Cards*/}
                         {
                             cards.map((card, index) => {
-                                return <BoardCardItem card={card} />
+                                return <BoardCardItem card={card} index={index} key={card["id"]} />
                             })
                         }
 

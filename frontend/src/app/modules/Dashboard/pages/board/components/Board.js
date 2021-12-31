@@ -9,7 +9,8 @@ import { MdClose, MdOutlineDashboard, MdLockOutline, MdCorporateFare } from "rea
 import { GrGroup } from "react-icons/gr";
 import BoardList from './board-list/BoardList';
 import axios from 'axios';
-import { lightGreyColor, lightGreyBackground, iconSize24, iconSize20, iconSize34, 
+import {
+  lightGreyColor, lightGreyBackground, iconSize24, iconSize20, iconSize34,
   contentBackgroundMask, menuContainer, menuDescription, listContainer, backgroundAddNewList, popoverDialogContainer
 } from './BoardStyles';
 
@@ -18,8 +19,12 @@ export const BASE_URL = 'http://127.0.0.1:8000';
 export const WORK_API = '/api/v1';
 export const GET_BOARD_DETAILS = BASE_URL + WORK_API + '/boards/2/details';
 export const CREATE_A_LIST = BASE_URL + WORK_API + '/lists/';
+export const CARD_DETAIL = BASE_URL + WORK_API + '/cards/';
 
 function Board(props) {
+
+  const INCREMENT_CARD_POSITION = 1;
+  const DECREMENT_CARD_POSITION = -1;
 
   const [board, setBoard] = useState({});
   const [lists, setLists] = useState([]);
@@ -55,8 +60,85 @@ function Board(props) {
     }
   }
 
+  const updateDraggableCardPosition = (draggableId, newPosition, newListId) => {
+    axios
+      .put(CARD_DETAIL + draggableId + '/', {
+        position: newPosition,
+        list: newListId,
+      })
+      .then(response => {
+        console.log("Successfully update draggable: " + response.data["title"] + " - position: " + response.data["position"]);
+        // TODO: get board details
+      })
+  }
+
+  const moveCardPosition = (card, updateUnit) => {
+    axios
+      .put(CARD_DETAIL + card["id"] + '/', {
+        position: card["position"] + updateUnit,
+      })
+      .then(response => {
+        console.log("Successfully move card: " + response.data["title"] + " - position: " + response.data["position"]);
+      });
+  }
+
+  const moveCardsPositionInNewDestinationList = (listId, newCardIndex) => {
+    const destinationList = lists.filter((list) => list["id"] == listId);
+    const destinationCards = destinationList["cards"];
+    const movedCards = destinationCards.filter((card) => card["position"] >= newCardIndex)
+    for (let card in movedCards) {
+      moveCardPosition(card, INCREMENT_CARD_POSITION);
+    }
+  }
+
+  const moveCardsPositionInOldDestinationList = (listId, oldCardIndex, newCardIndex) => {
+    const destinationList = lists.find((list) => list["id"] == listId);
+    // TODO: fix error here
+    const destinationCards = destinationList["cards"];
+
+    console.log("Destination: " + destinationList["id"]);
+
+    // if (oldCardIndex < newCardIndex) {
+    //   const movedCards = destinationCards.filter((card) => filter1(card, oldCardIndex, newCardIndex));
+    //   for (let card in movedCards) {
+    //     moveCardPosition(card, DECREMENT_CARD_POSITION);
+    //   }
+    // } else {
+    //   const movedCards = destinationCards.filter((card) => filter2(card, oldCardIndex, newCardIndex));
+    //   for (let card in movedCards) {
+    //     moveCardPosition(card, INCREMENT_CARD_POSITION);
+    //   }
+    // }
+  }
+
+  const filter1 = (card, oldCardIndex, newCardIndex) => {
+    return card["position"] > oldCardIndex && card["position"] <= newCardIndex;
+  }
+
+  const filter2 = (card, oldCardIndex, newCardIndex) => {
+    return card["position"] < oldCardIndex && card["position"] >= newCardIndex
+  }
+
   const onDragEnd = (result) => {
-    // TODO: 
+    const { source, destination, draggableId } = result;
+
+    if (!destination) {
+      return;
+    }
+
+    if (source.droppableId !== destination.droppableId) {
+      const currentListId = source.droppableId;
+      const newListId = destination.droppableId;
+
+      // TODO
+
+    } else {
+      const listId = destination.droppableId;
+      moveCardsPositionInOldDestinationList(listId, source.index, destination.index);
+      updateDraggableCardPosition(draggableId, destination.index, listId);
+    }
+
+    getBoardDetails();
   };
 
   // Toggle add new list
@@ -127,9 +209,11 @@ function Board(props) {
 
               {/* List of members */}
               <div className={"mx-2 p-2 d-flex align-items-center"}>
-                <img className={"rounded-circle bg-success"} style={iconSize24} />
-                <img className={"rounded-circle bg-dark"} style={iconSize24} />
-                <img className={"rounded-circle bg-warning"} style={iconSize24} />
+                {/* {
+                  board["members"].map((member, index) => {
+                    return <img className={"rounded-circle bg-success"} style={iconSize24}/>
+                  })
+                } */}
               </div>
 
               {/* Button invite member */}
@@ -161,6 +245,7 @@ function Board(props) {
                 {
                   lists.map((list, index) => {
                     return <BoardList
+                      key={list["id"]}
                       list={list}
                       getBoardDetails={getBoardDetails}
                     />
