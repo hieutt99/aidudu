@@ -1,12 +1,13 @@
 import React, { Suspense } from 'react';
-import { LayoutSplashScreen } from '../../../../../_metronic/layout';
-import { Switch } from 'react-router-dom';
+import { ContentRoute, LayoutSplashScreen, useSubheader } from '../../../../../_metronic/layout';import { Switch } from 'react-router-dom';
 
 function WorkspacePage(props) {
 
   //TODO: add route
 
   return (
+      <>
+      <h4>Workspace page</h4>
       <Switch>
         {/*{*/}
         {/*  <Redirect*/}
@@ -17,6 +18,7 @@ function WorkspacePage(props) {
         {/*}*/}
         {/*<ContentRoute path="/" component={} />*/}
       </Switch>
+      </>
   );
 }
 
