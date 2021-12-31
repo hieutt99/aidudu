@@ -50,6 +50,16 @@ const BoardList = (props) => {
             });
     }
 
+    const compareCards = (card1, card2) => {
+        if (card1.position < card2.position) {
+            return -1;
+        }
+        if (card1.position > card2.position) {
+            return 1;
+        }
+        return 0;
+    }
+
     // Toggle add new card
     const [isAddingNewCard, setAddingNewCard] = useState(false);
     const toggleAddNewCard = () => {
@@ -96,8 +106,8 @@ const BoardList = (props) => {
 
                         {/* Cards*/}
                         {
-                            cards.map((card, index) => {
-                                return <BoardCardItem card={card} index={index} key={card["id"]} />
+                            cards.sort(compareCards).map((card, index) => {
+                                return <BoardCardItem card={card} key={card["id"]} index={index}/>
                             })
                         }
 

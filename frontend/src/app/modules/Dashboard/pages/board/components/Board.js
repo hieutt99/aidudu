@@ -72,51 +72,64 @@ function Board(props) {
       })
   }
 
-  const moveCardPosition = (card, updateUnit) => {
+  const moveCardPosition = (listId, card, updateUnit) => {
     axios
       .put(CARD_DETAIL + card["id"] + '/', {
+        list: listId,
         position: card["position"] + updateUnit,
       })
       .then(response => {
-        console.log("Successfully move card: " + response.data["title"] + " - position: " + response.data["position"]);
+        console.log("Successfully move card: "
+          + "id: " + response.data["id"] + " - "
+          + "title: " + response.data["title"] + " - "
+          + "new position: " + response.data["position"]
+        );
       });
   }
 
-  const moveCardsPositionInNewDestinationList = (listId, newCardIndex) => {
-    const destinationList = lists.filter((list) => list["id"] == listId);
-    const destinationCards = destinationList["cards"];
-    const movedCards = destinationCards.filter((card) => card["position"] >= newCardIndex)
-    for (let card in movedCards) {
-      moveCardPosition(card, INCREMENT_CARD_POSITION);
+  const moveCardsPositionInNewDestinationList = (oldListId, newListId, oldCardIndex, newCardIndex) => {
+    try {
+      // Update position of cards in the new list
+      const destinationList = lists.find((list) => list["id"] == newListId);
+      const cardsInDestinationList = destinationList["cards"];
+      const destinationmMovedCards = cardsInDestinationList.filter((card) => card["position"] >= newCardIndex)
+      for (let i = 0; i < destinationmMovedCards.length; i++) {
+        moveCardPosition(newListId, destinationmMovedCards[i], INCREMENT_CARD_POSITION);
+      }
+
+      // Update position of cards in the old list
+      const sourceList = lists.find((list) => list["id"] == oldListId);
+      const cardsInSourceList = sourceList["cards"];
+      const sourceMovedCards = cardsInSourceList.filter((card) => card["position"] > oldCardIndex);
+      for (let j = 0; j < sourceMovedCards.length; j++) {
+        moveCardPosition(oldListId, sourceMovedCards[j], DECREMENT_CARD_POSITION);
+      }
+    } catch (exception) {
+      console.log(exception);
     }
   }
 
   const moveCardsPositionInOldDestinationList = (listId, oldCardIndex, newCardIndex) => {
-    const destinationList = lists.find((list) => list["id"] == listId);
-    // TODO: fix error here
-    const destinationCards = destinationList["cards"];
+    try {
+      const destinationList = lists.find((list) => list["id"] == listId);
+      const cardsInDestinationList = destinationList["cards"];
 
-    console.log("Destination: " + destinationList["id"]);
-
-    // if (oldCardIndex < newCardIndex) {
-    //   const movedCards = destinationCards.filter((card) => filter1(card, oldCardIndex, newCardIndex));
-    //   for (let card in movedCards) {
-    //     moveCardPosition(card, DECREMENT_CARD_POSITION);
-    //   }
-    // } else {
-    //   const movedCards = destinationCards.filter((card) => filter2(card, oldCardIndex, newCardIndex));
-    //   for (let card in movedCards) {
-    //     moveCardPosition(card, INCREMENT_CARD_POSITION);
-    //   }
-    // }
-  }
-
-  const filter1 = (card, oldCardIndex, newCardIndex) => {
-    return card["position"] > oldCardIndex && card["position"] <= newCardIndex;
-  }
-
-  const filter2 = (card, oldCardIndex, newCardIndex) => {
-    return card["position"] < oldCardIndex && card["position"] >= newCardIndex
+      if (oldCardIndex < newCardIndex) {
+        // Update position of cards after being moved up
+        const movedCards = cardsInDestinationList.filter((card) => card["position"] > oldCardIndex && card["position"] <= newCardIndex);
+        for (let i = 0; i < movedCards.length; i++) {
+          moveCardPosition(listId, movedCards[i], DECREMENT_CARD_POSITION);
+        }
+      } else {
+        // Update position of cards after being moved down
+        const movedCards = cardsInDestinationList.filter((card) => card["position"] < oldCardIndex && card["position"] >= newCardIndex);
+        for (let i = 0; i < movedCards.length; i++) {
+          moveCardPosition(listId, movedCards[i], INCREMENT_CARD_POSITION);
+        }
+      }
+    } catch (exception) {
+      console.log(exception);
+    }
   }
 
   const onDragEnd = (result) => {
@@ -126,18 +139,24 @@ function Board(props) {
       return;
     }
 
-    if (source.droppableId !== destination.droppableId) {
-      const currentListId = source.droppableId;
-      const newListId = destination.droppableId;
+    const oldListId = parseInt(source.droppableId);
+    const newListId = parseInt(destination.droppableId);
+    const oldCardIndex = source.index;
+    const newCardIndex = destination.index;
 
-      // TODO
-
-    } else {
-      const listId = destination.droppableId;
-      moveCardsPositionInOldDestinationList(listId, source.index, destination.index);
-      updateDraggableCardPosition(draggableId, destination.index, listId);
+    if (oldListId === newListId && oldCardIndex === newCardIndex) {
+      return;
     }
 
+    if (oldListId !== newListId) {
+      moveCardsPositionInNewDestinationList(oldListId, newListId, oldCardIndex, newCardIndex);
+    } else {
+      moveCardsPositionInOldDestinationList(newListId, oldCardIndex, newCardIndex);
+    }
+
+    updateDraggableCardPosition(draggableId, newCardIndex, newListId);
+
+    // TODO: await for cards update first
     getBoardDetails();
   };
 
