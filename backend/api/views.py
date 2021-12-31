@@ -20,7 +20,7 @@ from rest_framework.response import Response
 from rest_framework.serializers import ListSerializer
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-from utilities.request import (parse_bool_or_400, parse_int_or_400,
+from utilities.request import (parse_bool_or_400, parse_int_array_or_400, parse_int_or_400,
                                parse_string_array_or_400)
 
 from api.models import *
@@ -272,6 +272,7 @@ class CardViewSet(ModelViewSet):
         return obj
 
     def add_label_to_card(self, request, pk):
+
         label_id = parse_int_or_400(request.data, 'id')
         label = get_object_or_404(Label, id=label_id)
         
@@ -363,6 +364,17 @@ class CardViewSet(ModelViewSet):
         if self.request.method == 'DELETE':
             return self.delete_member_from_card(request, pk)
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    @action(detail=True, methods=['get'], url_path='details')
+    def get_details_of_a_card(self, request, pk):
+        card = get_object_or_404(Card, id=pk)
+        board_membership = BoardMembership.objects.filter(
+                user_id=request.user, board=card.list.board)
+        if not board_membership.exists():
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            serializer = CardDetailViewSerailizer(card)
+            return Response(data=serializer.data)
 
 class ListViewSet(ModelViewSet):
     model = List
@@ -509,7 +521,6 @@ class ListViewSet(ModelViewSet):
         else:
             raise PermissionDenied(
                 detail="You do not belong to this board or this board doesn't exist.")
-                
 
 class CommentViewSet(ModelViewSet):
     model = Comment
