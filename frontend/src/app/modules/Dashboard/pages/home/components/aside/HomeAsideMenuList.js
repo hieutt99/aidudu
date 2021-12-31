@@ -6,10 +6,7 @@ import { toAbsoluteUrl, checkIsActive } from "../../../../../../../_metronic/_he
 
 export function HomeAsideMenuList({ layoutProps, workspaces }) {
     const location = useLocation();
-    console.log(workspaces)
     const getMenuItemActive = (url, hasSubmenu = false) => {
-        console.log(url)
-        console.log(checkIsActive(location, url))
         return checkIsActive(location, url)
         ? ` ${!hasSubmenu &&
             "menu-item-active"} menu-item-open menu-item-not-hightlighted`
