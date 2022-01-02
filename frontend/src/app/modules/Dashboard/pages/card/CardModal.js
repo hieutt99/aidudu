@@ -185,7 +185,7 @@ const CardModal = ({ open, onClose, lists }) => {
                 </Row>
                 <Row className={'mb-2'}>
                   <div className={'text-dark-50 font-size-lg text-justify'}>
-                    {`In list ${cardData.list}`}
+                    {`In list ${cardData.list ? cardData.list.name : ''}`}
                   </div>
                 </Row>
 
@@ -350,8 +350,13 @@ const CardModal = ({ open, onClose, lists }) => {
                   <h6>Action</h6>
                 </Row>
                 <Row>
-                  <CardMove cardId={cardId} currentListId={cardData.list} currentPosition={cardData.position} lists={lists} closeCard={onClose}/>
-                  {/*TODO: list is object*/}
+                  <CardMove
+                    cardId={cardId}
+                    currentListId={cardData.list ? cardData.list.id : ''}
+                    currentPosition={cardData.position}
+                    lists={lists}
+                    closeCard={onClose}
+                  />
                   <Button
                     variant='secondary'
                     style={{ justifyContent: 'flex-start' }}

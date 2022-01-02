@@ -11,9 +11,6 @@ function CardMove({ cardId, currentListId, currentPosition, lists, closeCard }) 
   const [position, setPosition] = useState(currentPosition || 0);
 
   useEffect(() => {
-    console.log(currentListId);
-    console.log(currentPosition);
-    console.log(lists);
     setPosition(currentPosition);
     setDestination(currentListId);
   }, [currentListId, currentPosition, lists]);
@@ -41,8 +38,6 @@ function CardMove({ cardId, currentListId, currentPosition, lists, closeCard }) 
   };
 
   const handleCardMove = () => {
-    console.log(destination);
-    console.log(position);
     updateCardDetails(cardId, {
       list: destination,
       position: position
