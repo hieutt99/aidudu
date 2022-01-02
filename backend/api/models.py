@@ -156,8 +156,7 @@ class Label(models.Model):
 class Card(models.Model):
     """Represent card of list"""
 
-    list = models.ForeignKey(
-        List, on_delete=models.CASCADE, related_name='cards')
+    list = models.ForeignKey(List, on_delete=models.CASCADE, related_name='cards')
     title = models.CharField(default='', max_length=128)
     description = models.CharField(default='', max_length=256)
     start = models.DateTimeField(blank=True, null=True)
