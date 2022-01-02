@@ -39,7 +39,8 @@ function Board(props) {
       .then(response => {
         console.log("Board details: " + response.data["name"]);
         setBoard(response.data);
-        setLists(response.data["lists"])
+        setLists(response.data["lists"]);
+        props.setLists(response.data["lists"]);
       })
       .catch(error => {
         console.log("Error get board details: " + error);

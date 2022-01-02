@@ -24,8 +24,9 @@ import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import CardComment from './components/CardComment';
 import { BACKEND_ORIGIN } from '../../../../../config';
+import CardMove from './components/CardMove';
 
-const CardModal = ({ open, onClose }) => {
+const CardModal = ({ open, onClose, lists }) => {
   //
   const { cardId } = useParams();
   const { id: userId, username, avatar } = useSelector((state) => state.auth.user);
@@ -349,16 +350,8 @@ const CardModal = ({ open, onClose }) => {
                   <h6>Action</h6>
                 </Row>
                 <Row>
-                  <Button
-                    variant='secondary'
-                    style={{ justifyContent: 'flex-start' }}
-                    className={'text-left w-100 mb-3'}
-                    onClick={() => {
-                    }}
-                  >
-                    <HiArrowRight className={'mr-3'} style={iconSize20} />
-                    Move
-                  </Button>
+                  <CardMove cardId={cardId} currentListId={cardData.list} currentPosition={cardData.position} lists={lists} closeCard={onClose}/>
+                  {/*TODO: list is object*/}
                   <Button
                     variant='secondary'
                     style={{ justifyContent: 'flex-start' }}
