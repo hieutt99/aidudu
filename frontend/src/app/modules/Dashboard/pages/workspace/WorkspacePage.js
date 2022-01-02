@@ -1,7 +1,7 @@
 import React, { Suspense, useEffect } from 'react';
 import { useState } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
-import { LayoutSplashScreen, useSubheader } from '../../../../../_metronic/layout';
+import { ContentRoute, LayoutSplashScreen, useSubheader } from '../../../../../_metronic/layout';
 import { Redirect, Route, Switch } from "react-router-dom";
 import { WorkspaceAside } from './components/aside/WorkspaceAside';
 import { getUserWorkspace } from '../../_redux/home/homeCrud';
@@ -10,56 +10,57 @@ import WorkspaceBoards from './components/main/WorkspaceBoards';
 import WorkspaceDetail from './components/mainheader/WorkspaceDetail';
 import WorkspaceMembers from './components/main/WorkspaceMembers';
 import WorkspaceSettings from './components/main/WorkspaceSettings';
+import { useParams } from 'react-router-dom';
+import { HomeAside } from '../home/components/aside/HomeAside';
 
 export function WorkspacePage(props) {
-  const dispatch = useDispatch()
   // const workspaces = useSelector((state) => state.workspaces.workspaces, shallowEqual)
+  const { workspaceId } = useParams()
+  // console.log("=======================")
+  console.log(workspaceId)
   const [workspaces, setWorkspace] = useState([])
-
+  const [boards, setBoards] = useState([])
   useEffect(()=>{
-      getUserWorkspace().then(res=>{
-          setWorkspace(res.data)
-      }).catch(err=>{
-          toast.error('Cannot get workspaces', {
-              position: 'top-right',
-              autoClose: 5000,
-              hideProgressBar: false,
-              closeOnClick: true
-            });
-      })
+    getUserWorkspace().then(res=>{
+        setWorkspace(res.data)
+    }).catch(err=>{
+        toast.error('Cannot get workspaces', {
+            position: 'top-right',
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true
+          });
+    });
+    
   }, [])
-  //TODO: add route
 
   return (
     <>
-    <div className="d-flex flex-row-fluid align-self-stretch">
+    <div className="d-flex flex-row">
       {/*begin::Page*/}
       <div className="d-flex-fluid">
-        <WorkspaceAside workspaces={workspaces}/>
+        <HomeAside workspaces={workspaces}/>
       </div>
-      <div className="d-flex flex-column w-100">
-        <WorkspaceDetail workspaces={workspaces}/>
-        <Switch>
-          <Redirect
-            from="/workspace"
-            exact={true}
-            to="/workspace/boards"
-          />
-          <Route
-            path="/workspace/boards"
-            component={WorkspaceBoards}
-          />
-          <Route
-            path="/workspace/members"
-            component={WorkspaceMembers}
-          />
-          <Route
-            path="/workspace/settings"
-            component={WorkspaceSettings}
-          />
-        </Switch>
+      <Switch>
+        <Redirect
+          from="/workspaces/:workspaceId"
+          exact={true}
+          to="/workspaces/:workspaceId/boards"
+        />
+        <Route
+          path="/workspaces/:workspaceId/boards"
+          component={WorkspaceBoards}
+        />
+        <Route
+          path="/workspaces/:workspaceId/members"
+          component={WorkspaceMembers}
+        />
+        <Route
+          path="/workspaces/:workspaceId/settings"
+          component={WorkspaceSettings}
+        />
+      </Switch>
         
-      </div>
     </div>
     <Switch>
       {/*{*/}

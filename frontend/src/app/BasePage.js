@@ -5,6 +5,10 @@ import { BuilderPage } from "./pages/BuilderPage";
 import { MyPage } from "./pages/MyPage";
 import { DashboardPage } from './modules/Dashboard/pages/DashboardPage';
 import WorkspacePage from "./modules/Dashboard/pages/workspace/WorkspacePage";
+import WorkspaceBoards from "./modules/Dashboard/pages/workspace/components/main/WorkspaceBoards";
+import Members from "./modules/Dashboard/pages/workspace/components/main/workspacemembers/Members";
+import WorkspaceSettings from "./modules/Dashboard/pages/workspace/components/main/WorkspaceSettings";
+import WorkspaceMembers from "./modules/Dashboard/pages/workspace/components/main/WorkspaceMembers";
 // import { DashboardPage } from "./modules/Dashboard/pages/DashboardPage";
 
 const GoogleMaterialPage = lazy(() =>
@@ -35,9 +39,15 @@ export default function BasePage() {
           <Redirect exact from="/" to="/dashboard" />
         }
         <ContentRoute path="/dashboard" component={DashboardPage} />
-        <Route path="/workspaces/:workspaceid" component={WorkspacePage}/>
-        <Route path="/workspaces/:workspaceid/boards" component={WorkspacePage}/>
-        <Route path="/workspaces/:workspaceid/members" component={WorkspacePage}/>
+        <Route path="/workspaces/:workspaceId" component={WorkspacePage}/>
+        <Route path="/workspaces/:workspaceId/boards" component={WorkspaceBoards}/>
+        <Route path="/workspaces/:workspaceId/members" component={WorkspaceMembers}/>
+        <Route path="/workspaces/:workspaceId/settings" component={WorkspaceSettings}/>
+        <Route
+                    path="/workspace/:workspaceId/members/members"
+                    component={Members}
+                />
+   
         {/*<ContentRoute path="/builder" component={BuilderPage} />*/}
         <ContentRoute path="/my-page" component={MyPage} />
         <ContentRoute path="/workspace" component={WorkspacePage} />

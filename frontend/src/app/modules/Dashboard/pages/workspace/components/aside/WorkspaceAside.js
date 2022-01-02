@@ -5,7 +5,7 @@ import objectPath from "object-path";
 import {WorkspaceAsideMenu} from "./WorkspaceAsideMenu";
 import {useHtmlClassService} from "../../../../../../../_metronic/layout/_core/MetronicLayout";
 
-export function WorkspaceAside(workspaces) {
+export function WorkspaceAside(workspace) {
   const uiService = useHtmlClassService();
   const layoutProps = useMemo(() => {
     return {
@@ -28,7 +28,7 @@ export function WorkspaceAside(workspaces) {
 
           {/* begin::Aside Menu */}
           <div id="kt_aside_menu_wrapper" className="aside-menu-wrapper flex-column-fluid">
-            <WorkspaceAsideMenu disableScroll={layoutProps.disableScroll} workspaces={workspaces}/>
+            <WorkspaceAsideMenu disableScroll={layoutProps.disableScroll} workspace={workspace}/>
           </div>
           {/* end::Aside Menu */}
         </div>
