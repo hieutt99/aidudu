@@ -1,11 +1,10 @@
 import React from "react";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { useState } from "react";
-import { Redirect, Switch, Route, NavLink } from "react-router-dom";
+import { Redirect, Switch, Route, NavLink, useParams } from "react-router-dom";
 import { WorkspaceWidget } from "./WorkspaceWidget";
-import WorkspaceMemberSidebar from "./workspacemembers/WorkspaceMemberSidebar";
-import Members from "./workspacemembers/Members";
-import Guests from "./workspacemembers/Guests";
+import WorkspaceDetail from "../mainheader/WorkspaceDetail";
+import WorkspaceMemberMain from "./workspacemembers/WorkspaceMemberMain";
 
 const boardBackgroundIMG = {
     width : "350px",
@@ -15,28 +14,14 @@ const boardBackgroundIMG = {
 }
 
 function WorkspaceMembers(props){
-
+    const {workspaceId} = useParams();
+    console.log(workspaceId)
     return (
         <>
-            <div className="d-flex flex-row-fluid" style={{marginTop:"30px"}}>
-                <WorkspaceMemberSidebar/>
-                <Switch>
-                <Redirect
-                    from="/workspace/members"
-                    exact={true}
-                    to="/workspace/members/members"
-                />
-                <Route
-                    path="/workspace/members/members"
-                    component={Members}
-                />
-                <Route
-                    path="/workspace/members/guests"
-                    component={Guests}
-                />
-                </Switch>
-            </div>
-
+        <div className="d-flex flex-column w-100">
+            <WorkspaceDetail workspaceId={workspaceId}/>
+            <WorkspaceMemberMain workspaceId={workspaceId}/>
+        </div>
         </>
     )
 }

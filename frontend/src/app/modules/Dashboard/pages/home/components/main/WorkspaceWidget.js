@@ -11,7 +11,11 @@ export function WorkspaceWidget(props){
     
     useEffect(() => {
         getWorkspaceBoards(workspace.id)
-        .then(res => setBoards(res.data))
+        .then(res => {
+            console.log("+++++++++++++")
+            console.log(res.data)
+            setBoards(res.data)
+        })
         .catch(err => toast.error('Cannot get boards', {
             position: 'top-right',
             autoClose: 5000,
