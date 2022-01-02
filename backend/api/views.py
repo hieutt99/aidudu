@@ -159,25 +159,18 @@ class BoardViewSet(ModelViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods=['put'], url_path='update_cards')
-    @transaction.atomic
     def update_multiple_cards(self, request, pk):
-        if 'updates' in request.data.keys():
-            updates = request.data['updates']
-            board_membership = BoardMembership.objects.filter(
-                user_id=request.user, board_id=pk
-            )
-            # ids = [item['id'] for item in updates]
-            update_dict = {item['id']:item['position'] for item in updates}
-            if board_membership.exists():
-                cards = Card.objects.filter(id__in=list(update_dict.keys()))
-                if len(cards)==len(updates):
-                    for card in cards:
-                        update_value = update_dict[card.id]
-                        card.position = update_value
-                        card.save()
-            else:
-                raise PermissionDenied(
-                "You don't belong to this board")
+        if not BoardMembership.objects.filter(user_id=request.user, board_id=pk).exists():
+            raise PermissionDenied("You don't belong to this board")
+
+        update_dict = {item['id']:item['position'] for item in request.data}
+        cards = Card.objects.filter(id__in=list(update_dict.keys()))
+        
+        with transaction.atomic():
+            for card in cards:
+                card.position = update_dict[card.id]
+                card.save()
+        
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class WorkspaceViewSet(ModelViewSet):
