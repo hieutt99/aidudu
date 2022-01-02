@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { useState } from "react";
 import { Switch, Route, NavLink } from "react-router-dom";
-import { getWorkspaceById } from "../../../../../_redux/workspace/workspaceCrud";
+import { getMembersByWorkspace, getWorkspaceById } from "../../../../../_redux/workspace/workspaceCrud";
 import { toast } from "react-toastify"
 
 const textStyle = {
@@ -52,7 +52,6 @@ function WorkspaceMemberMain(workspaceId){
     useEffect(()=>{
         getWorkspaceById(workspaceId.workspaceId).then(res=>{
           setWorkspace(res.data)
-          setMembers(res.data.members)
         }).catch(err=>{
           toast.error('Cannot get workspace', {
               position: 'top-right',
@@ -61,6 +60,16 @@ function WorkspaceMemberMain(workspaceId){
               closeOnClick: true
             });
         })
+        getMembersByWorkspace(workspaceId.workspaceId).then(res=>{
+            setMembers(res.data)
+        }).catch(err=>{
+            toast.error('Cannot get members', {
+                position: 'top-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true
+              });
+          })
     }, [])
     console.log(members)
     return (
@@ -92,8 +101,8 @@ function WorkspaceMemberMain(workspaceId){
                     members.map(member =>
                         <div className="d-flex flex-row" style={memberRowStyle}>
                             <div className="d-flex flex-row mr-auto align-items-center">
-                                <img src="/media/stock-600x400/img-2.jpg" class="rounded-circle" alt="Cinque Terre" width="50" height="50"></img>
-                                <h5 style={{marginLeft:"5px"}}>{member.name}</h5>
+                                <img src={member.avatar} class="rounded-circle" alt="Cinque Terre" width="50" height="50"></img>
+                                <h5 style={{marginLeft:"5px"}}>{member.fullname}</h5>
                             </div>
                             <div className="d-flex flex-row align-items-center">
                                 <button class="btn btn-outline-secondary" style={{backgroundColor:"#DFE1E6", margin:"5px"}} type="button">Admin</button>
