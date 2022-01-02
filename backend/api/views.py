@@ -463,6 +463,29 @@ class ListViewSet(ModelViewSet):
         list.position = len(lists_in_board)
         list.save()
 
+    def perform_update(self, serializer):
+        list_src = get_object_or_404(List, pk=self.kwargs['pk'])
+        position_src = list_src.position
+
+        list = serializer.save()
+        board = list.board 
+        if position_src > list.position:
+            # di chuyen sang trai 
+            with transaction.atomic():
+                lists_in_board = [l for l in board.lists.all() if l.id!=list.id and l.position>=list.position and l.position<position_src]
+                for l in lists_in_board:
+                    l.position+=1
+                    l.save()
+        elif position_src < list.position:
+            # di chuyen sang phai 
+            with transaction.atomic():
+                lists_in_board = [l for l in board.lists.all() if l.id!=list.id and l.position>position_src and l.position <= list.position]
+                for l in lists_in_board:
+                    l.position-=1
+                    l.save()
+
+
+
     def get_object(self):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
         self.check_object_permissions(self.request, obj)
