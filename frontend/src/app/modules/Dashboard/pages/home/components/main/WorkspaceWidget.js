@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { Switch, Route, NavLink } from "react-router-dom";
+import SVG from "react-inlinesvg";
 import { getWorkspaceBoards } from "../../../../_redux/home/homeCrud";
 import { toast } from 'react-toastify'
+import { toAbsoluteUrl } from "../../../../../../../_metronic/_helpers";
+
 
 export function WorkspaceWidget(props){
     const workspace = props.workspace
@@ -29,11 +32,46 @@ export function WorkspaceWidget(props){
             <div className={`card card-custom ${className}`}>
             {/* Head */}
                 <div className="card-header border-0 pt-5">
-                    <h3 className="card-title align-items-start flex-column">
-                        <span className="card-label font-weight-bolder text-dark">
-                        {workspace.name}
-                        </span>
-                    </h3>
+                    <div className="container">
+                        <div className="row">
+                            <div className="col-lg">
+                                <h3 className="card-title align-items-start flex-column">
+                                    <span className="card-label font-weight-bolder text-dark">
+                                        {workspace.name}
+                                    </span>
+                                </h3>
+                            </div>
+                            <div className="container">
+                                <div className="row">
+                                    <div className="col-sm">
+                                        <NavLink className="btn btn-secondary" to={`/workspaces/${workspace.id}/boards`}>
+                                            <span className="svg-icon menu-icon">
+                                                <SVG src={toAbsoluteUrl("/media/svg/icons/Home/Library.svg")} />
+                                            </span>
+                                            <span className="menu-text text-black">Boards</span>
+                                        </NavLink>
+                                    </div>
+                                    <div className="col-sm">
+                                        <NavLink className="btn btn-secondary" to={`/workspaces/${workspace.id}/members`}>
+                                            <span className="svg-icon menu-icon">
+                                                <SVG src={toAbsoluteUrl("/media/svg/icons/General/User.svg")} />
+                                            </span>
+                                            <span className="menu-text text-black">Members</span>
+                                        </NavLink>
+                                    </div>
+                                    <div className="col-sm">
+                                        <NavLink className="btn btn-secondary" to={`/workspaces/${workspace.id}/settings`}>
+                                            <span className="svg-icon menu-icon">
+                                                <SVG src={toAbsoluteUrl("/media/svg/icons/Tools/Tools.svg")} />
+                                            </span>
+                                            <span className="menu-text text-black">Settings</span>
+                                        </NavLink>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </div>
                 <div className="card-body pt-2 pb-0 mt-n3">
                     <div className="row">
