@@ -111,13 +111,6 @@ class CardSerializer(serializers.ModelSerializer):
         model = Card
         fields = '__all__'
 
-# class CardDetailSerializer(serializers.ModelSerializer):
-    
-
-#     class Meta:
-#         model = Card
-#         fields  = []
-
 
 class CardCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -234,15 +227,21 @@ class BoardDetailViewCardSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Card
-        fields = ['id', 'title', 'due', 'position', 'comments', 'attachments', 'labels', 'members', 'checklists']
+        fields = ['id', 'title', 'due', 'position', 'comments', 'attachments', 'labels', 'members', 'checklists', 'archived']
 
 
 class BoardDetailViewListSerializer(serializers.ModelSerializer):
-        cards = BoardDetailViewCardSerializer(many=True)
+        # cards = BoardDetailViewCardSerializer(many=True)
+        cards = serializers.SerializerMethodField()
         class Meta:
             model = List
             fields = ['id', 'name', 'position', 'archived', 'cards']
-
+        
+        def get_cards(self, instance):
+            cards = instance.cards.filter(archived=False)
+            serializer = BoardDetailViewCardSerializer(cards, many=True)
+            return serializer.data
+            
 class BoardMemberSerializer(serializers.ModelSerializer):
     avatar = serializers.SerializerMethodField()
 
@@ -275,12 +274,16 @@ class BoardDetailViewSerializer(serializers.ModelSerializer):
         labels = LabelDetailSerializer(instance.labels, many=True)
         return labels.data
 
+class ListDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = List
+        fields = ['id', 'name']
 
-class CardDetailViewSerailizer(serializers.ModelSerializer):
+class CardDetailViewSerializer(serializers.ModelSerializer):
     checklists = ChecklistDetailSerializer('checklists', many=True)
     labels = LabelSerializer('labels', many=True)
-    # comments = CommentCardSerializer('comments', many=True)
     comments = serializers.SerializerMethodField()
+    list = serializers.SerializerMethodField()
 
     class Meta:
         model = Card 
@@ -291,3 +294,7 @@ class CardDetailViewSerailizer(serializers.ModelSerializer):
         comments = CommentCardSerializer(instance.comments, many=True, context=self.context)
 
         return comments.data
+
+    def get_list(self, instance):
+        list = ListDetailSerializer(instance.list)
+        return list.data
