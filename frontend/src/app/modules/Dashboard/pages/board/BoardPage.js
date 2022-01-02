@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useState } from 'react';
 import { ContentRoute, LayoutSplashScreen } from '../../../../../_metronic/layout';
 import { Redirect, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import MyDashBoard from './components/Board';
@@ -10,12 +10,23 @@ function BoardPage(props) {
   const history = useHistory();
   console.log("boardpage", url);
 
+  const [rerenderFlag, setRerenderFlag] = useState(false);
+
+  const handleOnCardClose = async () => {
+    await setRerenderFlag(true);
+    history.goBack();
+  }
+
   return (
     <>
-      <Route path={`${url}/`} component={Board} />
+      <Route path={`${url}/`} render={() => {
+        return (
+          <Board rerenderFlag={rerenderFlag}/>
+        )
+      }} />
       <Route path={`${url}/card/:cardId`} children={({ match }) => {
         return (
-          match ? <CardModal onClose={history.goBack} open={Boolean(match)}/> : ""
+          match ? <CardModal onClose={handleOnCardClose} open={Boolean(match)}/> : ""
         )
       }} />
       {/*<Redirect to={"/error/error-v1"}/>*/}

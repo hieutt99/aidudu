@@ -31,7 +31,7 @@ function Board(props) {
 
   useEffect(() => {
     getBoardDetails();
-  }, []);
+  }, [props.rerenderFlag]);
 
   const getBoardDetails = () => {
     axios.get(GET_BOARD_DETAILS)
