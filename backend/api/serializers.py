@@ -108,6 +108,13 @@ class CardSerializer(serializers.ModelSerializer):
         model = Card
         fields = '__all__'
 
+# class CardDetailSerializer(serializers.ModelSerializer):
+    
+
+#     class Meta:
+#         model = Card
+#         fields  = []
+
 
 class CardCreateSerializer(serializers.ModelSerializer):
     class Meta:
