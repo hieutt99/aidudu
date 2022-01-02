@@ -450,6 +450,10 @@ class ListViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         list = serializer.save()
+        board = list.board 
+        lists_in_board = [l for l in board.lists.all() if l.id!= list.id]
+        list.position = len(lists_in_board)
+        list.save()
 
     def get_object(self):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
