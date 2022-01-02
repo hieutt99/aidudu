@@ -11,6 +11,12 @@ export function getUserWorkspace() {
     return axios.get(url)
 }
 
+export function getWorkspaceBoards(workspaceid) {
+    const workspace_id = workspaceid
+    console.log(workspaceid)
+    let url = BOARD_URL+`/?workspace=${workspace_id}`
+    return axios.get(url)
+}
 // export function createWorkspace(data) {
 //     url = WORKSPACE_URL
 //     axios.post(url, data=data).then(res => {

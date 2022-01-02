@@ -43,6 +43,7 @@ export default function BasePage() {
         <Route path="/workspaces/:workspaceid/members" component={WorkspacePage}/>
         {/*<ContentRoute path="/builder" component={BuilderPage} />*/}
         <ContentRoute path="/my-page" component={MyPage} />
+        <ContentRoute path="/workspace" component={WorkspacePage} />
         {/*<Route path="/google-material" component={GoogleMaterialPage} />*/}
         {/*<Route path="/react-bootstrap" component={ReactBootstrapPage} />*/}
         {/*<Route path="/e-commerce" component={ECommercePage} />*/}

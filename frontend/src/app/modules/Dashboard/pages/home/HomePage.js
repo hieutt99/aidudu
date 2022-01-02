@@ -38,7 +38,7 @@ function HomePage(props) {
             <HomeAside workspaces={workspaces}/>
             <HomeMain workspaces={workspaces}/>
         </div>
-      </div>
+      </div> 
       <Switch>
         {/*{*/}
         {/*  <Redirect*/}
