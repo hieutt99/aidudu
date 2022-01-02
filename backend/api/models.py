@@ -158,7 +158,7 @@ class Card(models.Model):
 
     list = models.ForeignKey(List, on_delete=models.CASCADE, related_name='cards')
     title = models.CharField(default='', max_length=128)
-    description = models.CharField(default='', max_length=256)
+    description = models.TextField(default='', blank=True)
     start = models.DateTimeField(blank=True, null=True)
     due = models.DateTimeField(blank=True, null=True)
     position = models.IntegerField(default=0)

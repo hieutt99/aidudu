@@ -278,7 +278,52 @@ class CardViewSet(ModelViewSet):
 
     def get_queryset(self):
 
-        return
+        return Card.objects.all()
+
+    def perform_create(self, serializer):
+        card = serializer.save()
+        list = card.list
+        with transaction.atomic():
+            cards_in_list = [c for c in list.cards.all() if c.id!=card.id]
+            card.position = len(cards_in_list)
+            card.save()
+
+    def perform_update(self, serializer):
+        card_src = get_object_or_404(Card, pk=self.kwargs['pk'])
+        list_src = card_src.list
+        position_src = card_src.position
+
+        card = serializer.save()
+        list = card.list 
+
+        if card.list.id != list_src.id:
+            with transaction.atomic():
+                cards_in_list = [c for c in list.cards.all() if 
+                                c.id!=card.id and c.position >= card.position]
+                for c in cards_in_list:
+                    c.position+=1
+                    c.save()
+
+                cards_in_old_list = [c for c in list_src.cards.all() if c.position > position_src]
+
+                for c in cards_in_old_list:
+                    c.position-=1
+                    c.save()
+        elif position_src != card.position:
+            with transaction.atomic():
+                if position_src < card.position: 
+                    # di chuyen xuong 
+                    cards_in_list = [c for c in list.cards.all() if c.id!=card.id and c.position > position_src and c.position <= card.position]
+                    for c in cards_in_list:
+                        c.position-=1
+                        c.save()
+
+                if position_src > card.position:
+                    # di chuyen len 
+                    cards_in_list = [c for c in list.cards.all() if c.id!=card.id and c.position>=card.position and c.position<position_src]
+                    for c in cards_in_list:
+                        c.position+=1
+                        c.save()
 
     def get_object(self):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
@@ -413,6 +458,10 @@ class ListViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         list = serializer.save()
+        board = list.board 
+        lists_in_board = [l for l in board.lists.all() if l.id!= list.id]
+        list.position = len(lists_in_board)
+        list.save()
 
     def get_object(self):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
