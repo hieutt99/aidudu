@@ -1,5 +1,5 @@
 from rest_framework import fields, serializers
-from django.contrib.auth import get_user_model
+from django.contrib.auth import get_user, get_user_model
 from api.models import *
 from django.db.models import Count
 
@@ -48,20 +48,17 @@ class ListSerializer(serializers.ModelSerializer):
 
 
 class ListCreateSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = List
         fields = '__all__'
 
 
 class WorkspaceSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Workspace
         fields = '__all__'
 
 class UserDisplaySerializer(serializers.ModelSerializer):
-
     fullname = serializers.SerializerMethodField('get_full_name_of_user')
 
     class Meta:
@@ -73,7 +70,6 @@ class UserDisplaySerializer(serializers.ModelSerializer):
 
 
 class WorkspaceMembershipSerializer(serializers.ModelSerializer):
-    
     id = serializers.SerializerMethodField('get_user_id_of_workspacemembership')
     fullname = serializers.SerializerMethodField('get_user_fullname_of_workspacemembership')
     avatar = serializers.SerializerMethodField('get_user_avatar_of_workspacemembership')
@@ -91,7 +87,6 @@ class WorkspaceMembershipSerializer(serializers.ModelSerializer):
         return workspace_src.user.avatar.url
 
 class WorkspaceBoardSerializer(serializers.ModelSerializer):
-
     # admin = serializers.SerializerMethodField('get_admin_of_workspace')
     members = WorkspaceMembershipSerializer(source='workspaces', many=True);
     class Meta:
@@ -113,6 +108,34 @@ class CardCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card
         fields = '__all__'
+
+class CommentUserSerializer(serializers.ModelSerializer):
+    avatar = serializers.SerializerMethodField()
+
+    class Meta:
+        model = get_user_model()
+        fields = ('id', 'username', 'avatar')
+
+    def get_avatar(self, instance):
+        request = self.context.get('request')
+        if not instance.avatar:
+            return None
+        
+        url = instance.avatar.url
+        return request.build_absolute_uri(url) if request else url
+
+class CommentCardSerializer(serializers.ModelSerializer):
+    # user = CommentUserSerializer()
+
+    user = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
+    
+    def get_user(self, instance):
+        user = CommentUserSerializer(instance.user, context=self.context)
+        return user.data
 
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -138,8 +161,8 @@ class LabelSerializer(serializers.ModelSerializer):
         model = Label
         fields = '__all__'
 
-class CardMembershipSerializer(serializers.ModelSerializer):
-    
+
+class CardMembershipSerializer(serializers.ModelSerializer):    
     id = serializers.SerializerMethodField('get_user_id_of_cardmembership')
     fullname = serializers.SerializerMethodField('get_user_fullname_of_cardmembership')
     avatar = serializers.SerializerMethodField('get_user_avatar_of_cardmembership')
@@ -157,8 +180,8 @@ class CardMembershipSerializer(serializers.ModelSerializer):
     def get_user_avatar_of_cardmembership(self, card_src):
         return card_src.user.avatar.url
 
-class ChecklistStatSerializer(serializers.ModelSerializer):
 
+class ChecklistStatSerializer(serializers.ModelSerializer):
     stats = serializers.SerializerMethodField('get_stat')
 
     class Meta:
@@ -169,11 +192,13 @@ class ChecklistStatSerializer(serializers.ModelSerializer):
         stats = checklist_src.items.order_by('id').values('checked').annotate(count=Count('id'))
         return stats
 
+
 class ChecklistDetailSerializer(serializers.ModelSerializer):
     items = ChecklistItemSerializer('items', many=True)
     class Meta:
         model = Checklist
         fields = ['id', 'items']
+
 
 class BoardDetailViewCardSerializer(serializers.ModelSerializer):
     comments = serializers.IntegerField(source='comments.count', read_only=True)
@@ -184,25 +209,54 @@ class BoardDetailViewCardSerializer(serializers.ModelSerializer):
         model = Card
         fields = ['id', 'title', 'due', 'position', 'comments', 'attachments', 'labels', 'members', 'checklists']
 
+
 class BoardDetailViewListSerializer(serializers.ModelSerializer):
         cards = BoardDetailViewCardSerializer(many=True)
         class Meta:
             model = List
-            fields = ['id', 'name', 'position', 'archive', 'cards']
-                                                                              #todo: checklist stat
-class BoardDetailViewSerializer(serializers.ModelSerializer):
+            fields = ['id', 'name', 'position', 'archived', 'cards']
 
+class BoardMemberSerializer(serializers.ModelSerializer):
+    avatar = serializers.SerializerMethodField()
+
+    class Meta:
+        model = get_user_model()
+        fields = ('id', 'username', 'avatar')
+    
+    def get_avatar(self, instance):
+        request = self.context.get('request')
+        if not instance.avatar:
+            return None
+        
+        url = instance.avatar.url
+        return request.build_absolute_uri(url) if request else url
+
+
+class BoardDetailViewSerializer(serializers.ModelSerializer):
     lists = BoardDetailViewListSerializer(many=True)
+    members = serializers.SerializerMethodField()
 
     class Meta:
         model = Board
         fields = ['id', 'name', 'background', 'workspace', 'members', 'lists', 'labels']
+    
+    def get_members(self, instance):
+        members = BoardMemberSerializer(instance.members, many=True, context=self.context)
+        return members.data
+
 
 class CardDetailViewSerailizer(serializers.ModelSerializer):
     checklists = ChecklistDetailSerializer('checklists', many=True)
     labels = LabelSerializer('labels', many=True)
-    comments = CommentSerializer('comments', many=True)
+    # comments = CommentCardSerializer('comments', many=True)
+    comments = serializers.SerializerMethodField()
+
     class Meta:
         model = Card 
         fields = ['id', 'title', 'description', 'start', 'due',
                 'position', 'list', 'labels', 'comments', 'checklists']
+    
+    def get_comments(self, instance):
+        comments = CommentCardSerializer(instance.comments, many=True, context=self.context)
+
+        return comments.data
