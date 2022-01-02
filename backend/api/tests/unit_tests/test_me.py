@@ -29,7 +29,8 @@ class MeTest(APITestCase):
         # print(dir(self.client))
         self.assertEqual(200, resp.status_code)
         all_field = list(resp.json().keys())
-        some_field = ["id","last_login","is_superuser","username","first_name","last_name","is_staff","is_active","date_joined","email","avatar","bio","groups","user_permissions"]
+        some_field = ['id', 'last_login', 'username', 'first_name', 'last_name', 'date_joined', 'email', 'avatar', 'bio']
+        # print(all_field)
         self.assertEqual(all_field, some_field)
     
     def test_not_found_get_info(self):

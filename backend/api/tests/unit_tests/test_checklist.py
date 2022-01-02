@@ -112,7 +112,7 @@ class ChecklistsTest(APITestCase):
         data = {
             "title": "This is a new title"
         }
-        resp = self.client.put(reverse("checklist-detail",args=[self.my_checklist[0].id]),data=data)
+        resp = self.client.patch(reverse("checklist-detail",args=[self.my_checklist[0].id]),data=data)
         # print(resp.status_code,resp.content)
         self.assertEqual(200,resp.status_code)
         tmp_checklist = self.my_checklist[0]
@@ -125,8 +125,8 @@ class ChecklistsTest(APITestCase):
         data = {
             "title": "This is a new title"
         }
-        # resp = self.client.put(reverse("checklist-list")+f"?card={tmp}",data=data)
-        resp = self.client.put(reverse("checklist-detail",args=[tmp]),data=data)
+        # resp = self.client.patch(reverse("checklist-list")+f"?card={tmp}",data=data)
+        resp = self.client.patch(reverse("checklist-detail",args=[tmp]),data=data)
         # print(resp.status_code,resp.content)
         self.assertEqual(404,resp.status_code)
         self.assertEqual(resp.json(),{"detail":"Not found."})
