@@ -1,5 +1,4 @@
 import json
-
 import requests
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
@@ -145,7 +144,7 @@ class BoardViewSet(ModelViewSet):
     @action(detail=True, methods=['get'], url_path='details')
     def get_details_of_a_board(self, request, pk):
         object = self.get_object_with_permission()
-        serializer = BoardDetailViewSerializer(object)
+        serializer = BoardDetailViewSerializer(object, context={'request': request})
         return Response(data=serializer.data)
 
     @action(detail=True, methods=['post'], url_path='leave')
@@ -383,13 +382,22 @@ class CardViewSet(ModelViewSet):
     @action(detail=True, methods=['get'], url_path='details')
     def get_details_of_a_card(self, request, pk):
         card = get_object_or_404(Card, id=pk)
-        board_membership = BoardMembership.objects.filter(
-                user_id=request.user, board=card.list.board)
+        board_membership = BoardMembership.objects.filter(user_id=request.user, board=card.list.board)
         if not board_membership.exists():
             return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            serializer = CardDetailViewSerailizer(card)
-            return Response(data=serializer.data)
+    
+        serializer = CardDetailViewSerailizer(card, context={'request': request})
+        return Response(data=serializer.data)
+    
+    @action(detail=True, methods=['post'], url_path='archive')
+    def archive_a_card(self, request, pk):
+        card = get_object_or_404(Card, id=pk)
+        board_membership = BoardMembership.objects.filter(user=request.user, board=card.list.board)
+        if not board_membership.exists():
+            raise PermissionDenied(detail="You do not belogn to this board or this board doesn't exist.")
+        card.archived = True
+        card.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class ListViewSet(ModelViewSet):
     model = List
@@ -516,26 +524,22 @@ class ListViewSet(ModelViewSet):
         list_id_dest = parse_int_or_400(request.data, 'id')
         cards = Card.objects.filter(list=pk)
         list = List.objects.get(id=pk)
-        board_membership = BoardMembership.objects.filter(
-            user_id=request.user, board=list.board)
-        if board_membership.exists():
-            cards.update(list=list_id_dest)
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            raise PermissionDenied(
-                detail="You do not belong to this board or this board doesn't exist.")
+        board_membership = BoardMembership.objects.filter(user=request.user, board=list.board)
+        if not board_membership.exists():
+            raise PermissionDenied(detail="You do not belong to this board or this board doesn't exist.")
+        cards.update(list=list_id_dest)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+            
 
-    @action(detail=True, methods=['post'], url_path='archive-lists')
+    @action(detail=True, methods=['post'], url_path='archive')
     def archive_a_list(self, request, pk):
         list = List.objects.filter(id=pk)
-        board_membership = BoardMembership.objects.filter(
-            user_id=request.user, board=list[0].board)
-        if board_membership.exists():
-            list.update(archive=True)
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            raise PermissionDenied(
-                detail="You do not belong to this board or this board doesn't exist.")
+        board_membership = BoardMembership.objects.filter(user=request.user, board=list[0].board)
+        if not board_membership.exists():
+            raise PermissionDenied(detail="You do not belong to this board or this board doesn't exist.")
+        list.update(archived=True)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class CommentViewSet(ModelViewSet):
     model = Comment
