@@ -207,15 +207,21 @@ class BoardDetailViewCardSerializer(serializers.ModelSerializer):
     checklists = ChecklistStatSerializer('checklists', many=True)
     class Meta:
         model = Card
-        fields = ['id', 'title', 'due', 'position', 'comments', 'attachments', 'labels', 'members', 'checklists']
+        fields = ['id', 'title', 'due', 'position', 'comments', 'attachments', 'labels', 'members', 'checklists', 'archived']
 
 
 class BoardDetailViewListSerializer(serializers.ModelSerializer):
-        cards = BoardDetailViewCardSerializer(many=True)
+        # cards = BoardDetailViewCardSerializer(many=True)
+        cards = serializers.SerializerMethodField()
         class Meta:
             model = List
             fields = ['id', 'name', 'position', 'archived', 'cards']
-
+        
+        def get_cards(self, instance):
+            cards = instance.cards.filter(archived=False)
+            serializer = BoardDetailViewCardSerializer(cards, many=True)
+            return serializer.data
+            
 class BoardMemberSerializer(serializers.ModelSerializer):
     avatar = serializers.SerializerMethodField()
 
