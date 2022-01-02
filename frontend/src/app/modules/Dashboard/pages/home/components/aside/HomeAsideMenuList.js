@@ -41,11 +41,12 @@ export function HomeAsideMenuList({ layoutProps, workspaces }) {
           <h4 className="menu-text text-black">Workspaces</h4>
           <i className="menu-icon flaticon-more-v2"></i>
         </li>
-        {workspaces_array.map(workspace => 
+        {workspaces_array.map((workspace, key) =>
            <li
                 className={`menu-item menu-item-submenu`}
                 aria-haspopup="true"
                 data-menu-toggle="hover"
+                key={key}
             >
                 <NavLink className="menu-link menu-toggle" to={`/workspaces/${workspace.id}`}>
                     <span className="svg-icon menu-icon">

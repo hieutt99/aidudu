@@ -22,7 +22,6 @@ export const CREATE_A_LIST = BASE_URL + WORK_API + '/lists/';
 export const CARD_DETAIL = BASE_URL + WORK_API + '/cards/';
 
 function Board(props) {
-
   const INCREMENT_CARD_POSITION = 1;
   const DECREMENT_CARD_POSITION = -1;
 
