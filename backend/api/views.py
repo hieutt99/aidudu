@@ -197,7 +197,7 @@ class BoardViewSet(ModelViewSet):
             ids = [request.data['id']] if isinstance(request.data['id'], int) \
                 else request.data['id']
             if isinstance(ids, list) and len(ids)>0:
-                memberships = BoardMembership.objects.filter(user_id__in=ids)
+                memberships = BoardMembership.objects.filter(user_id__in=ids, board_id=board.id)
                 # id da ton tai 
                 changes = [item.id for item in memberships]
                 # id can the ma chua ton tai
