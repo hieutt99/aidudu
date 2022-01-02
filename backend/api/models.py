@@ -122,10 +122,9 @@ class List(models.Model):
     """Represent list of board"""
 
     name = models.CharField(default='', max_length=128)
-    board = models.ForeignKey(
-        Board, on_delete=models.CASCADE, related_name='lists')
+    board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='lists')
     position = models.IntegerField(default=0)
-    archive = models.BooleanField(default=False)
+    archived = models.BooleanField(default=False)
 
     def __str__(self):
         return f"List {self.name} ({self.id})"
@@ -148,8 +147,7 @@ class Label(models.Model):
 
     board = models.ForeignKey(Board, on_delete=models.CASCADE, related_name='labels')
     name = models.CharField(default='', max_length=32)
-    color = models.CharField(default=COLOR.TOMATO,
-                             choices=COLOR.choices, max_length=16)
+    color = models.CharField(default=COLOR.TOMATO, choices=COLOR.choices, max_length=16)
 
     def __str__(self):
         return f"Label {self.name} ({self.id})"
@@ -158,13 +156,13 @@ class Label(models.Model):
 class Card(models.Model):
     """Represent card of list"""
 
-    list = models.ForeignKey(
-        List, on_delete=models.CASCADE, related_name='cards')
+    list = models.ForeignKey(List, on_delete=models.CASCADE, related_name='cards')
     title = models.CharField(default='', max_length=128)
     description = models.CharField(default='', max_length=256, blank=True)
     start = models.DateTimeField(blank=True, null=True)
     due = models.DateTimeField(blank=True, null=True)
     position = models.IntegerField(default=0)
+    archived = models.BooleanField(default=False)
 
     labels = models.ManyToManyField(Label, through='CardLabelRelationship')
 
