@@ -215,11 +215,23 @@ class ChecklistDetailSerializer(serializers.ModelSerializer):
         fields = ['id', 'items']
 
 
+
+
+class LabelDetailSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Label
+        fields = ['id', 'name', 'color']
+
+
+
 class BoardDetailViewCardSerializer(serializers.ModelSerializer):
     comments = serializers.IntegerField(source='comments.count', read_only=True)
     attachments = serializers.IntegerField(source='attachments.count', read_only=True)
     members = CardMembershipSerializer(source='user_cards', many=True)
     checklists = ChecklistStatSerializer('checklists', many=True)
+    labels = LabelDetailSerializer('labels', many=True)
+
     class Meta:
         model = Card
         fields = ['id', 'title', 'due', 'position', 'comments', 'attachments', 'labels', 'members', 'checklists']
@@ -245,14 +257,6 @@ class BoardMemberSerializer(serializers.ModelSerializer):
         
         url = instance.avatar.url
         return request.build_absolute_uri(url) if request else url
-
-
-class LabelDetailSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = Label
-        fields = ['id', 'name', 'color']
-
 
 class BoardDetailViewSerializer(serializers.ModelSerializer):
     lists = BoardDetailViewListSerializer(many=True)
