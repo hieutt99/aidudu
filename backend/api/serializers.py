@@ -73,6 +73,7 @@ class WorkspaceMembershipSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField('get_user_id_of_workspacemembership')
     fullname = serializers.SerializerMethodField('get_user_fullname_of_workspacemembership')
     avatar = serializers.SerializerMethodField('get_user_avatar_of_workspacemembership')
+    
     class Meta:
         model = WorkspaceMembership
         fields = ['id', 'fullname', 'avatar', 'role']
@@ -84,11 +85,18 @@ class WorkspaceMembershipSerializer(serializers.ModelSerializer):
         return workspace_src.user.get_full_name()
     
     def get_user_avatar_of_workspacemembership(self, workspace_src):
-        return workspace_src.user.avatar.url
+        request = self.context.get('request')
+        if not workspace_src.user.avatar:
+            return None
+        
+        url = workspace_src.user.avatar.url
+        return request.build_absolute_uri(url) if request else url
+
 
 class WorkspaceBoardSerializer(serializers.ModelSerializer):
     # admin = serializers.SerializerMethodField('get_admin_of_workspace')
-    members = WorkspaceMembershipSerializer(source='workspaces', many=True);
+    members = WorkspaceMembershipSerializer(source='workspaces', many=True)
+
     class Meta:
         model = Workspace
         fields = ['id', 'name', 'members', 'visibility', 'logo', 'boards']
@@ -239,9 +247,17 @@ class BoardMemberSerializer(serializers.ModelSerializer):
         return request.build_absolute_uri(url) if request else url
 
 
+class LabelDetailSerializer(serializers.ModelSerializer):
+    
+    class Meta:
+        model = Label
+        fields = ['id', 'name', 'color']
+
+
 class BoardDetailViewSerializer(serializers.ModelSerializer):
     lists = BoardDetailViewListSerializer(many=True)
     members = serializers.SerializerMethodField()
+    labels = serializers.SerializerMethodField()
 
     class Meta:
         model = Board
@@ -250,6 +266,10 @@ class BoardDetailViewSerializer(serializers.ModelSerializer):
     def get_members(self, instance):
         members = BoardMemberSerializer(instance.members, many=True, context=self.context)
         return members.data
+    
+    def get_labels(self, instance):
+        labels = LabelDetailSerializer(instance.labels, many=True)
+        return labels.data
 
 
 class CardDetailViewSerailizer(serializers.ModelSerializer):
