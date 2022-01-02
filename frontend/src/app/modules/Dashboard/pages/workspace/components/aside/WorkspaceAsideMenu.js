@@ -2,9 +2,9 @@ import React, {useMemo} from "react";
 import {WorkspaceAsideMenuList} from "./WorkspaceAsideMenuList";
 import {useHtmlClassService} from "../../../../../../../_metronic/layout/_core/MetronicLayout";
 
-export function WorkspaceAsideMenu({disableScroll, workspaces}) {
+export function WorkspaceAsideMenu({disableScroll, workspace}) {
   const uiService = useHtmlClassService();
-  console.log(workspaces)
+  console.log(workspace)
   const layoutProps = useMemo(() => {
     return {
       layoutConfig: uiService.config,
@@ -23,7 +23,7 @@ export function WorkspaceAsideMenu({disableScroll, workspaces}) {
         className={`aside-menu my-4 ${layoutProps.asideClassesFromConfig}`}
         {...layoutProps.asideMenuAttr}
       >
-        <WorkspaceAsideMenuList layoutProps={layoutProps} workspaces={workspaces} />
+        <WorkspaceAsideMenuList layoutProps={layoutProps} workspaces={workspace} />
       </div>
       {/* end::Menu Container */}
     </>
