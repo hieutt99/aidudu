@@ -19,6 +19,7 @@ services:
             - redis
             - worker
             - scheduler
+        restart: always
     database:
         image: postgres
         environment:
@@ -29,10 +30,14 @@ services:
             - postgres_data:/var/lib/postgresql/data/
         ports:
             - "5432:5432"
+        restart: always
+
     redis:
         image: redis
         volumes:
             - redis_data:/data
+        restart: always
+
     worker:
         build: 
             context: ./backend
@@ -45,6 +50,8 @@ services:
         env_file: 
             - ./backend/.env_files/backend.dev.env
         command: celery --app=aidudu worker --autoscale=4,1 -l DEBUG
+        restart: always
+
     scheduler:
         build:
             context: ./backend
@@ -57,6 +64,8 @@ services:
         env_file:
             - ./backend/.env_files/backend.dev.env
         command: celery --app=aidudu beat -l DEBUG
+        restart: always
+        
     frontend:
         build: ./frontend
         container_name: frontend
@@ -68,6 +77,7 @@ services:
           - /app/node_modules
         depends_on:
           - backend
+        restart: always
 volumes:
     postgres_data:
     redis_data:
