@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Button, Col, Container, Modal, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import {
-  addCommentToCard,
+  addCommentToCard, archiveCard,
   deleteCommentInCard,
   getCardDetails,
   updateCardDetails, updateCommentInCard
@@ -137,6 +137,20 @@ const CardModal = ({ open, onClose }) => {
     }
   };
 
+  const onCardArchiveClicked = () => {
+    archiveCard(cardId)
+      .then(r => {
+        console.log(r);
+        toast.success(`Card archived OK`, {
+          position: 'top-right',
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true
+        });
+      })
+      .catch(err => console.log(err))
+  }
+
   return (
     <>
       <Modal size={'lg'} show={open} onHide={() => onClose()} centered>
@@ -232,8 +246,9 @@ const CardModal = ({ open, onClose }) => {
                     className={'mr-0'}
                     margin='normal'
                     multiline
-                    variant='outlined'
+                    variant='filled'
                     defaultValue={cardData.description}
+                    InputProps={{ disableUnderline: true, style: {fontSize: '1.1rem'}}}
                     onBlur={(event) => handleCardTextFieldChange(event, 'description')}
                   />
                 </Row>
@@ -348,8 +363,7 @@ const CardModal = ({ open, onClose }) => {
                     variant='secondary'
                     style={{ justifyContent: 'flex-start' }}
                     className={'text-left w-100 mb-3'}
-                    onClick={() => {
-                    }}
+                    onClick={onCardArchiveClicked}
                   >
                     <FiArchive className={'mr-3'} style={iconSize20} />
                     Archive

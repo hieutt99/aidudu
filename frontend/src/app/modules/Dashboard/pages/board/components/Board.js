@@ -31,6 +31,7 @@ function Board(props) {
 
   useEffect(() => {
     getBoardDetails();
+    props.setRerenderFlag(false);
   }, [props.rerenderFlag]);
 
   const getBoardDetails = () => {

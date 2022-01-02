@@ -21,7 +21,7 @@ function BoardPage(props) {
     <>
       <Route path={`${url}/`} render={() => {
         return (
-          <Board rerenderFlag={rerenderFlag}/>
+          <Board rerenderFlag={rerenderFlag} setRerenderFlag={setRerenderFlag}/>
         )
       }} />
       <Route path={`${url}/card/:cardId`} children={({ match }) => {

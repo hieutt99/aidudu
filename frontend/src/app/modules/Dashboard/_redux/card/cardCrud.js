@@ -33,3 +33,8 @@ export const updateCommentInCard = (cmtId, content) => {
     content: content
   });
 }
+
+export const archiveCard = (cardId) => {
+  const POST_ARCHIVE_CARD_URL = BACKEND_ORIGIN + `api/v1/cards/${cardId}/archive/`;
+  return axios.post(POST_ARCHIVE_CARD_URL);
+}
