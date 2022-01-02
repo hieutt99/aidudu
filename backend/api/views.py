@@ -431,7 +431,7 @@ class CardViewSet(ModelViewSet):
         if not board_membership.exists():
             return Response(status=status.HTTP_204_NO_CONTENT)
     
-        serializer = CardDetailViewSerailizer(card, context={'request': request})
+        serializer = CardDetailViewSerializer(card, context={'request': request})
         return Response(data=serializer.data)
     
     @action(detail=True, methods=['post'], url_path='archive')

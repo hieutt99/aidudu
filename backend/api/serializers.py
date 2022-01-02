@@ -103,13 +103,6 @@ class CardSerializer(serializers.ModelSerializer):
         model = Card
         fields = '__all__'
 
-# class CardDetailSerializer(serializers.ModelSerializer):
-    
-
-#     class Meta:
-#         model = Card
-#         fields  = []
-
 
 class CardCreateSerializer(serializers.ModelSerializer):
     class Meta:
@@ -251,12 +244,16 @@ class BoardDetailViewSerializer(serializers.ModelSerializer):
         members = BoardMemberSerializer(instance.members, many=True, context=self.context)
         return members.data
 
+class ListDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = List
+        fields = ['id', 'name']
 
-class CardDetailViewSerailizer(serializers.ModelSerializer):
+class CardDetailViewSerializer(serializers.ModelSerializer):
     checklists = ChecklistDetailSerializer('checklists', many=True)
     labels = LabelSerializer('labels', many=True)
-    # comments = CommentCardSerializer('comments', many=True)
     comments = serializers.SerializerMethodField()
+    list = serializers.SerializerMethodField()
 
     class Meta:
         model = Card 
@@ -267,3 +264,7 @@ class CardDetailViewSerailizer(serializers.ModelSerializer):
         comments = CommentCardSerializer(instance.comments, many=True, context=self.context)
 
         return comments.data
+
+    def get_list(self, instance):
+        list = ListDetailSerializer(instance.list)
+        return list.data
