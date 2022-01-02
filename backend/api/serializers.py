@@ -257,6 +257,26 @@ class BoardMemberSerializer(serializers.ModelSerializer):
         url = instance.avatar.url
         return request.build_absolute_uri(url) if request else url
 
+class BoardMembershipSerializer(serializers.ModelSerializer):
+    id = serializers.SerializerMethodField()
+    username = serializers.SerializerMethodField()
+    avatar = serializers.SerializerMethodField()
+
+    class Meta:
+        model = BoardMembership
+        fields = ["id", "username", "avatar"]
+
+    def get_id(self, instance):
+        return instance.user.id 
+    def get_username(self, instance):
+        return instance.user.username
+    def get_avatar(self, instance):
+        request = self.context.get("request")
+        if not instance.user.avatar:
+            return None 
+        url = instance.user.avatar.url 
+        return request.build_absolute_uri(url) if request else url 
+
 class BoardDetailViewSerializer(serializers.ModelSerializer):
     lists = BoardDetailViewListSerializer(many=True)
     members = serializers.SerializerMethodField()
