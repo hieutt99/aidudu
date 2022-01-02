@@ -158,6 +158,21 @@ class BoardViewSet(ModelViewSet):
         membership.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @action(detail=True, methods=['put'], url_path='update_cards')
+    def update_multiple_cards(self, request, pk):
+        if not BoardMembership.objects.filter(user_id=request.user, board_id=pk).exists():
+            raise PermissionDenied("You don't belong to this board")
+
+        update_dict = {item['id']:item['position'] for item in request.data}
+        cards = Card.objects.filter(id__in=list(update_dict.keys()))
+        
+        with transaction.atomic():
+            for card in cards:
+                card.position = update_dict[card.id]
+                card.save()
+        
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 class WorkspaceViewSet(ModelViewSet):
     model = Workspace
 
