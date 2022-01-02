@@ -31,7 +31,7 @@ export function WorkspaceWidget(props){
         <>
             <div className={`card card-custom ${className}`}>
             {/* Head */}
-                <div className="card-header border-0 pt-5">
+                <div className="card-header border-0 pt-5 pb-5">
                     <div className="container">
                         <div className="row">
                             <div className="col-lg">
@@ -41,7 +41,7 @@ export function WorkspaceWidget(props){
                                     </span>
                                 </h3>
                             </div>
-                            <div className="container">
+                            <div className="col">
                                 <div className="row">
                                     <div className="col-sm">
                                         <NavLink className="btn btn-secondary" to={`/workspaces/${workspace.id}/boards`}>
@@ -73,15 +73,15 @@ export function WorkspaceWidget(props){
                     </div>
                     
                 </div>
-                <div className="card-body pt-2 pb-0 mt-n3">
+                <div className="card-body pt-2 pb-2 mt-n3">
                     <div className="row">
                         {boards.map((board, index)=>
                             <>
                                 <div className="col-sm-3">
-                                    <div className="card card custom">
+                                    <div className="card card-custom">
                                         <NavLink className="menu-link" to={`boards/${board.id}`} >
-                                            <div className="card-body">
-                                                <img className="card-img-center" src="..." alt="Card image cap"></img>
+                                            <div className="card-body ">
+                                                <img className="card-img-center img-fluid" src={board.background} style={{maxWidth: '100%', height: '20%'}} alt="Card image cap"></img>
 
                                             </div>
                                         </NavLink>
