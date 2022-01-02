@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
 import { useState } from "react";
 import { Switch, Route, NavLink } from "react-router-dom";
 import { WorkspaceWidget } from "./WorkspaceWidget";
+import { useParams } from 'react-router-dom';
+import { getWorkspaceBoards } from "../../../../_redux/home/homeCrud";
+import { toast } from "react-toastify";
+import WorkspaceDetail from "../mainheader/WorkspaceDetail";
 
 const textStyle = {
     fontSize : "15px"
@@ -47,62 +51,129 @@ const boardBackgroundIMG = {
 }
 
 function WorkspaceBoards(props){
+    const {workspaceId} = useParams();
+    const [boards, setBoards] = useState([])
+    useEffect(()=>{
+        getWorkspaceBoards(workspaceId).then(res=>{
+            setBoards(res.data)
+        }).catch(err=>{
+            toast.error('Cannot get boards', {
+                position: 'top-right',
+                autoClose: 5000,
+                hideProgressBar: false,
+                closeOnClick: true
+              });
+        })
+    }, [])
+    console.log(boards)
+    if (boards.length == 0){
+        return (
+            <>
+            <div className="d-flex flex-column w-100">
+                <WorkspaceDetail workspaceId={workspaceId}/>
+                <div className="d-flex flex-column">
+                    <div className="d-flex flex-row justify-content-around" style={{marginTop:30}}>
+                        <div className="d-flex flex-column">
+                            <h4>Sort by</h4>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Dropdown button
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="d-flex flex-column">
+                            <h4>Filter by</h4>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Dropdown button
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="d-flex flex-column">
+                            <h4>Search</h4>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"></input>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="d-flex justify-content-center">
+                        <h3>This workspace is empty!</h3>
+                    </div>
+                </div>
+            </div>              
+            </>
+        )
+    } else {
+        return (
+            <>
+            <div className="d-flex flex-column w-100">
+                <WorkspaceDetail workspaceId={workspaceId}/>
+                <div className="d-flex flex-column">
+                    <div className="d-flex flex-row justify-content-around" style={{marginTop:30}}>
+                        <div className="d-flex flex-column">
+                            <h4>Sort by</h4>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Dropdown button
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a class="dropdown-item" href="#">Action</a>
+                                    <a class="dropdown-item" href="#">Another action</a>
+                                    <a class="dropdown-item" href="#">Something else here</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="d-flex flex-column">
+                            <h4>Filter by</h4>
+                            <div className="dropdown">
+                                <button className="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Dropdown button
+                                </button>
+                                <div className="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                    <a className="dropdown-item" href="#">Action</a>
+                                    <a className="dropdown-item" href="#">Another action</a>
+                                    <a className="dropdown-item" href="#">Something else here</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="d-flex flex-column">
+                            <h4>Search</h4>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"></input>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="row">
+                        {boards.map(board => 
+                            <div className="col-sm-4">
+                                <div className="image-container" style={{position:"relative", textAlign:"center",textTransform:"uppercase",fontSize:"30px"}}>
+                                    <NavLink
+                                    to={`/boards/${board.id}`}
+                                    activeClassName="active"
+                                    >
+                                            <img src={board.background}  style={boardBackgroundIMG} alt={board.name}></img>
+                                            <div class="top-left" style={{position:"absolute", top:"25px", left:"90px", color:"white"}}>{board.name}</div>
+                                    </NavLink>
+                            </div>
+                            </div>
 
-    return (
-        <>
-        <div className="d-flex flex-column">
-            <div className="d-flex flex-row justify-content-around" style={{marginTop:30}}>
-                <div className="d-flex flex-column">
-                    <h4>Sort by</h4>
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Dropdown button
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                        </div>
+                        )}
                     </div>
                 </div>
-                <div className="d-flex flex-column">
-                    <h4>Filter by</h4>
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Dropdown button
-                        </button>
-                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <a class="dropdown-item" href="#">Something else here</a>
-                        </div>
-                    </div>
-                </div>
-                <div className="d-flex flex-column">
-                    <h4>Search</h4>
-                    <div class="input-group mb-3">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text" id="inputGroup-sizing-default">Default</span>
-                        </div>
-                        <input type="text" class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"></input>
-                    </div>
-                </div>
-            </div>
-            <div className="d-flex flex-column">
-                <div className="d-flex flex-row justify-content-around">
-                    <img src="/media/stock-600x400/img-4.jpg" class="img-fluid" style={boardBackgroundIMG} alt="Responsive image"></img>
-                    <img src="/media/stock-600x400/img-4.jpg" class="img-fluid" style={boardBackgroundIMG} alt="Responsive image"></img>
-                    <img src="/media/stock-600x400/img-4.jpg" class="img-fluid" style={boardBackgroundIMG} alt="Responsive image"></img>
-                </div>
-                <div className="d-flex flex-row justify-content-around">
-                    <img src="/media/stock-600x400/img-4.jpg" class="img-fluid" style={boardBackgroundIMG} alt="Responsive image"></img>
-                    <img src="/media/stock-600x400/img-4.jpg" class="img-fluid" style={boardBackgroundIMG} alt="Responsive image"></img>
-                    <img src="/media/stock-600x400/img-4.jpg" class="img-fluid" style={boardBackgroundIMG} alt="Responsive image"></img>
-                </div>
-            </div>
-        </div>
-        </>
-    )
+            </div>              
+            </>
+        )
+    }
 }
 
 export default WorkspaceBoards

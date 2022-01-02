@@ -13,7 +13,7 @@ export function HomeAsideMenuList({ layoutProps, workspaces }) {
         : "";
     };
     const workspaces_array = workspaces.workspaces
-
+    console.log(workspaces_array)
 //   useEffect = () => {
 //       dispatchEvent()
 //   }
@@ -62,7 +62,7 @@ export function HomeAsideMenuList({ layoutProps, workspaces }) {
                             className={`menu-item `}
                             aria-haspopup="true"
                         >
-                            <NavLink className="menu-link" to={`/workspaces/${workspace.id}/boards`}>
+                            <NavLink className="menu-link" to={`/workspaces/${workspace.id}`}>
                             <span className="svg-icon menu-icon">
                                 <SVG src={toAbsoluteUrl("/media/svg/icons/Home/Library.svg")} />
                             </span>
