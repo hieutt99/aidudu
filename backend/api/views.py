@@ -1,5 +1,4 @@
 import json
-
 import requests
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
@@ -145,7 +144,7 @@ class BoardViewSet(ModelViewSet):
     @action(detail=True, methods=['get'], url_path='details')
     def get_details_of_a_board(self, request, pk):
         object = self.get_object_with_permission()
-        serializer = BoardDetailViewSerializer(object)
+        serializer = BoardDetailViewSerializer(object, context={'request': request})
         return Response(data=serializer.data)
 
     @action(detail=True, methods=['post'], url_path='leave')
@@ -156,6 +155,21 @@ class BoardViewSet(ModelViewSet):
             raise PermissionDenied(
                 detail="You do not belong to this board or this board doesn't exist.")
         membership.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=['put'], url_path='update_cards')
+    def update_multiple_cards(self, request, pk):
+        if not BoardMembership.objects.filter(user_id=request.user, board_id=pk).exists():
+            raise PermissionDenied("You don't belong to this board")
+
+        update_dict = {item['id']:item['position'] for item in request.data}
+        cards = Card.objects.filter(id__in=list(update_dict.keys()))
+        
+        with transaction.atomic():
+            for card in cards:
+                card.position = update_dict[card.id]
+                card.save()
+        
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class WorkspaceViewSet(ModelViewSet):
@@ -264,7 +278,52 @@ class CardViewSet(ModelViewSet):
 
     def get_queryset(self):
 
-        return
+        return Card.objects.all()
+
+    def perform_create(self, serializer):
+        card = serializer.save()
+        list = card.list
+        with transaction.atomic():
+            cards_in_list = [c for c in list.cards.all() if c.id!=card.id]
+            card.position = len(cards_in_list)
+            card.save()
+
+    def perform_update(self, serializer):
+        card_src = get_object_or_404(Card, pk=self.kwargs['pk'])
+        list_src = card_src.list
+        position_src = card_src.position
+
+        card = serializer.save()
+        list = card.list 
+
+        if card.list.id != list_src.id:
+            with transaction.atomic():
+                cards_in_list = [c for c in list.cards.all() if 
+                                c.id!=card.id and c.position >= card.position]
+                for c in cards_in_list:
+                    c.position+=1
+                    c.save()
+
+                cards_in_old_list = [c for c in list_src.cards.all() if c.position > position_src]
+
+                for c in cards_in_old_list:
+                    c.position-=1
+                    c.save()
+        elif position_src != card.position:
+            with transaction.atomic():
+                if position_src < card.position: 
+                    # di chuyen xuong 
+                    cards_in_list = [c for c in list.cards.all() if c.id!=card.id and c.position > position_src and c.position <= card.position]
+                    for c in cards_in_list:
+                        c.position-=1
+                        c.save()
+
+                if position_src > card.position:
+                    # di chuyen len 
+                    cards_in_list = [c for c in list.cards.all() if c.id!=card.id and c.position>=card.position and c.position<position_src]
+                    for c in cards_in_list:
+                        c.position+=1
+                        c.save()
 
     def get_object(self):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
@@ -368,13 +427,22 @@ class CardViewSet(ModelViewSet):
     @action(detail=True, methods=['get'], url_path='details')
     def get_details_of_a_card(self, request, pk):
         card = get_object_or_404(Card, id=pk)
-        board_membership = BoardMembership.objects.filter(
-                user_id=request.user, board=card.list.board)
+        board_membership = BoardMembership.objects.filter(user_id=request.user, board=card.list.board)
         if not board_membership.exists():
             return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            serializer = CardDetailViewSerailizer(card)
-            return Response(data=serializer.data)
+    
+        serializer = CardDetailViewSerailizer(card, context={'request': request})
+        return Response(data=serializer.data)
+    
+    @action(detail=True, methods=['post'], url_path='archive')
+    def archive_a_card(self, request, pk):
+        card = get_object_or_404(Card, id=pk)
+        board_membership = BoardMembership.objects.filter(user=request.user, board=card.list.board)
+        if not board_membership.exists():
+            raise PermissionDenied(detail="You do not belogn to this board or this board doesn't exist.")
+        card.archived = True
+        card.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class ListViewSet(ModelViewSet):
     model = List
@@ -390,6 +458,33 @@ class ListViewSet(ModelViewSet):
 
     def perform_create(self, serializer):
         list = serializer.save()
+        board = list.board 
+        lists_in_board = [l for l in board.lists.all() if l.id!= list.id]
+        list.position = len(lists_in_board)
+        list.save()
+
+    def perform_update(self, serializer):
+        list_src = get_object_or_404(List, pk=self.kwargs['pk'])
+        position_src = list_src.position
+
+        list = serializer.save()
+        board = list.board 
+        if position_src > list.position:
+            # di chuyen sang trai 
+            with transaction.atomic():
+                lists_in_board = [l for l in board.lists.all() if l.id!=list.id and l.position>=list.position and l.position<position_src]
+                for l in lists_in_board:
+                    l.position+=1
+                    l.save()
+        elif position_src < list.position:
+            # di chuyen sang phai 
+            with transaction.atomic():
+                lists_in_board = [l for l in board.lists.all() if l.id!=list.id and l.position>position_src and l.position <= list.position]
+                for l in lists_in_board:
+                    l.position-=1
+                    l.save()
+
+
 
     def get_object(self):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
@@ -501,26 +596,22 @@ class ListViewSet(ModelViewSet):
         list_id_dest = parse_int_or_400(request.data, 'id')
         cards = Card.objects.filter(list=pk)
         list = List.objects.get(id=pk)
-        board_membership = BoardMembership.objects.filter(
-            user_id=request.user, board=list.board)
-        if board_membership.exists():
-            cards.update(list=list_id_dest)
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            raise PermissionDenied(
-                detail="You do not belong to this board or this board doesn't exist.")
+        board_membership = BoardMembership.objects.filter(user=request.user, board=list.board)
+        if not board_membership.exists():
+            raise PermissionDenied(detail="You do not belong to this board or this board doesn't exist.")
+        cards.update(list=list_id_dest)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+            
 
-    @action(detail=True, methods=['post'], url_path='archive-lists')
+    @action(detail=True, methods=['post'], url_path='archive')
     def archive_a_list(self, request, pk):
         list = List.objects.filter(id=pk)
-        board_membership = BoardMembership.objects.filter(
-            user_id=request.user, board=list[0].board)
-        if board_membership.exists():
-            list.update(archive=True)
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        else:
-            raise PermissionDenied(
-                detail="You do not belong to this board or this board doesn't exist.")
+        board_membership = BoardMembership.objects.filter(user=request.user, board=list[0].board)
+        if not board_membership.exists():
+            raise PermissionDenied(detail="You do not belong to this board or this board doesn't exist.")
+        list.update(archived=True)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 class CommentViewSet(ModelViewSet):
     model = Comment
@@ -589,6 +680,35 @@ class UserViewSet(ModelViewSet):
         
         return self.model.objects.annotate(full_name=Concat('first_name', V(' '), 'last_name')).filter(q)
             
+    def get_object(self):
+        """
+        Returns the object the view is displaying.
+
+        You may want to override this if you need to provide non-standard
+        queryset lookups.  Eg if objects are referenced using multiple
+        keyword arguments in the url conf.
+        """
+        # queryset = self.filter_queryset(self.get_queryset())
+        queryset = self.model.objects.all()
+
+        # Perform the lookup filtering.
+        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+
+        assert lookup_url_kwarg in self.kwargs, (
+            'Expected view %s to be called with a URL keyword argument '
+            'named "%s". Fix your URL conf, or set the `.lookup_field` '
+            'attribute on the view correctly.' %
+            (self.__class__.__name__, lookup_url_kwarg)
+        )
+
+        filter_kwargs = {self.lookup_field: self.kwargs[lookup_url_kwarg]}
+        obj = get_object_or_404(queryset, **filter_kwargs)
+
+        # May raise a permission denied
+        self.check_object_permissions(self.request, obj)
+
+        return obj
+
 
 class LabelViewSet(ModelViewSet):
     model = Label
