@@ -460,9 +460,9 @@ function Board(props) {
 
                   {/* Header */}
                   <div className='d-flex justify-content-between align-items-center p-3'>
-                    {/* <div className='btn p-0' onClick={() => { setDialogInviteMember(false) }}>
+                    <div className='btn p-0' style={{visibility: 'hidden'}}>
                       <MdClose style={iconSize20} />
-                    </div> */}
+                    </div>
                     <h6 className='m-0'>Invite to board</h6>
                     <div className='btn p-0' onClick={() => { setDialogInviteMember(false) }}>
                       <MdClose style={iconSize20} />
