@@ -25,7 +25,7 @@ function BoardPage(props) {
           <Board rerenderFlag={rerenderFlag} setRerenderFlag={setRerenderFlag} setLists={setLists}/>
         )
       }} />
-      <Route path={`${url}/card/:cardId`} children={({ match }) => {
+      <Route path={`${url}/:boardId/card/:cardId`} children={({ match }) => {
         return (
           match ? <CardModal onClose={handleOnCardClose} open={Boolean(match)} lists={lists}/> : ""
         )
