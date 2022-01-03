@@ -49,11 +49,12 @@ export function HomeAsideMenuList({ layoutProps, workspaces, handleWorkspaceModa
             </li>
             
         </li>
-        {workspaces_array.map(workspace => 
+        {workspaces_array.map((workspace, key) =>
            <li
                 className={`menu-item menu-item-submenu`}
                 aria-haspopup="true"
                 data-menu-toggle="hover"
+                key={key}
             >
                 <div className="menu-link menu-toggle">
                     <span className="svg-icon menu-icon">

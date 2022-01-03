@@ -81,8 +81,7 @@ export function* saga() {
   });
 
   yield takeLatest(actionTypes.UserRequested, function* userRequested() {
-    const user = yield getUserByToken();
-
-    yield put(actions.fulfillUser(user.data));
+    const user = yield getUserByToken(); //side effect
+    yield put(actions.fulfillUser(user.data));  // return action object which is going to be dispatched to reducer
   });
 }

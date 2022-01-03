@@ -1,4 +1,3 @@
-// export const BACKEND_ORIGIN = 'http://127.0.0.1:8000/';
 export const BACKEND_ORIGIN = process.env.REACT_APP_BACKEND_ORIGIN ? process.env.REACT_APP_BACKEND_ORIGIN : "http://127.0.0.1:8000/";
 
 console.log(BACKEND_ORIGIN);

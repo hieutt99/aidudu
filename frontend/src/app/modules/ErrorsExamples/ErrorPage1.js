@@ -1,5 +1,6 @@
 import React from "react";
 import {toAbsoluteUrl} from "../../../_metronic/_helpers";
+import { Link } from 'react-router-dom';
 
 export function ErrorPage1() {
   return (
@@ -19,6 +20,7 @@ export function ErrorPage1() {
         <p className="font-size-h3 font-weight-light">
           OOPS! Something went wrong here
         </p>
+        <Link to="/" className="font-size-h3 font-weight-light">Return to Home Page</Link>
       </div>
     </div>
   );

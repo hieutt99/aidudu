@@ -240,7 +240,7 @@ class BoardMemberSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'avatar')
+        fields = ('id', 'username', 'first_name', 'last_name', 'avatar')
     
     def get_avatar(self, instance):
         request = self.context.get('request')
@@ -277,7 +277,7 @@ class BoardDetailViewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Board
-        fields = ['id', 'name', 'background', 'workspace', 'members', 'lists', 'labels']
+        fields = ['id', 'name', 'background', 'workspace', 'members', 'lists', 'labels', 'starred']
     
     def get_members(self, instance):
         members = BoardMemberSerializer(instance.members, many=True, context=self.context)

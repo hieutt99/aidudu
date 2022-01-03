@@ -5,11 +5,21 @@ import { BiMenuAltLeft } from "react-icons/bi";
 import { MdAttachFile } from "react-icons/md";
 import { GoCommentDiscussion } from "react-icons/go";
 import { iconSize24, iconSize20Grey, label, memberAvatarContainer } from '../BoardStyles';
+import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 
 const BoardCardItem = (props) => {
 
     const card = props.card;
     const index = props.index;
+
+    const history = useHistory();
+    const path  = useLocation();
+
+    const handleCardClick = (cardId) => {
+        history.push({
+         pathname: `${path.pathname}/card/${cardId}`
+        });
+    };
 
     return (
         <Draggable draggableId={'' + card["id"]} index={index} key={card["id"]}>
@@ -19,8 +29,8 @@ const BoardCardItem = (props) => {
                     {...provided.dragHandleProps}
                     ref={provided.innerRef}
                     className='card-body rounded bg-white shadow-2 mb-2 p-3'
+                    onClick={() => handleCardClick(card["id"])}
                 >
-
                     {/* Labels */}
                     {card["labels"] !== undefined && card["labels"].length > 0 &&
                         <div className='d-flex align-items-start justify-content-start mb-3' style={label}>

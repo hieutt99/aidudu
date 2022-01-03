@@ -17,8 +17,6 @@ export function WorkspaceWidget(props){
     useEffect(() => {
         getWorkspaceBoards(workspace.id)
         .then(res => {
-            console.log("+++++++++++++")
-            console.log(res.data)
             setBoards(res.data)
         })
         .catch(err => toast.error('Cannot get boards', {
@@ -80,7 +78,7 @@ export function WorkspaceWidget(props){
                         {boards.map((board, index)=>
                             <>
                                 <div className="col-sm-3">
-                                    <NavLink className="menu-link" to={`boards/${board.id}`} >
+                                    <NavLink className="menu-link" to={`board/${board.id}`} >
                                         <div className="card card-custom gutter-b">
                                             <div className="card-body" style={{backgroundImage: `url(${board.background})`}}>
                                                     <h5> {board.name} </h5>
