@@ -5,11 +5,13 @@ import SVG from "react-inlinesvg";
 import { getWorkspaceBoards } from "../../../../_redux/home/homeCrud";
 import { toast } from 'react-toastify'
 import { toAbsoluteUrl } from "../../../../../../../_metronic/_helpers";
+import { Button, Image } from 'react-bootstrap'
 
 
 export function WorkspaceWidget(props){
     const workspace = props.workspace
     const className = props.className
+    const handleBoardModalOpen = props.handleBoardModalOpen
     const [boards, setBoards] = useState([])
     
     useEffect(() => {
@@ -78,23 +80,29 @@ export function WorkspaceWidget(props){
                         {boards.map((board, index)=>
                             <>
                                 <div className="col-sm-3">
-                                    <div className="card card-custom">
-                                        <NavLink className="menu-link" to={`boards/${board.id}`} >
-                                            <div className="card-body ">
-                                                <img className="card-img-center img-fluid" src={board.background} style={{maxWidth: '100%', height: '20%'}} alt="Card image cap"></img>
-
+                                    <NavLink className="menu-link" to={`boards/${board.id}`} >
+                                        <div className="card card-custom gutter-b">
+                                            <div className="card-body" style={{backgroundImage: `url(${board.background})`}}>
+                                                    <h5> {board.name} </h5>
                                             </div>
-                                        </NavLink>
-                                       
-                                    </div>
+                                        </div>
+                                    </NavLink>
                                 </div>
                             </>
                         )}
+                        <div className="col-sm-3">
+                            <span onClick={handleBoardModalOpen} style={{cursor: 'pointer'}}>
+                                <div className="card card-custom gutter-b">
+                                    <div className="card-body">
+                                            <h6>Create new Board</h6>
+                                    </div>
+                                </div>
+                            </span>
+                        </div>
                     </div>
                     
                 </div>
                 <div className="card-footer border-0 pt-5">
-
                 </div>
             </div>
         </>

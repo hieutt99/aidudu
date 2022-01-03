@@ -5,12 +5,12 @@ import { BuilderPage } from "./pages/BuilderPage";
 import { MyPage } from "./pages/MyPage";
 import { DashboardPage } from './modules/Dashboard/pages/DashboardPage';
 import WorkspacePage from "./modules/Dashboard/pages/workspace/WorkspacePage";
-import BoardPage from "./modules/Dashboard/pages/board/BoardPage";
 import Board from "./modules/Dashboard/pages/board/components/Board";
 import WorkspaceBoards from "./modules/Dashboard/pages/workspace/components/main/WorkspaceBoards";
 import Members from "./modules/Dashboard/pages/workspace/components/main/workspacemembers/Members";
 import WorkspaceSettings from "./modules/Dashboard/pages/workspace/components/main/WorkspaceSettings";
 import WorkspaceMembers from "./modules/Dashboard/pages/workspace/components/main/WorkspaceMembers";
+import BoardPage from "./modules/Dashboard/pages/board/BoardPage";
 // import { DashboardPage } from "./modules/Dashboard/pages/DashboardPage";
 
 const GoogleMaterialPage = lazy(() =>
