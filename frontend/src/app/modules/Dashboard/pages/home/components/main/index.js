@@ -6,6 +6,7 @@ import { WorkspaceWidget } from "./WorkspaceWidget";
 
 function HomeMain(props){
     const wp_list = props.workspaces
+    const handleBoardModalOpen = props.handleBoardModalOpen
 
     return (
         <>
@@ -13,7 +14,7 @@ function HomeMain(props){
                 {wp_list.map((workspace)=>(
                     <div className="row">
                         <div className="col">
-                            <WorkspaceWidget className="gutter-b card-stretch" workspace={workspace} />
+                            <WorkspaceWidget className="gutter-b card-stretch" workspace={workspace} handleBoardModalOpen={handleBoardModalOpen}/>
                         </div>
                     </div>
                 ))
