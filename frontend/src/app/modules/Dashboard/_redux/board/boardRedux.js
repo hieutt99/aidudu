@@ -1,1 +1,0 @@
-// redux for board page
