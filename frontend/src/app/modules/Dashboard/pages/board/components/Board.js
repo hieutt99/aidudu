@@ -12,8 +12,8 @@ import {
   lightGreyColor, lightGreyBackground, iconSize24, iconSize20, iconSize34,
   contentBackgroundMask, menuContainer, menuDescription, listContainer, backgroundAddNewList, popoverDialogContainer
 } from './BoardStyles';
-import BoardWorkspaceVisibility from './board-workspace-visibility/BoardWorkspaceVisibility';
 import BoardMember from './board-member/BoardMember';
+import BoardWorkspaceVisibility from './board-workspace-visibility/BoardWorkspaceVisibility';
 import { BACKEND_ORIGIN } from '../../../../../../config';
 
 // APIs
@@ -23,6 +23,7 @@ export const CREATE_A_LIST = BACKEND_ORIGIN + WORK_API + '/lists/';
 export const CARD_DETAIL = BACKEND_ORIGIN + WORK_API + '/cards/';
 
 function Board(props) {
+
   const INCREMENT_CARD_POSITION = 1;
   const DECREMENT_CARD_POSITION = -1;
 
@@ -41,12 +42,11 @@ function Board(props) {
 
   const getBoardDetails = () => {
     axios.get(GET_BOARD_DETAILS).then(response => {
-        console.log("Board details: ", response.data);
-        setBoard(response.data);
-        setLists(response.data["lists"]);
-
-        setMembers(response.data['members']);
-      })
+      console.log("Board details: ", response.data);
+      setBoard(response.data);
+      setLists(response.data["lists"]);
+      setMembers(response.data['members']);
+    })
       .catch(error => {
         console.log("Error get board details: " + error);
       })
@@ -200,38 +200,37 @@ function Board(props) {
   }
 
   useEffect(() => {
-    if(inviteQuery){
+    if (inviteQuery) {
       // call API to search for candidates
-      axios.get(`${BACKEND_ORIGIN}api/v1/users/`, {params: {query: inviteQuery}}).then(res => {
-        if(res.data.count){
+      axios.get(`${BACKEND_ORIGIN}api/v1/users/`, { params: { query: inviteQuery } }).then(res => {
+        if (res.data.count) {
           const resCandidates = res.data.results;
           let temp = [];
-          for(let i=0; i<resCandidates.length; i++){
+          for (let i = 0; i < resCandidates.length; i++) {
             let found = false;
-            for(let j=0; j<members.length; j++){
-              if(members[j].id === resCandidates[i].id){
+            for (let j = 0; j < members.length; j++) {
+              if (members[j].id === resCandidates[i].id) {
                 found = true; break;
               }
             }
-            if(found) continue;
+            if (found) continue;
             found = false;
-            for(let j=0; j<selectedCandidates.length; j++){
-              if(selectedCandidates[j].id === resCandidates[i].id){
+            for (let j = 0; j < selectedCandidates.length; j++) {
+              if (selectedCandidates[j].id === resCandidates[i].id) {
                 found = true; break;
               }
             }
-            if(!found) temp.push(resCandidates[i]);
+            if (!found) temp.push(resCandidates[i]);
           }
           setCandidates(temp);
         }
         else setCandidates([]);
       })
     }
-    else{
+    else {
       setCandidates([]);
     }
   }, [inviteQuery])
-
 
   const handleSelectCandidate = candidate => {
     setInviteQuery('');
@@ -240,11 +239,11 @@ function Board(props) {
   }
 
   const removeSelectedCandidate = candidate => {
-    if(!selectedCandidates) return;
-    
+    if (!selectedCandidates) return;
+
     const temp = [...selectedCandidates];
-    for(let i=0; i<temp.length; i++){
-      if(temp[i].id === candidate.id){
+    for (let i = 0; i < temp.length; i++) {
+      if (temp[i].id === candidate.id) {
         temp.splice(i, 1);
         setSelectedCandidates(temp);
         return;
@@ -255,9 +254,9 @@ function Board(props) {
 
   const inviteMembers = e => {
     let idList = [];
-    for(let i=0; i<selectedCandidates.length; i++) idList.push(selectedCandidates[i].id);
+    for (let i = 0; i < selectedCandidates.length; i++) idList.push(selectedCandidates[i].id);
 
-    axios.post(`${BACKEND_ORIGIN}api/v1/boards/${board.id}/members/`, {id: idList}).then(res => {
+    axios.post(`${BACKEND_ORIGIN}api/v1/boards/${board.id}/members/`, { id: idList }).then(res => {
       setMembers([...members, selectedCandidates]);
     }).catch(e => {
       alert("Có lỗi xảy ra khi mời thành viên mới");
@@ -276,7 +275,7 @@ function Board(props) {
 
           {/* Toolbar */}
           <div className={"d-flex justify-content-between align-items-center bg-white text-black"}>
-            <div className={"d-flex justify-content-start align-items-center px-3 py-3"}>
+            <div className={"d-flex justify-content-start align-items-center flex-wrap px-3 py-3"}>
 
               {/* Board name */}
               <h3 className={"my-0 mx-4 p-2"}>{board["name"]}</h3>
@@ -290,11 +289,11 @@ function Board(props) {
               <BoardWorkspaceVisibility />
 
               {/* List of members */}
-              {board["members"] !== undefined && board["members"].length > 0 &&
+              {members !== undefined && members.length > 0 &&
                 <div className={"mx-2 p-2 d-flex align-items-center"}>
                   {
-                    board["members"].map((member, i) => {
-                      return <BoardMember key={member.id} member={member}/>
+                    members.map((member, i) => {
+                      return <BoardMember key={member.id} member={member} />
                     })
                   }
                 </div>
@@ -458,29 +457,36 @@ function Board(props) {
                   <hr className='m-0' />
 
                   {/* Input field */}
-                  <div className='p-3'>
+                  <div className='p-3 d-flex flex-column'>
+                    {/* Input field */}
                     <input type="text" className="form-control" placeholder='Email address or name...' onChange={handleInviteInputOnChange} value={inviteQuery} />
-                    <div className="w-100 mt-1 rounded" style={{position: 'absolute', zIndex: 1}}>
-                      {candidates && candidates.map(candidate => 
-                        <button className="d-flex flex-row align-items-center p-3 border-0 w-100" onClick={() => handleSelectCandidate(candidate)} key={candidate.id}>
-                          <img src={candidate.avatar} className="rounded-circle" style={{width: '40px', height: '40px'}}></img>
-                          <p className="h6 ml-5 mb-0" style={{fontSize: '14px'}}>{candidate.first_name} {candidate.last_name}</p>
+
+                    {/* Candidates card item */}
+                    <div className="mt-3 d-flex flex-column" >
+                      {candidates && candidates.map(candidate =>
+                        <button className="d-flex align-items-center p-3 mb-2 border-0 rounded" style={lightGreyBackground} onClick={() => handleSelectCandidate(candidate)} key={candidate.id}>
+                          <img src={candidate.avatar} className="rounded-circle" style={iconSize24}></img>
+                          <p className="ml-5 mb-0" style={{ fontSize: '12px' }}>{candidate.first_name} {candidate.last_name}</p>
                         </button>
                       )}
                     </div>
-                    
-                    <div style={{minHeight: '150px'}}>
-                      <div className="d-flex mt-1 flex-row flex-wrap">
-                        {selectedCandidates && selectedCandidates.map(candidate => 
-                          <span className="badge badge-pill badge-light p-3 mr-2 mb-2" style={{fontSize: '14px'}} key={candidate.id}>{candidate.first_name} {candidate.last_name} <div className='btn p-0' onClick={() => removeSelectedCandidate(candidate)}>
-                          <MdClose style={iconSize20}/></div>
+
+                    {/* Selected candidates chip item */}
+                    <div style={{ minHeight: '150px' }}>
+                      <div className="d-flex mt-2 flex-row flex-wrap">
+                        {selectedCandidates && selectedCandidates.map(candidate =>
+                          <span className="badge badge-pill badge-light py-2 px-4 mr-2 mb-2 align-items-center" style={{ fontSize: '12px' }} key={candidate.id}>
+                            {candidate.first_name} {candidate.last_name}
+                            <div className='btn p-0 ml-2' onClick={() => removeSelectedCandidate(candidate)}>
+                              <MdClose style={iconSize20} />
+                            </div>
                           </span>
                         )}
                       </div>
                     </div>
-                    
+
                   </div>
-                
+
                   {/* Button send invite */}
                   <Button variant='primary' className='mx-3 mb-3 mt-0' disabled={selectedCandidates.length === 0} onClick={inviteMembers}>
                     Send invitation

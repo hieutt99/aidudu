@@ -4,6 +4,7 @@ import { Button, Popover, Overlay, Image } from 'react-bootstrap';
 import { MdClose } from "react-icons/md";
 import axios from 'axios';
 import { iconSize24, iconSize20, iconSize50, popoverDialogContainer } from '../BoardStyles';
+import { BACKEND_ORIGIN } from '../../../../../../../config';
 
 const BoardMember = (props) => {
 
@@ -20,6 +21,10 @@ const BoardMember = (props) => {
             setDialogMember(true);
         }
     };
+
+    // const removeMember = () => {
+    //     axios.post(`${BACKEND_ORIGIN}api/v1/boards/${board.id}/leave/`)
+    // }
 
     return (
         <>
@@ -62,7 +67,7 @@ const BoardMember = (props) => {
                             {/* Current user can leave board and remove others from board */}
                             {member.id === user.id
                                 ? <Button variant='danger' className='mx-3 mt-0 mb-3 py-2'>Leave board</Button>
-                                : <Button variant='danger' className='mx-3 mt-0 mb-3 py-2'>Remove from board...</Button>
+                                : <Button variant='danger' className='mx-3 mt-0 mb-3 py-2'>Remove from board</Button>
                             }
 
                         </div>
