@@ -278,6 +278,7 @@ class BoardDetailViewSerializer(serializers.ModelSerializer):
     lists = BoardDetailViewListSerializer(many=True)
     members = serializers.SerializerMethodField()
     labels = serializers.SerializerMethodField()
+    starred = serializers.SerializerMethodField()
 
     class Meta:
         model = Board
@@ -290,6 +291,18 @@ class BoardDetailViewSerializer(serializers.ModelSerializer):
     def get_labels(self, instance):
         labels = LabelDetailSerializer(instance.labels, many=True)
         return labels.data
+    
+    def get_starred(self, instance):
+        if 'request' not in self.context:
+            return None
+        
+        user = self.context['request'].user
+
+        bms = BoardMembership.objects.filter(user=user, board=instance)
+
+        if not bms.exists():
+            return None
+        return bms.first().starred
 
 class ListDetailSerializer(serializers.ModelSerializer):
     class Meta:
