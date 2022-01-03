@@ -782,6 +782,8 @@ class ChecklistItemViewSet(ModelViewSet):
     model = ChecklistItem
 
     def get_serializer_class(self):
+        if self.action == 'create':
+            return ChecklistItemCreateSerializer
         return ChecklistItemSerializer
 
     def get_queryset(self):

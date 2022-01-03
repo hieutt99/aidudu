@@ -156,6 +156,10 @@ class ChecklistSerializer(serializers.ModelSerializer):
         model = Checklist
         fields = '__all__'
 
+class ChecklistItemCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ChecklistItem
+        fields = '__all__'
 
 class ChecklistItemSerializer(serializers.ModelSerializer):
     class Meta:
