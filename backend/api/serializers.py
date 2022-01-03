@@ -161,7 +161,7 @@ class ChecklistItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChecklistItem
         fields = '__all__'
-
+        read_only_fields = ['id', 'checklist']
 
 class LabelSerializer(serializers.ModelSerializer):
     class Meta:
