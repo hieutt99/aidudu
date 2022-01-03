@@ -12,6 +12,22 @@ class UserSerializer(serializers.ModelSerializer):
         exclude = ('password', 'groups', 'user_permissions', 'is_superuser', 'is_staff', 'is_active')
 
 
+class GeneralUserSerializer(serializers.ModelSerializer):
+    avatar = serializers.SerializerMethodField()
+
+    class Meta:
+        model = get_user_model()
+        fields = ('id', 'username', 'first_name', 'last_name', 'avatar')
+
+    def get_avatar(self, instance):
+        request = self.context.get('request')
+        if not instance.avatar:
+            return None
+        
+        url = instance.avatar.url
+        return request.build_absolute_uri(url) if request else url
+
+
 class UserRegisterSerializer(serializers.ModelSerializer):
     """Serializer for user registration"""
 
@@ -279,14 +295,22 @@ class BoardDetailViewSerializer(serializers.ModelSerializer):
     members = serializers.SerializerMethodField()
     labels = serializers.SerializerMethodField()
     starred = serializers.SerializerMethodField()
+    # admins = serializers.SerializerMethodField()
 
     class Meta:
         model = Board
-        fields = ['id', 'name', 'background', 'workspace', 'members', 'lists', 'labels', 'starred']
+        fields = ['id', 'name', 'visibility', 'background', 'workspace', 'members', 'lists', 'labels', 'starred']
     
     def get_members(self, instance):
-        members = BoardMemberSerializer(instance.members, many=True, context=self.context)
-        return members.data
+        bms = BoardMembership.objects.filter(board=instance)
+
+        data = []
+        for bm in bms:
+            user_data = GeneralUserSerializer(bm.user, context=self.context).data
+            user_data.update({"role": bm.role})
+            data.append(user_data)
+        
+        return data
     
     def get_labels(self, instance):
         labels = LabelDetailSerializer(instance.labels, many=True)
@@ -303,6 +327,25 @@ class BoardDetailViewSerializer(serializers.ModelSerializer):
         if not bms.exists():
             return None
         return bms.first().starred
+    
+    # def get_admins(self, instance):
+    #     if 'request' not in self.context:
+    #         return None
+        
+    #     bms = BoardMembership.objects.filter(board=instance, role=BoardMembership.ROLE.ADMIN)
+
+    #     data = []
+
+    #     for bm in bms:
+    #         user = bm.user
+
+    #         user_data = GeneralUserSerializer(bm.user, context=self.context).data
+    #         user_data.update({"role": bm.role})
+
+    #         data.append(user_data)
+        
+    #     return data
+        
 
 class ListDetailSerializer(serializers.ModelSerializer):
     class Meta:
