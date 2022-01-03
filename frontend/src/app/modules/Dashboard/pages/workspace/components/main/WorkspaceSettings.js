@@ -6,7 +6,7 @@ import { WorkspaceWidget } from "./WorkspaceWidget";
 import WorkspaceDetail from "../mainheader/WorkspaceDetail";
 import { toast } from "react-toastify"
 import { getWorkspaceById } from "../../../../_redux/workspace/workspaceCrud";
-// import Popup from "reactjs-popup";
+import Popup from "reactjs-popup";
 
 const boardBackgroundIMG = {
     width : "350px",
@@ -26,6 +26,10 @@ const deleteBtnStyle = {
     width: "170px",
     height: "30px",
     padding: "0px"
+}
+
+const settingModalStyle = {
+    
 }
 
 function WorkspaceSettings(props){
@@ -52,9 +56,9 @@ function WorkspaceSettings(props){
                     <h3 style={{borderBottom:"2px solid"}}>Workspace visibility</h3>
                     <div className="d-flex flex-row">
                         <h4 style={{marginRight:"10px", textTransform:"capitalize"}}>{workspace.visibility}</h4>
-                        <p style={{margin:"0px"}}>This Workspace is private. It's not indexed or visible to those outside the Workspace</p>
+                        <p style={{margin:"0px"}}>This Workspace is private. It's not indexed or visible to those outside the Workspace.</p>
                     </div>
-                    <button class="btn btn-outline-secondary" style={{backgroundColor:"#DFE1E6", width:"100px", height:"30px", padding:"0px"}} type="button">Change</button>
+                    <button class="btn btn-outline-secondary" style={{backgroundColor:"#DFE1E6", width:"150px", height:"50px", padding:"0px"}} type="button">Change to Public</button>
                     <button class="btn" type="button" style={deleteBtnStyle}>Delete this workspace?</button>
                 </div>
             </div>
@@ -71,9 +75,7 @@ function WorkspaceSettings(props){
                         <h4 style={{marginRight:"10px", textTransform:"capitalize"}}>{workspace.visibility}</h4>
                         <p style={{margin:"0px"}}>This Workspace is public. It's visible to anyone with the link and will show up in search engines like Google. Only those invited to the Workspace can add and edit Workspace boards.</p>
                     </div>
-                    {/* <Popup modal trigger={<button class="btn btn-outline-secondary" style={{backgroundColor:"#DFE1E6", width:"100px", height:"50px", padding:"0px"}} type="button">Change</button>}>
-                        test
-                    </Popup> */}
+                    <button class="btn btn-outline-secondary" style={{backgroundColor:"#DFE1E6", width:"150px", height:"50px", padding:"0px"}} type="button">Change to Private</button>
                     <button class="btn" type="button" style={deleteBtnStyle}>Delete this workspace?</button>
                 </div>
             </div>
