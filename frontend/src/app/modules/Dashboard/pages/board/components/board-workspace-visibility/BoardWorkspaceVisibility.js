@@ -25,7 +25,7 @@ const BoardWorkspaceVisibility = (props) => {
                 className={"btn mx-2 p-3 rounded d-flex align-items-center"} style={lightGreyBackground}
                 ref={dialogWorkspaceVisibilityTarget} onClick={onWorkspaceVisibleButtonClicked}
             >
-                <BsPeople style={iconSize20} />
+                <BsPeople style={iconSize20} className='my-0'/>
                 <h6 className='my-0 mx-2'>Workspace Visible</h6>
             </div>
 
