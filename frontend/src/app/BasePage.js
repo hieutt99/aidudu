@@ -9,6 +9,7 @@ import WorkspaceBoards from "./modules/Dashboard/pages/workspace/components/main
 import Members from "./modules/Dashboard/pages/workspace/components/main/workspacemembers/Members";
 import WorkspaceSettings from "./modules/Dashboard/pages/workspace/components/main/WorkspaceSettings";
 import WorkspaceMembers from "./modules/Dashboard/pages/workspace/components/main/WorkspaceMembers";
+import BoardPage from "./modules/Dashboard/pages/board/BoardPage";
 // import { DashboardPage } from "./modules/Dashboard/pages/DashboardPage";
 
 const GoogleMaterialPage = lazy(() =>

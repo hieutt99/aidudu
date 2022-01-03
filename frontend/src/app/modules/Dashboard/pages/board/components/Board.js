@@ -256,7 +256,7 @@ function Board(props) {
           </div>
 
           {/* Main content */}
-          <div className='p-0 bg-image' style={{ height: "100vh", backgroundImage: "url('" + BASE_URL + board.background + "')" }}>
+          <div className='p-0 bg-image' style={{ height: "100vh", backgroundImage: "url('" + board.background + "')" }}>
             <div style={contentBackgroundMask}>
               <div className='px-5 pb-3 d-flex align-items-start h-100' style={{ overflowX: "auto" }}>
 
