@@ -24,7 +24,8 @@ export const CREATE_A_LIST = BACKEND_ORIGIN + WORK_API + '/lists/';
 export const CARD_DETAIL = BACKEND_ORIGIN + WORK_API + '/cards/';
 
 function Board(props) {
-    const boardId = useParams()
+    const param = useParams()
+    const boardId = param.boardId
     const GET_BOARD_DETAILS = BACKEND_ORIGIN + WORK_API + `/boards/${boardId}/details`;
     const INCREMENT_CARD_POSITION = 1;
     const DECREMENT_CARD_POSITION = -1;
