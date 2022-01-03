@@ -172,6 +172,53 @@ class BoardViewSet(ModelViewSet):
         
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    def get_members_of_board(self, request, pk):
+        board = get_object_or_404(Board, id=pk)
+        boardmembership = BoardMembership.objects.filter(
+            user_id=request.user, board_id=board.id
+        )
+        if boardmembership.exists():
+            memberships = BoardMembership.objects.filter(
+                board_id=board.id
+            )
+            serializer = BoardMembershipSerializer(memberships, many=True)
+            return Response(data=serializer.data)
+        else:
+            raise PermissionDenied(
+                detail="You do not belong to this board or this board doesn't exist.")
+ 
+
+    def add_members_to_board(self, request, pk):
+        board = get_object_or_404(Board, id=pk)
+        boardmembership = BoardMembership.objects.filter(
+            user_id=request.user, board_id=board.id
+        )
+        if boardmembership.exists() and 'id' in request.data.keys():
+            ids = [request.data['id']] if isinstance(request.data['id'], int) \
+                else request.data['id']
+            if isinstance(ids, list) and len(ids)>0:
+                memberships = BoardMembership.objects.filter(user_id__in=ids, board_id=board.id)
+                # id da ton tai 
+                changes = [item.id for item in memberships]
+                # id can the ma chua ton tai
+                changes = [i for i in ids if i not in changes]
+                for change in changes:
+                    BoardMembership.objects.create(
+                        user_id=change, board_id=board.id
+                    )
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            raise PermissionDenied(
+                detail="You do not belong to this board or this board doesn't exist.")
+ 
+    @action(detail=True, methods=['get', 'post'], url_path='members')
+    def handle_members(self, request, pk):
+        if self.request.method == 'POST':
+            return self.add_members_to_board(request, pk)
+        elif self.request.method == 'GET':
+            return self.get_members_of_board(request, pk)
+        raise PermissionDenied(detail="Unsupported method")
+
 class WorkspaceViewSet(ModelViewSet):
     model = Workspace
 
