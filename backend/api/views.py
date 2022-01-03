@@ -288,7 +288,7 @@ class WorkspaceViewSet(ModelViewSet):
             raise PermissionDenied(
                 "You don't have permission to update this workspace")
         object = workspace_membership.first().workspace
-        serializer = WorkspaceSerializer(object, request.data)
+        serializer = WorkspaceSerializer(object, request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -782,6 +782,8 @@ class ChecklistItemViewSet(ModelViewSet):
     model = ChecklistItem
 
     def get_serializer_class(self):
+        if self.action == 'create':
+            return ChecklistItemCreateSerializer
         return ChecklistItemSerializer
 
     def get_queryset(self):
