@@ -1,4 +1,5 @@
 import json
+from django.db.models.functions.text import Repeat
 import requests
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
@@ -288,7 +289,7 @@ class WorkspaceViewSet(ModelViewSet):
             raise PermissionDenied(
                 "You don't have permission to update this workspace")
         object = workspace_membership.first().workspace
-        serializer = WorkspaceSerializer(object, request.data)
+        serializer = WorkspaceSerializer(object, request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -782,6 +783,8 @@ class ChecklistItemViewSet(ModelViewSet):
     model = ChecklistItem
 
     def get_serializer_class(self):
+        if self.action == 'create':
+            return ChecklistItemCreateSerializer
         return ChecklistItemSerializer
 
     def get_queryset(self):
@@ -886,6 +889,16 @@ class UserViewSet(ModelViewSet):
 
         return obj
 
+    @action(detail=True, methods=['get'], url_path='cards')
+    def get_cards_of_user(self, request, pk):
+        user = request.user
+        if user.id == int(pk):
+            cardmembership = CardMembership.objects.filter(user_id=user.id)
+            cards = [item.card for item in cardmembership if item.card.archived==False]
+            serializer = CardDetailViewSerializer(cards, many=True)
+            return Response(data=serializer.data)
+        else:
+            raise PermissionDenied("Nah")
 
 class LabelViewSet(ModelViewSet):
     model = Label
