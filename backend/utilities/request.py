@@ -263,6 +263,9 @@ def parse_bool_or_400(data, key, default=None):
     if key not in data:
         return default
     
+    if isinstance(data[key], bool):
+        return data[key]
+    
     return data[key].lower() in ('true', '1')
 
 
