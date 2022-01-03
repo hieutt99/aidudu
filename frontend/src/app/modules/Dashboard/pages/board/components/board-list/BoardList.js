@@ -101,13 +101,17 @@ const BoardList = (props) => {
                     <div
                         {...provided.droppableProps}
                         ref={provided.innerRef}
-                        style={{ overflowY: "auto", maxHeight: "800px", }}
+                        style={{ overflowY: "auto", maxHeight: "800px" }}
                     >
+                        {/* Blank space for drag & drop cards */}
+                        {cards.length === 0 &&
+                            <div style={{ height: "5px" }}></div>
+                        }
 
                         {/* Cards*/}
                         {
                             cards.sort(compareCards).map((card, index) => {
-                                return <BoardCardItem card={card} key={card["id"]} index={index}/>
+                                return <BoardCardItem card={card} key={card["id"]} index={index} />
                             })
                         }
 
