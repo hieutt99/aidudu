@@ -7,7 +7,11 @@ import { useParams } from 'react-router-dom';
 import { getWorkspaceBoards } from "../../../../_redux/home/homeCrud";
 import { toast } from "react-toastify";
 import WorkspaceDetail from "../mainheader/WorkspaceDetail";
-
+import Box from '@mui/material/Box';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select from '@mui/material/Select';
 const textStyle = {
     fontSize : "15px"
 };
@@ -92,11 +96,7 @@ function WorkspaceBoards(props){
                             <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 Dropdown button
                             </button>
-                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item" href="#">Action</a>
-                                <a class="dropdown-item" href="#">Another action</a>
-                                <a class="dropdown-item" href="#">Something else here</a>
-                            </div>
+                            
                         </div>
                     </div>
                     <div className="d-flex flex-column">
