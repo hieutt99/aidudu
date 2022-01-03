@@ -5,6 +5,7 @@ import { BuilderPage } from "./pages/BuilderPage";
 import { MyPage } from "./pages/MyPage";
 import { DashboardPage } from './modules/Dashboard/pages/DashboardPage';
 import WorkspacePage from "./modules/Dashboard/pages/workspace/WorkspacePage";
+import Board from "./modules/Dashboard/pages/board/components/Board";
 import WorkspaceBoards from "./modules/Dashboard/pages/workspace/components/main/WorkspaceBoards";
 import Members from "./modules/Dashboard/pages/workspace/components/main/workspacemembers/Members";
 import WorkspaceSettings from "./modules/Dashboard/pages/workspace/components/main/WorkspaceSettings";
@@ -49,7 +50,7 @@ export default function BasePage() {
                     path="/workspace/:workspaceId/members/members"
                     component={Members}
                 />
-   
+
         {/*<ContentRoute path="/builder" component={BuilderPage} />*/}
         <ContentRoute path="/my-page" component={MyPage} />
         <ContentRoute path="/workspace" component={WorkspacePage} />

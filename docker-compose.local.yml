@@ -57,18 +57,6 @@ services:
         env_file:
             - ./backend/.env_files/backend.dev.env
         command: celery --app=aidudu beat -l DEBUG
-    frontend:
-        build: ./frontend
-        container_name: frontend
-        image: frontend:1.0
-        ports:
-          - "3000:3000"
-        volumes:
-          - ./frontend/:/app
-          - /app/node_modules
-        depends_on:
-          - backend
-        restart: always
 volumes:
     postgres_data:
     redis_data:

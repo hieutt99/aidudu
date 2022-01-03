@@ -211,6 +211,7 @@ class BoardViewSet(ModelViewSet):
         else:
             raise PermissionDenied(
                 detail="You do not belong to this board or this board doesn't exist.")
+
     def remove_members_from_board(self, request, pk):
         board = get_object_or_404(Board, id=pk)
         boardmembership = BoardMembership.objects.filter(

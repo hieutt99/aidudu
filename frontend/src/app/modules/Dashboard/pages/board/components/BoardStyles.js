@@ -31,6 +31,11 @@ export const iconSize34 = {
     height: "34px",
 };
 
+export const iconSize50 = {
+    width: "50px",
+    height: "50px",
+}
+
 export const label = {
     flexWrap: "wrap",
     gap: "5px 5px",
