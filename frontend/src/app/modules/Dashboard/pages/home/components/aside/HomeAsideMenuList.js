@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 import SVG from "react-inlinesvg";
 import { toAbsoluteUrl, checkIsActive } from "../../../../../../../_metronic/_helpers";
 
-export function HomeAsideMenuList({ layoutProps, workspaces }) {
+export function HomeAsideMenuList({ layoutProps, workspaces, handleWorkspaceModalOpen }) {
     const location = useLocation();
     const getMenuItemActive = (url, hasSubmenu = false) => {
         return checkIsActive(location, url)
@@ -12,11 +12,12 @@ export function HomeAsideMenuList({ layoutProps, workspaces }) {
             "menu-item-active"} menu-item-open menu-item-not-hightlighted`
         : "";
     };
-    const workspaces_array = workspaces.workspaces
-    console.log(workspaces_array)
+    const workspaces_array = workspaces
+    // console.log(workspaces_array)
 //   useEffect = () => {
 //       dispatchEvent()
 //   }
+
 
   return (
     <>
@@ -38,8 +39,15 @@ export function HomeAsideMenuList({ layoutProps, workspaces }) {
 
         {/*begin::1 Level*/}
         <li className="menu-section ">
-          <h4 className="menu-text text-black">Workspaces</h4>
-          <i className="menu-icon flaticon-more-v2"></i>
+            <li className="menu-item">
+                <div className="d-flex flex-row justify-content-between">
+                    <h4 className="menu-text text-black">Workspaces</h4>
+                    <span className="svg-icon" onClick={handleWorkspaceModalOpen} style={{cursor: 'pointer'}}>
+                        <SVG src={toAbsoluteUrl("/media/svg/icons/Navigation/Plus.svg")} />
+                    </span>
+                </div>
+            </li>
+            
         </li>
         {workspaces_array.map(workspace => 
            <li
