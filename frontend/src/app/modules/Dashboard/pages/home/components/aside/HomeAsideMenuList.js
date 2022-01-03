@@ -6,17 +6,14 @@ import { toAbsoluteUrl, checkIsActive } from "../../../../../../../_metronic/_he
 
 export function HomeAsideMenuList({ layoutProps, workspaces }) {
     const location = useLocation();
-    console.log(workspaces)
     const getMenuItemActive = (url, hasSubmenu = false) => {
-        console.log(url)
-        console.log(checkIsActive(location, url))
         return checkIsActive(location, url)
         ? ` ${!hasSubmenu &&
             "menu-item-active"} menu-item-open menu-item-not-hightlighted`
         : "";
     };
     const workspaces_array = workspaces.workspaces
-
+    console.log(workspaces_array)
 //   useEffect = () => {
 //       dispatchEvent()
 //   }
@@ -34,77 +31,69 @@ export function HomeAsideMenuList({ layoutProps, workspaces }) {
             <span className="svg-icon menu-icon">
               <SVG src={toAbsoluteUrl("/media/svg/icons/Design/Layers.svg")} />
             </span>
-            <span className="menu-text">Dashboard</span>
+            <span className="menu-text text-black">Dashboard</span>
           </NavLink>
         </li>
         {/*end::1 Level*/}
 
         {/*begin::1 Level*/}
         <li className="menu-section ">
-          <h4 className="menu-text text-white">Workspaces</h4>
+          <h4 className="menu-text text-black">Workspaces</h4>
           <i className="menu-icon flaticon-more-v2"></i>
         </li>
         {workspaces_array.map(workspace => 
            <li
-                className={`menu-item menu-item-submenu ${getMenuItemActive(
-                    `/workspaces/${workspace.id}`,
-                    true
-                )}`}
+                className={`menu-item menu-item-submenu`}
                 aria-haspopup="true"
                 data-menu-toggle="hover"
             >
-                <NavLink className="menu-link menu-toggle" to={`/workspaces/${workspace.id}`}>
+                <div className="menu-link menu-toggle">
                     <span className="svg-icon menu-icon">
                         <SVG src={toAbsoluteUrl("/media/svg/icons/Home/Library.svg")} />
                     </span>
-                    <span className="menu-text text-white">{workspace.name}</span>
+                    <span className="menu-text text-black">{workspace.name}</span>
                     <i className="menu-arrow" />
-                </NavLink>
+                </div>
                 <div className="menu-submenu ">
                     <i className="menu-arrow" />
                     <ul className="menu-subnav">
                         <li
-                            className={`menu-item ${getMenuItemActive(
-                                `/workspaces/${workspace.id}/boards`,
-                                true
-                            )}`}
+                            className={`menu-item `}
                             aria-haspopup="true"
                         >
-                            <NavLink className="menu-link" to={`/workspaces/${workspace.id}/boards`}>
-                            <span className="svg-icon menu-icon">
-                                <SVG src={toAbsoluteUrl("/media/svg/icons/Home/Library.svg")} />
-                            </span>
-                            <span className="menu-text text-white">Boards</span>
+                            <NavLink className="menu-link" to={`/workspaces/${workspace.id}`}>
+                                <span className="svg-icon menu-icon">
+                                    <SVG src={toAbsoluteUrl("/media/svg/icons/Home/Library.svg")} />
+                                </span>
+                                <span className="menu-text text-black">Boards</span>
                             </NavLink>
                         </li>
                         <li
-                            className={`menu-item ${getMenuItemActive(
-                                `/workspaces/${workspace.id}/members`,
-                                true
-                            )}`}
+                            className={`menu-item `}
                             aria-haspopup="true"
                         >
                             <NavLink className="menu-link" to={`/workspaces/${workspace.id}/members`}>
                             <span className="svg-icon menu-icon">
-                                <SVG src={toAbsoluteUrl("/media/svg/icons/Home/Library.svg")} />
+                                <SVG src={toAbsoluteUrl("/media/svg/icons/General/User.svg")} />
                             </span>
-                            <span className="menu-text text-white">Members</span>
+                            <span className="menu-text text-black">Members</span>
+                            </NavLink>
+                        </li>
+                        <li
+                            className={`menu-item `}
+                            aria-haspopup="true"
+                        >
+                            <NavLink className="menu-link" to={`/workspaces/${workspace.id}/settings`}>
+                            <span className="svg-icon menu-icon">
+                                <SVG src={toAbsoluteUrl("/media/svg/icons/Tools/Tools.svg")} />
+                            </span>
+                            <span className="menu-text text-black">Settings</span>
                             </NavLink>
                         </li>
                     </ul>
                 </div>
             </li>
         )}
-        <li
-          className={`menu-item menu-item-submenu ${getMenuItemActive(
-            "/workspaces",
-            true
-          )}`}
-          aria-haspopup="true"
-          data-menu-toggle="hover"
-        >
-
-        </li>
         {/*end::1 Level*/}
     </ul>
     </>
