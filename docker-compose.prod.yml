@@ -41,7 +41,7 @@ services:
     worker:
         build: 
             context: ./backend
-            dockerfile: dockerfile
+            dockerfile: Dockerfile.prod
         image: aidudu:dev
         volumes:
             - ./backend:/backend
@@ -55,7 +55,7 @@ services:
     scheduler:
         build:
             context: ./backend
-            dockerfile: dockerfile
+            dockerfile: Dockerfile.prod
         image: aidudu:dev
         volumes:
             - ./backend:/backend
@@ -66,20 +66,20 @@ services:
         command: celery --app=aidudu beat -l DEBUG
         restart: always
         
-    # frontend:
-    #     build:
-    #         context: ./frontend
-    #         dockerfile: dockerfile.prod
-    #     # container_name: frontend
-    #     image: frontend:1.0
-    #     ports:
-    #       - 3000:3000
-    #     volumes:
-    #       - ./frontend/:/app
-    #       - /app/node_modules
-    #     depends_on:
-    #       - backend
-    #     restart: always
+    frontend:
+        build:
+            context: ./frontend
+            dockerfile: dockerfile.prod
+        # container_name: frontend
+        image: frontend:1.0
+        ports:
+          - 3000:3000
+        volumes:
+          - ./frontend/:/app
+          - /app/node_modules
+        depends_on:
+          - backend
+        restart: always
 volumes:
     postgres_data:
     redis_data:
