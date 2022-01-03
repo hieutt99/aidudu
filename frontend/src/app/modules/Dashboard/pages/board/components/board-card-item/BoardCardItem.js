@@ -5,7 +5,7 @@ import { BiMenuAltLeft } from "react-icons/bi";
 import { MdAttachFile } from "react-icons/md";
 import { GoCommentDiscussion } from "react-icons/go";
 import { iconSize24, iconSize20Grey, label, memberAvatarContainer } from '../BoardStyles';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 
 const BoardCardItem = (props) => {
 
@@ -13,11 +13,11 @@ const BoardCardItem = (props) => {
     const index = props.index;
 
     const history = useHistory();
-    const { path } = useRouteMatch();
+    const path  = useLocation();
 
     const handleCardClick = (cardId) => {
         history.push({
-         pathname: `${path}card/${cardId}`
+         pathname: `${path.pathname}/card/${cardId}`
         });
     };
 

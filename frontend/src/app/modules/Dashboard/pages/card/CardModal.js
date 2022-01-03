@@ -28,7 +28,9 @@ import CardMove from './components/CardMove';
 
 const CardModal = ({ open, onClose, lists }) => {
   //
-  const { cardId } = useParams();
+  const params = useParams()
+  console.log(params)
+  const cardId  = params.cardId;
   const { id: userId, username, avatar } = useSelector((state) => state.auth.user);
   const userAvatar = BACKEND_ORIGIN + '' + avatar.substring(1); //remove first slash in avatar
   //
