@@ -89,6 +89,7 @@ class Board(models.Model):
     background = models.ImageField(upload_to=dynamic_board_background_filepath, null=True, blank=True)
     workspace = models.ForeignKey(Workspace, on_delete=models.CASCADE, related_name='boards')
     members = models.ManyToManyField(CustomUser, through='BoardMembership')
+    starred = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Board {self.name} ({self.id})"
