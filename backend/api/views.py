@@ -210,13 +210,30 @@ class BoardViewSet(ModelViewSet):
         else:
             raise PermissionDenied(
                 detail="You do not belong to this board or this board doesn't exist.")
- 
-    @action(detail=True, methods=['get', 'post'], url_path='members')
+    def remove_members_from_board(self, request, pk):
+        board = get_object_or_404(Board, id=pk)
+        boardmembership = BoardMembership.objects.filter(
+            user_id=request.user, board_id=board.id
+        )
+        if boardmembership.exists() and 'id' in request.data.keys():
+            ids = [request.data['id']] if isinstance(request.data['id'], int) \
+                else request.data['id']
+            if isinstance(ids, list) and len(ids)>0:
+                memberships = BoardMembership.objects.filter(user_id__in=ids, board_id=board.id)
+                # id da ton tai 
+                changes = [item for item in memberships]
+                for change in changes:
+                    change.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=['get', 'post', 'delete'], url_path='members')
     def handle_members(self, request, pk):
         if self.request.method == 'POST':
             return self.add_members_to_board(request, pk)
         elif self.request.method == 'GET':
             return self.get_members_of_board(request, pk)
+        elif self.request.method == 'DELETE':
+            return self.remove_members_from_board(request, pk)
         raise PermissionDenied(detail="Unsupported method")
 
 class WorkspaceViewSet(ModelViewSet):
