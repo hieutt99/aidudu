@@ -16,7 +16,7 @@ class LabelTest(APITestCase):
         
         self.my_list_eachboard = {self.list_my_board[0].id:[
             List.objects.create(name='lubu',board=self.list_my_board[0]),
-            List.objects.create(name='lobo',board=self.list_my_board[0],position=1,archive=True)
+            List.objects.create(name='lobo',board=self.list_my_board[0],position=1,archived=True)
         ]}
         # create some card each list 
         self.my_cards_eachlist = {self.my_list_eachboard[self.list_my_board[0].id][0].id:[
