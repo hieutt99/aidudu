@@ -837,7 +837,7 @@ class UserViewSet(ModelViewSet):
             | Q(username__icontains=query_string))\
             | Q(full_name__icontains=query_string)
         
-        return self.model.objects.annotate(full_name=Concat('first_name', V(' '), 'last_name')).filter(q)
+        return self.model.objects.annotate(full_name=Concat('first_name', V(' '), 'last_name')).filter(q).order_by('id')
             
     def get_object(self):
         """
