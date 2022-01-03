@@ -1,5 +1,5 @@
 name: Aidudu CI/CD
-on: 
+on:
   push:
     branches:
       - develop
@@ -9,5 +9,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: docker-compose -f docker-compose.prod.yml down
-      - run: docker-compose -f docker-compose.prod.yml build
-      - run: docker-compose -f docker-compose.prod.yml up
+      - run: docker-compose -f docker-compose.prod.yml up -d

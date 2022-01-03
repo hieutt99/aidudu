@@ -260,15 +260,26 @@ function Board(props) {
         for (let i = 0; i < selectedCandidates.length; i++) idList.push(selectedCandidates[i].id);
 
         axios.post(`${BACKEND_ORIGIN}api/v1/boards/${board.id}/members/`, { id: idList }).then(res => {
-        setMembers([...members, selectedCandidates]);
+          setMembers([...members, ...selectedCandidates]);
         }).catch(e => {
-        alert("Có lỗi xảy ra khi mời thành viên mới");
+          alert("Có lỗi xảy ra khi mời thành viên mới");
         })
 
         setInviteQuery('');
         setCandidates([]);
         setSelectedCandidates([]);
         setDialogInviteMember(false);
+    }
+
+    const handleRemoveMemberFromBoard = member => {
+      const temp = [...members];
+      for(let i=0; i<temp.length; i++){
+        if(member.id === temp[i].id){
+          temp.splice(i, 1);
+          setMembers(temp);
+          break;
+        }
+      }
     }
 
     return (
@@ -296,7 +307,7 @@ function Board(props) {
                     <div className={"mx-2 p-2 d-flex align-items-center"}>
                     {
                         members.map((member, i) => {
-                        return <BoardMember key={member.id} member={member} />
+                        return <BoardMember key={member.id} member={member} handleRemoveMember={handleRemoveMemberFromBoard} board={board}/>
                         })
                     }
                     </div>
@@ -379,7 +390,7 @@ function Board(props) {
 
                 {/* Menu header */}
                 <div className='d-flex justify-content-between bg-white align-items-center p-4'>
-                    <div>
+                    <div style={{visibility: 'hidden'}}>
                         <MdClose style={iconSize24} className='opacity-0' />
                     </div>
                     <h5 className='m-0'>MENU</h5>
@@ -448,7 +459,7 @@ function Board(props) {
 
                     {/* Header */}
                     <div className='d-flex justify-content-between align-items-center p-3'>
-                        <div className='btn p-0' onClick={() => { setDialogInviteMember(false) }}>
+                        <div className='btn p-0' style={{visibility: 'hidden'}}>
                         <MdClose style={iconSize20} />
                         </div>
                         <h6 className='m-0'>Invite to board</h6>
