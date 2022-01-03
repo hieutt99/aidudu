@@ -20,7 +20,7 @@ function BoardPage(props) {
 
   return (
     <>
-      <Route path={`${url}/`} render={() => {
+      <Route path={`${url}/:boardId`} render={() => {
         return (
           <Board rerenderFlag={rerenderFlag} setRerenderFlag={setRerenderFlag} setLists={setLists}/>
         )
