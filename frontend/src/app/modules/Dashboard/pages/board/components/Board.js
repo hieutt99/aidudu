@@ -13,33 +13,38 @@ import {
   lightGreyColor, lightGreyBackground, iconSize24, iconSize20, iconSize34,
   contentBackgroundMask, menuContainer, menuDescription, listContainer, backgroundAddNewList, popoverDialogContainer
 } from './BoardStyles';
+import { BACKEND_ORIGIN } from '../../../../../../config';
 
 // APIs
-export const BASE_URL = 'http://127.0.0.1:8000';
-export const WORK_API = '/api/v1';
-export const GET_BOARD_DETAILS = BASE_URL + WORK_API + '/boards/2/details';
-export const CREATE_A_LIST = BASE_URL + WORK_API + '/lists/';
-export const CARD_DETAIL = BASE_URL + WORK_API + '/cards/';
+export const WORK_API = 'api/v1';
+export const GET_BOARD_DETAILS = BACKEND_ORIGIN + WORK_API + '/boards/2/details';
+export const CREATE_A_LIST = BACKEND_ORIGIN + WORK_API + '/lists/';
+export const CARD_DETAIL = BACKEND_ORIGIN + WORK_API + '/cards/';
 
 function Board(props) {
-
   const INCREMENT_CARD_POSITION = 1;
   const DECREMENT_CARD_POSITION = -1;
 
   const [board, setBoard] = useState({});
   const [lists, setLists] = useState([]);
   const [onTextChangedNewListTitle, setTextChangedNewListTitle] = useState('');
+  const [candidates, setCandidates] = useState([]);
+  const [selectedCandidates, setSelectedCandidates] = useState([]);
+  const [inviteQuery, setInviteQuery] = useState('');
+
+  const [members, setMembers] = useState([]);
 
   useEffect(() => {
     getBoardDetails();
   }, []);
 
   const getBoardDetails = () => {
-    axios.get(GET_BOARD_DETAILS)
-      .then(response => {
-        console.log("Board details: " + response.data["name"]);
+    axios.get(GET_BOARD_DETAILS).then(response => {
+        console.log("Board details: ", response.data);
         setBoard(response.data);
-        setLists(response.data["lists"])
+        setLists(response.data["lists"]);
+
+        setMembers(response.data['members']);
       })
       .catch(error => {
         console.log("Error get board details: " + error);
@@ -199,6 +204,80 @@ function Board(props) {
       setDialogWorkspaceVisibility(true);
     }
   };
+
+  const handleInviteInputOnChange = e => {
+    setInviteQuery(e.target.value);
+  }
+
+  useEffect(() => {
+    if(inviteQuery){
+      // call API to search for candidates
+      axios.get(`${BACKEND_ORIGIN}api/v1/users/`, {params: {query: inviteQuery}}).then(res => {
+        if(res.data.count){
+          const resCandidates = res.data.results;
+          let temp = [];
+          for(let i=0; i<resCandidates.length; i++){
+            let found = false;
+            for(let j=0; j<members.length; j++){
+              if(members[j].id === resCandidates[i].id){
+                found = true; break;
+              }
+            }
+            if(found) continue;
+            found = false;
+            for(let j=0; j<selectedCandidates.length; j++){
+              if(selectedCandidates[j].id === resCandidates[i].id){
+                found = true; break;
+              }
+            }
+            if(!found) temp.push(resCandidates[i]);
+          }
+          setCandidates(temp);
+        }
+        else setCandidates([]);
+      })
+    }
+    else{
+      setCandidates([]);
+    }
+  }, [inviteQuery])
+
+
+  const handleSelectCandidate = candidate => {
+    setInviteQuery('');
+    setCandidates([]);
+    setSelectedCandidates([...selectedCandidates, candidate]);
+  }
+
+  const removeSelectedCandidate = candidate => {
+    if(!selectedCandidates) return;
+    
+    const temp = [...selectedCandidates];
+    for(let i=0; i<temp.length; i++){
+      if(temp[i].id === candidate.id){
+        temp.splice(i, 1);
+        setSelectedCandidates(temp);
+        return;
+      }
+    }
+
+  }
+
+  const inviteMembers = e => {
+    let idList = [];
+    for(let i=0; i<selectedCandidates.length; i++) idList.push(selectedCandidates[i].id);
+
+    axios.post(`${BACKEND_ORIGIN}api/v1/boards/${board.id}/members/`, {id: idList}).then(res => {
+      setMembers([...members, selectedCandidates]);
+    }).catch(e => {
+      alert("Có lỗi xảy ra khi mời thành viên mới");
+    })
+
+    setInviteQuery('');
+    setCandidates([]);
+    setSelectedCandidates([]);
+    setDialogInviteMember(false);
+  }
 
   return (
     <Container fluid className='p-0 m-0'>
@@ -374,7 +453,7 @@ function Board(props) {
           </div>
 
           {/* Dialog invite member */}
-          <Overlay target={dialogInviteMemberTarget.current} show={isDialogInviteMemberOpen} placement="right">
+          <Overlay target={dialogInviteMemberTarget.current} show={isDialogInviteMemberOpen} placement="bottom">
             {(props) => (
               <Popover {...props}>
                 <div className='rounded bg-white p-0 d-flex flex-column' style={popoverDialogContainer} >
@@ -394,11 +473,30 @@ function Board(props) {
 
                   {/* Input field */}
                   <div className='p-3'>
-                    <input type="text" className="form-control" placeholder='Email address or name...' />
+                    <input type="text" className="form-control" placeholder='Email address or name...' onChange={handleInviteInputOnChange} value={inviteQuery} />
+                    <div className="w-100 mt-1 rounded" style={{position: 'absolute', zIndex: 1}}>
+                      {candidates && candidates.map(candidate => 
+                        <button className="d-flex flex-row align-items-center p-3 border-0 w-100" onClick={() => handleSelectCandidate(candidate)} key={candidate.id}>
+                          <img src={candidate.avatar} className="rounded-circle" style={{width: '40px', height: '40px'}}></img>
+                          <p className="h6 ml-5 mb-0" style={{fontSize: '14px'}}>{candidate.first_name} {candidate.last_name}</p>
+                        </button>
+                      )}
+                    </div>
+                    
+                    <div style={{minHeight: '150px'}}>
+                      <div className="d-flex mt-1 flex-row flex-wrap">
+                        {selectedCandidates && selectedCandidates.map(candidate => 
+                          <span className="badge badge-pill badge-light p-3 mr-2 mb-2" style={{fontSize: '14px'}} key={candidate.id}>{candidate.first_name} {candidate.last_name} <div className='btn p-0' onClick={() => removeSelectedCandidate(candidate)}>
+                          <MdClose style={iconSize20}/></div>
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    
                   </div>
-
+                
                   {/* Button send invite */}
-                  <Button variant='primary' className='mx-3 mb-3 mt-0'>
+                  <Button variant='primary' className='mx-3 mb-3 mt-0' disabled={selectedCandidates.length === 0} onClick={inviteMembers}>
                     Send invitation
                   </Button>
 
