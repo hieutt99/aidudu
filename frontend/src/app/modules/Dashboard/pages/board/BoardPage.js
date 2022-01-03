@@ -11,7 +11,7 @@ function BoardPage(props) {
   return (
     <Suspense fallback={<LayoutSplashScreen />}>
       <Switch>
-        <ContentRoute path="/" component={Board} />
+        <ContentRoute path="/:boardId" component={Board} />
         {/*{*/}
         {/*  <Redirect*/}
         {/*    exact={true}*/}
