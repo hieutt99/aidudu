@@ -9,7 +9,7 @@ import {
   DropdownCustomToggler,
   DropdownMenu4,
 } from "../../../../_metronic/_partials/dropdowns";
-
+// we will not using this to navigate in profile 
 export function ProfileCard() {
   const user = useSelector(({ auth }) => auth.user, shallowEqual);
 
@@ -64,18 +64,6 @@ export function ProfileCard() {
                   </a>
                   <div className="text-muted">{user.occupation}</div>
                   <div className="mt-2">
-                    <a
-                      href="#"
-                      className="btn btn-sm btn-primary font-weight-bold mr-2 py-2 px-3 px-xxl-5 my-1"
-                    >
-                      Chat
-                    </a>
-                    <a
-                      href="#"
-                      className="btn btn-sm btn-success font-weight-bold py-2 px-3 px-xxl-5 my-1"
-                    >
-                      Follow
-                    </a>
                   </div>
                 </div>
               </div>

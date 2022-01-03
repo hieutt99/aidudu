@@ -1,4 +1,5 @@
-export const BACKEND_ORIGIN = 'http://127.0.0.1:8000/';
+// export const BACKEND_ORIGIN = 'http://127.0.0.1:8000/';
+export const BACKEND_ORIGIN = 'http://192.168.230.129:8000/';
 
 export const LOGIN_URL = BACKEND_ORIGIN + 'api/v1/auth/login';
 export const REGISTER_URL = BACKEND_ORIGIN + 'api/v1/auth/register';
