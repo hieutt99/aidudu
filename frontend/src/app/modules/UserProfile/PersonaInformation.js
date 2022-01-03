@@ -85,7 +85,6 @@ function PersonaInformation(props) {
     if (!pic) {
       return "none";
     }
-
     return `url(${pic})`;
   };
   const removePic = () => {

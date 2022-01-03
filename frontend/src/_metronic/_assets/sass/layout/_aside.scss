@@ -4,10 +4,12 @@
 
 .aside {
 	width: get($aside-config, base, width);
+    background-color: white !important;
 
 	// Aside Menu
 	.aside-menu {
 		@include perfect-scrollbar-ver-offset(4px);
+        background-color: white !important;
 	}
 }
 

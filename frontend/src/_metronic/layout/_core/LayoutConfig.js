@@ -109,21 +109,21 @@ export function getInitLayoutConfig() {
       displayDaterangepicker: false,
       layout: "subheader-v1",
       fixed: false,
-      width: "fixed", // fixed/fluid,
+      width: "fluid", // fixed/fluid,
       clear: false,
       style: "transparent", // solid/transparent
     },
     content: {
-      width: "fixed", // fluid|fixed
+      width: "fluid", // fluid|fixed
     },
     brand: {
       self: {
-        theme: "dark", // light/dark
+        theme: "light", // light/dark
       },
     },
     aside: {
       self: {
-        theme: "dark", // light/dark
+        theme: "light", // light/dark
         display: false,
         fixed: true,
         minimize: {
