@@ -91,13 +91,13 @@ export function WorkspaceWidget(props){
                             </>
                         )}
                         <div className="col-sm-3">
-                            <div className="card card-custom gutter-b">
-                                <div className="card-body">
-                                    <Button variant="light" size="md" onClick={handleBoardModalOpen}>
-                                        <h6>Create new Board</h6>
-                                    </Button>
+                            <span onClick={handleBoardModalOpen} style={{cursor: 'pointer'}}>
+                                <div className="card card-custom gutter-b">
+                                    <div className="card-body">
+                                            <h6>Create new Board</h6>
+                                    </div>
                                 </div>
-                            </div>
+                            </span>
                         </div>
                     </div>
                     

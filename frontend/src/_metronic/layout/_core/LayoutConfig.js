@@ -104,7 +104,7 @@ export function getInitLayoutConfig() {
       },
     },
     subheader: {
-      display: true,
+      display: false,
       displayDesc: false,
       displayDaterangepicker: false,
       layout: "subheader-v1",
