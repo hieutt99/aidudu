@@ -104,17 +104,17 @@ export function getInitLayoutConfig() {
       },
     },
     subheader: {
-      display: true,
+      display: false,
       displayDesc: false,
       displayDaterangepicker: false,
       layout: "subheader-v1",
       fixed: false,
-      width: "fixed", // fixed/fluid,
+      width: "fluid", // fixed/fluid,
       clear: false,
       style: "transparent", // solid/transparent
     },
     content: {
-      width: "fixed", // fluid|fixed
+      width: "fluid", // fluid|fixed
     },
     brand: {
       self: {

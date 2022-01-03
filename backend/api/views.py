@@ -1,4 +1,5 @@
 import json
+from django.db.models.functions.text import Repeat
 import requests
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import User
@@ -210,13 +211,31 @@ class BoardViewSet(ModelViewSet):
         else:
             raise PermissionDenied(
                 detail="You do not belong to this board or this board doesn't exist.")
- 
-    @action(detail=True, methods=['get', 'post'], url_path='members')
+
+    def remove_members_from_board(self, request, pk):
+        board = get_object_or_404(Board, id=pk)
+        boardmembership = BoardMembership.objects.filter(
+            user_id=request.user, board_id=board.id
+        )
+        if boardmembership.exists() and 'id' in request.data.keys():
+            ids = [request.data['id']] if isinstance(request.data['id'], int) \
+                else request.data['id']
+            if isinstance(ids, list) and len(ids)>0:
+                memberships = BoardMembership.objects.filter(user_id__in=ids, board_id=board.id)
+                # id da ton tai 
+                changes = [item for item in memberships]
+                for change in changes:
+                    change.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+    @action(detail=True, methods=['get', 'post', 'delete'], url_path='members')
     def handle_members(self, request, pk):
         if self.request.method == 'POST':
             return self.add_members_to_board(request, pk)
         elif self.request.method == 'GET':
             return self.get_members_of_board(request, pk)
+        elif self.request.method == 'DELETE':
+            return self.remove_members_from_board(request, pk)
         raise PermissionDenied(detail="Unsupported method")
 
 class WorkspaceViewSet(ModelViewSet):
@@ -270,7 +289,7 @@ class WorkspaceViewSet(ModelViewSet):
             raise PermissionDenied(
                 "You don't have permission to update this workspace")
         object = workspace_membership.first().workspace
-        serializer = WorkspaceSerializer(object, request.data)
+        serializer = WorkspaceSerializer(object, request.data, partial=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -764,6 +783,8 @@ class ChecklistItemViewSet(ModelViewSet):
     model = ChecklistItem
 
     def get_serializer_class(self):
+        if self.action == 'create':
+            return ChecklistItemCreateSerializer
         return ChecklistItemSerializer
 
     def get_queryset(self):
@@ -837,7 +858,7 @@ class UserViewSet(ModelViewSet):
             | Q(username__icontains=query_string))\
             | Q(full_name__icontains=query_string)
         
-        return self.model.objects.annotate(full_name=Concat('first_name', V(' '), 'last_name')).filter(q)
+        return self.model.objects.annotate(full_name=Concat('first_name', V(' '), 'last_name')).filter(q).order_by('id')
             
     def get_object(self):
         """
@@ -868,6 +889,16 @@ class UserViewSet(ModelViewSet):
 
         return obj
 
+    @action(detail=True, methods=['get'], url_path='cards')
+    def get_cards_of_user(self, request, pk):
+        user = request.user
+        if user.id == int(pk):
+            cardmembership = CardMembership.objects.filter(user_id=user.id)
+            cards = [item.card for item in cardmembership if item.card.archived==False]
+            serializer = CardDetailViewSerializer(cards, many=True)
+            return Response(data=serializer.data)
+        else:
+            raise PermissionDenied("Nah")
 
 class LabelViewSet(ModelViewSet):
     model = Label
