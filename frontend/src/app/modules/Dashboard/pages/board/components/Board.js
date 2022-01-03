@@ -2,17 +2,18 @@ import React, { useState, useRef, useEffect } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { Button, Container, Popover, Overlay } from 'react-bootstrap';
 import { FiStar } from "react-icons/fi";
-import { BsPeople, BsPersonPlus, BsTags, BsInboxes } from "react-icons/bs";
-import { BiArrowToLeft, BiWorld } from "react-icons/bi";
+import { BsPersonPlus, BsTags, BsInboxes } from "react-icons/bs";
+import { BiArrowToLeft } from "react-icons/bi";
 import { AiOutlinePlus } from "react-icons/ai";
-import { MdClose, MdOutlineDashboard, MdLockOutline, MdCorporateFare } from "react-icons/md";
-import { GrGroup } from "react-icons/gr";
+import { MdClose, MdOutlineDashboard } from "react-icons/md";
 import BoardList from './board-list/BoardList';
 import axios from 'axios';
 import {
   lightGreyColor, lightGreyBackground, iconSize24, iconSize20, iconSize34,
   contentBackgroundMask, menuContainer, menuDescription, listContainer, backgroundAddNewList, popoverDialogContainer
 } from './BoardStyles';
+import BoardMember from './board-member/BoardMember';
+import BoardWorkspaceVisibility from './board-workspace-visibility/BoardWorkspaceVisibility';
 import { BACKEND_ORIGIN } from '../../../../../../config';
 
 // APIs
@@ -22,6 +23,7 @@ export const CREATE_A_LIST = BACKEND_ORIGIN + WORK_API + '/lists/';
 export const CARD_DETAIL = BACKEND_ORIGIN + WORK_API + '/cards/';
 
 function Board(props) {
+
   const INCREMENT_CARD_POSITION = 1;
   const DECREMENT_CARD_POSITION = -1;
 
@@ -41,12 +43,12 @@ function Board(props) {
 
   const getBoardDetails = () => {
     axios.get(GET_BOARD_DETAILS).then(response => {
-        console.log("Board details: ", response.data);
-        setBoard(response.data);
-        setLists(response.data["lists"]);
-        props.setLists(response.data["lists"]);
-        setMembers(response.data['members']);
-      })
+      console.log("Board details: ", response.data);
+      setBoard(response.data);
+      setLists(response.data["lists"]);
+      props.setLists(response.data["lists"]);
+      setMembers(response.data['members']);
+    })
       .catch(error => {
         console.log("Error get board details: " + error);
       })
@@ -195,54 +197,42 @@ function Board(props) {
     }
   };
 
-  // Open/close dialog workspace visibility
-  const dialogWorkspaceVisibilityTarget = useRef(null);
-  const [isDialogWorkspaceVisibilityOpen, setDialogWorkspaceVisibility] = useState(false);
-  const onWorkspaceVisibleButtonClicked = () => {
-    if (isDialogWorkspaceVisibilityOpen) {
-      setDialogWorkspaceVisibility(false);
-    } else {
-      setDialogWorkspaceVisibility(true);
-    }
-  };
-
   const handleInviteInputOnChange = e => {
     setInviteQuery(e.target.value);
   }
 
   useEffect(() => {
-    if(inviteQuery){
+    if (inviteQuery) {
       // call API to search for candidates
-      axios.get(`${BACKEND_ORIGIN}api/v1/users/`, {params: {query: inviteQuery}}).then(res => {
-        if(res.data.count){
+      axios.get(`${BACKEND_ORIGIN}api/v1/users/`, { params: { query: inviteQuery } }).then(res => {
+        if (res.data.count) {
           const resCandidates = res.data.results;
           let temp = [];
-          for(let i=0; i<resCandidates.length; i++){
+          for (let i = 0; i < resCandidates.length; i++) {
             let found = false;
-            for(let j=0; j<members.length; j++){
-              if(members[j].id === resCandidates[i].id){
+            for (let j = 0; j < members.length; j++) {
+              if (members[j].id === resCandidates[i].id) {
                 found = true; break;
               }
             }
-            if(found) continue;
+            if (found) continue;
             found = false;
-            for(let j=0; j<selectedCandidates.length; j++){
-              if(selectedCandidates[j].id === resCandidates[i].id){
+            for (let j = 0; j < selectedCandidates.length; j++) {
+              if (selectedCandidates[j].id === resCandidates[i].id) {
                 found = true; break;
               }
             }
-            if(!found) temp.push(resCandidates[i]);
+            if (!found) temp.push(resCandidates[i]);
           }
           setCandidates(temp);
         }
         else setCandidates([]);
       })
     }
-    else{
+    else {
       setCandidates([]);
     }
   }, [inviteQuery])
-
 
   const handleSelectCandidate = candidate => {
     setInviteQuery('');
@@ -251,11 +241,11 @@ function Board(props) {
   }
 
   const removeSelectedCandidate = candidate => {
-    if(!selectedCandidates) return;
+    if (!selectedCandidates) return;
 
     const temp = [...selectedCandidates];
-    for(let i=0; i<temp.length; i++){
-      if(temp[i].id === candidate.id){
+    for (let i = 0; i < temp.length; i++) {
+      if (temp[i].id === candidate.id) {
         temp.splice(i, 1);
         setSelectedCandidates(temp);
         return;
@@ -266,9 +256,9 @@ function Board(props) {
 
   const inviteMembers = e => {
     let idList = [];
-    for(let i=0; i<selectedCandidates.length; i++) idList.push(selectedCandidates[i].id);
+    for (let i = 0; i < selectedCandidates.length; i++) idList.push(selectedCandidates[i].id);
 
-    axios.post(`${BACKEND_ORIGIN}api/v1/boards/${board.id}/members/`, {id: idList}).then(res => {
+    axios.post(`${BACKEND_ORIGIN}api/v1/boards/${board.id}/members/`, { id: idList }).then(res => {
       setMembers([...members, selectedCandidates]);
     }).catch(e => {
       alert("Có lỗi xảy ra khi mời thành viên mới");
@@ -287,7 +277,7 @@ function Board(props) {
 
           {/* Toolbar */}
           <div className={"d-flex justify-content-between align-items-center bg-white text-black"}>
-            <div className={"d-flex justify-content-start align-items-center px-3 py-3"}>
+            <div className={"d-flex justify-content-start align-items-center flex-wrap px-3 py-3"}>
 
               {/* Board name */}
               <h3 className={"my-0 mx-4 p-2"}>{board["name"]}</h3>
@@ -297,23 +287,19 @@ function Board(props) {
                 <FiStar style={iconSize20} />
               </div>
 
-              {/* Workspace visible */}
-              <div
-                className={"btn mx-2 p-3 rounded d-flex align-items-center"} style={lightGreyBackground}
-                ref={dialogWorkspaceVisibilityTarget} onClick={onWorkspaceVisibleButtonClicked}
-              >
-                <BsPeople style={iconSize20} />
-                <h6 className='my-0 mx-2'>Workspace Visible</h6>
-              </div>
+              {/* Workspace visibility */}
+              <BoardWorkspaceVisibility />
 
               {/* List of members */}
-              <div className={"mx-2 p-2 d-flex align-items-center"}>
-                {/* {
-                  board["members"].map((member, index) => {
-                    return <img className={"rounded-circle bg-success"} style={iconSize24}/>
-                  })
-                } */}
-              </div>
+              {members !== undefined && members.length > 0 &&
+                <div className={"mx-2 p-2 d-flex align-items-center"}>
+                  {
+                    members.map((member, i) => {
+                      return <BoardMember key={member.id} member={member} />
+                    })
+                  }
+                </div>
+              }
 
               {/* Button invite member */}
               <Button
@@ -473,22 +459,29 @@ function Board(props) {
                   <hr className='m-0' />
 
                   {/* Input field */}
-                  <div className='p-3'>
+                  <div className='p-3 d-flex flex-column'>
+                    {/* Input field */}
                     <input type="text" className="form-control" placeholder='Email address or name...' onChange={handleInviteInputOnChange} value={inviteQuery} />
-                    <div className="w-100 mt-1 rounded" style={{position: 'absolute', zIndex: 1}}>
+
+                    {/* Candidates card item */}
+                    <div className="mt-3 d-flex flex-column" >
                       {candidates && candidates.map(candidate =>
-                        <button className="d-flex flex-row align-items-center p-3 border-0 w-100" onClick={() => handleSelectCandidate(candidate)} key={candidate.id}>
-                          <img src={candidate.avatar} className="rounded-circle" style={{width: '40px', height: '40px'}}></img>
-                          <p className="h6 ml-5 mb-0" style={{fontSize: '14px'}}>{candidate.first_name} {candidate.last_name}</p>
+                        <button className="d-flex align-items-center p-3 mb-2 border-0 rounded" style={lightGreyBackground} onClick={() => handleSelectCandidate(candidate)} key={candidate.id}>
+                          <img src={candidate.avatar} className="rounded-circle" style={iconSize24}></img>
+                          <p className="ml-5 mb-0" style={{ fontSize: '12px' }}>{candidate.first_name} {candidate.last_name}</p>
                         </button>
                       )}
                     </div>
 
-                    <div style={{minHeight: '150px'}}>
-                      <div className="d-flex mt-1 flex-row flex-wrap">
+                    {/* Selected candidates chip item */}
+                    <div style={{ minHeight: '150px' }}>
+                      <div className="d-flex mt-2 flex-row flex-wrap">
                         {selectedCandidates && selectedCandidates.map(candidate =>
-                          <span className="badge badge-pill badge-light p-3 mr-2 mb-2" style={{fontSize: '14px'}} key={candidate.id}>{candidate.first_name} {candidate.last_name} <div className='btn p-0' onClick={() => removeSelectedCandidate(candidate)}>
-                          <MdClose style={iconSize20}/></div>
+                          <span className="badge badge-pill badge-light py-2 px-4 mr-2 mb-2 align-items-center" style={{ fontSize: '12px' }} key={candidate.id}>
+                            {candidate.first_name} {candidate.last_name}
+                            <div className='btn p-0 ml-2' onClick={() => removeSelectedCandidate(candidate)}>
+                              <MdClose style={iconSize20} />
+                            </div>
                           </span>
                         )}
                       </div>
@@ -500,74 +493,6 @@ function Board(props) {
                   <Button variant='primary' className='mx-3 mb-3 mt-0' disabled={selectedCandidates.length === 0} onClick={inviteMembers}>
                     Send invitation
                   </Button>
-
-                </div>
-              </Popover>
-            )}
-          </Overlay>
-
-          {/* Dialog workspace visibility */}
-          <Overlay target={dialogWorkspaceVisibilityTarget.current} show={isDialogWorkspaceVisibilityOpen} placement="bottom">
-            {(props) => (
-              <Popover {...props}>
-                <div className='rounded bg-white p-0 d-flex flex-column' style={popoverDialogContainer} >
-
-                  {/* Header */}
-                  <div className='d-flex justify-content-between align-items-center p-3'>
-                    <div className='btn p-0' onClick={() => { setDialogWorkspaceVisibility(false) }}>
-                      <MdClose style={iconSize20} />
-                    </div>
-                    <h6 className='m-0'>Workspace visibility</h6>
-                    <div className='btn p-0' onClick={() => { setDialogWorkspaceVisibility(false) }}>
-                      <MdClose style={iconSize20} />
-                    </div>
-                  </div>
-
-                  <hr className='m-0' />
-
-                  {/* Private */}
-                  <div className='d-flex p-3'>
-                    <div>
-                      <MdLockOutline style={iconSize20} />
-                    </div>
-                    <div className='d-flex flex-column mx-3'>
-                      <h6 className='m-0'><strong>Private</strong></h6>
-                      <p className='m-0'>Only board member can see and edit this board.</p>
-                    </div>
-                  </div>
-
-                  {/* Workspace */}
-                  <div className='d-flex p-3'>
-                    <div>
-                      <GrGroup style={iconSize20} />
-                    </div>
-                    <div className='d-flex flex-column mx-3'>
-                      <h6 className='m-0'><strong>Workspace</strong></h6>
-                      <p className='m-0'>All members of the Workspace can see and edit this board. The board must be added to a Workspace to enable this.</p>
-                    </div>
-                  </div>
-
-                  {/* Organization */}
-                  <div className='d-flex p-3'>
-                    <div>
-                      <MdCorporateFare style={iconSize20} />
-                    </div>
-                    <div className='d-flex flex-column mx-3'>
-                      <h6 className='m-0'><strong>Organization</strong></h6>
-                      <p className='m-0'>All members of the organization can see this board. The board must be added to an enterprise Workspace to enable this.</p>
-                    </div>
-                  </div>
-
-                  {/* Public */}
-                  <div className='d-flex p-3'>
-                    <div>
-                      <BiWorld style={iconSize20} />
-                    </div>
-                    <div className='d-flex flex-column mx-3'>
-                      <h6 className='m-0'><strong>Public</strong></h6>
-                      <p className='m-0'>Anyone on the internet can see this board. Only board members can edit.</p>
-                    </div>
-                  </div>
 
                 </div>
               </Popover>
