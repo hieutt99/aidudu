@@ -1,27 +1,37 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useState } from 'react';
 import { ContentRoute, LayoutSplashScreen } from '../../../../../_metronic/layout';
-import { Route, Switch } from 'react-router-dom';
+import { Redirect, Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import MyDashBoard from './components/Board';
 import Board from './components/Board';
+import CardModal from '../card/CardModal';
 
 function BoardPage(props) {
+  const { url } = useRouteMatch();
+  const history = useHistory();
+  console.log("boardpage", url);
 
-  // TODO: add route
+  const [rerenderFlag, setRerenderFlag] = useState(false);
+  const [lists, setLists] = useState([]); // lists -> get in Board, pass to CardModal
+
+  const handleOnCardClose = async () => {
+    await setRerenderFlag(true);
+    history.goBack();
+  }
 
   return (
-    <Suspense fallback={<LayoutSplashScreen />}>
-      <Switch>
-        <ContentRoute path="/" component={Board} />
-        {/*{*/}
-        {/*  <Redirect*/}
-        {/*    exact={true}*/}
-        {/*    from="/"*/}
-        {/*    to="/"*/}
-        {/*  />*/}
-        {/*}*/}
-        {/*<ContentRoute path="/" component={} />*/}
-      </Switch>
-    </Suspense>
+    <>
+      <Route path={`${url}/`} render={() => {
+        return (
+          <Board rerenderFlag={rerenderFlag} setRerenderFlag={setRerenderFlag} setLists={setLists}/>
+        )
+      }} />
+      <Route path={`${url}/card/:cardId`} children={({ match }) => {
+        return (
+          match ? <CardModal onClose={handleOnCardClose} open={Boolean(match)} lists={lists}/> : ""
+        )
+      }} />
+      {/*<Redirect to={"/error/error-v1"}/>*/}
+    </>
   );
 }
 

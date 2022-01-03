@@ -38,13 +38,15 @@ function Board(props) {
 
   useEffect(() => {
     getBoardDetails();
-  }, []);
+    props.setRerenderFlag(false);
+  }, [props.rerenderFlag]);
 
   const getBoardDetails = () => {
     axios.get(GET_BOARD_DETAILS).then(response => {
       console.log("Board details: ", response.data);
       setBoard(response.data);
       setLists(response.data["lists"]);
+      props.setLists(response.data["lists"]);
       setMembers(response.data['members']);
     })
       .catch(error => {
