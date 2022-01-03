@@ -19,3 +19,6 @@ def create_personal_workspace(sender, instance, created, **kwargs):
         )
 
 
+@receiver(post_save, sender=Board)
+def create_default_labels(sender, instance, created, **kwargs):
+    pass

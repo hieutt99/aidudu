@@ -151,7 +151,9 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOWED_ORIGINS = [
-    'http://localhost:3000'
+    'http://localhost:3000',
+    'http://minhdq99hp.ddns.net:3000',
+    'http://minhdq99hp.ddns.net:3100',
 ]
 
 # CELERY CONFIG
