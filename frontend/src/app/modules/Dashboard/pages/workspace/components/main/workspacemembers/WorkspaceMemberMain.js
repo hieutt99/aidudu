@@ -161,17 +161,23 @@ function WorkspaceMemberMain(workspaceId){
       }
     
     const inviteMembers = e => {
-        console.log("+++++++++++++++++++++++++=")
         let idList = [];
         for (let i = 0; i < selectedCandidates.length; i++) idList.push(selectedCandidates[i].id);
-        console.log(idList)
         for(
             let i = 0; i < idList.length; i++
         ){
             axios.post(`${BACKEND_ORIGIN}api/v1/workspaces/${workspace.id}/members/`, { id: idList[i] }).then(res => {
                 setMembers([...members, selectedCandidates]);
+                console.log(selectedCandidates)
+                console.log(searchMembers)
                 // let newMembers = members.concat(selectedCandidates);
-                selectedCandidates.map(cand =>setSearchMembers([...members, cand]));
+                // for (
+                //     let i = 0; i < selectedCandidates.length; i++
+                // ){
+                //     setSearchMembers([...members, selectedCandidates[i]])
+                // }
+                // selectedCandidates.map(cand =>setSearchMembers([...searchMembers, cand]));
+                setSearchMembers([...searchMembers, selectedCandidates])
                 // setSearchMembers([...members, selectedCandidates]);
             }).catch(e => {
                 alert("Có lỗi xảy ra khi mời thành viên mới");
@@ -298,7 +304,7 @@ function WorkspaceMemberMain(workspaceId){
                         <div className="d-flex flex-row" style={memberRowStyle}>
                             <div className="d-flex flex-row mr-auto align-items-center">
                                 <img src={member.avatar} class="rounded-circle" alt="Cinque Terre" width="50" height="50"></img>
-                                <h5 style={{marginLeft:"5px"}}>{member.username}</h5>
+                                <h5 style={{marginLeft:"5px"}}>{member.firstname.concat(" "+member.lastname)}</h5>
                             </div>
                             <div className="d-flex flex-row align-items-center">
                                 <button class="btn btn-outline-secondary" style={{backgroundColor:"#DFE1E6", margin:"5px"}} type="button">Admin</button>
