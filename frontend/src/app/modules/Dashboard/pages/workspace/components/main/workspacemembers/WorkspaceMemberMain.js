@@ -49,6 +49,7 @@ const clickedButtonStyle = {
 function WorkspaceMemberMain(workspaceId){
     const [workspace, setWorkspace] = useState([])
     const [members, setMembers] = useState([])
+    const [searchMembers, setSearchMembers] = useState([])
     useEffect(()=>{
         getWorkspaceById(workspaceId.workspaceId).then(res=>{
           setWorkspace(res.data)
@@ -62,6 +63,7 @@ function WorkspaceMemberMain(workspaceId){
         })
         getMembersByWorkspace(workspaceId.workspaceId).then(res=>{
             setMembers(res.data)
+            setSearchMembers(res.data)
         }).catch(err=>{
             toast.error('Cannot get members', {
                 position: 'top-right',
@@ -71,20 +73,25 @@ function WorkspaceMemberMain(workspaceId){
               });
           })
     }, [])
+
+    function handleSearchMembers(searchTerm){
+        if (searchTerm !==""){
+            const searchRes = members.filter(({fullname}) => fullname.includes(searchTerm))
+            console.log(searchRes)
+            setSearchMembers(searchRes)
+        } else if (searchTerm ==""){
+            setSearchMembers(members)
+        }
+        console.log(searchMembers)
+    }
     console.log(members)
     return (
         <>
-        <div className="d-flex flex-row-fluid" style={{marginTop:"30px"}}>
+        <div className="d-flex flex-row-fluid" style={{marginTop:"30px", marginLeft:"30px"}}>
             <div className="d-flex flex-column" style={{marginRight:"50px"}}>
                 <h4>Members of Workspace boards</h4>
                 <div className="navi-item" >
-                        <NavLink
-                            to="/workspace/members/members"
-                            className="navi-link py-4"
-                            activeClassName="active"
-                        >
-                            <button type="button" className="btn" style={buttonStyle}>Workspace members ({members.length})</button>
-                        </NavLink>
+                    <button type="button" className="btn" style={buttonStyle}>Workspace members ({members.length})</button>
                 </div>
             </div>
             <div className="d-flex flex-column w-75">
@@ -92,13 +99,13 @@ function WorkspaceMemberMain(workspaceId){
             <p>Workspace members can view and join all Workspace boards and create new boards in the Workspace</p>
             <div className="d-flex flex-row justify-content-between">
                 <div class="input-group input-group-sm mb-3">
-                    <input type="text" placeholder="Filter by name" style={inputFieldStyle}></input>
+                    <input type="text" onKeyUp={e => {if(e.key==='Enter'){handleSearchMembers(e.target.value)}}} placeholder="Filter by name" style={inputFieldStyle}></input>
                 </div>
                 <button class="btn" type="button" style={buttonStyle}>Invite Workspace members</button>
             </div>
             <div className="d-flex flex-column">
                 {
-                    members.map(member =>
+                    searchMembers.map(member =>
                         <div className="d-flex flex-row" style={memberRowStyle}>
                             <div className="d-flex flex-row mr-auto align-items-center">
                                 <img src={member.avatar} class="rounded-circle" alt="Cinque Terre" width="50" height="50"></img>

@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { ContentRoute, LayoutSplashScreen, useSubheader } from '../../../../../_metronic/layout';
 import { Redirect, Route, Switch } from "react-router-dom";
-import { WorkspaceAside } from './components/aside/WorkspaceAside';
 import { getUserWorkspace } from '../../_redux/home/homeCrud';
 import { toast } from "react-toastify"
 import WorkspaceBoards from './components/main/WorkspaceBoards';
@@ -14,9 +13,7 @@ import { useParams } from 'react-router-dom';
 import { HomeAside } from '../home/components/aside/HomeAside';
 
 export function WorkspacePage(props) {
-  // const workspaces = useSelector((state) => state.workspaces.workspaces, shallowEqual)
   const { workspaceId } = useParams()
-  // console.log("=======================")
   console.log(workspaceId)
   const [workspaces, setWorkspace] = useState([])
   const [boards, setBoards] = useState([])
