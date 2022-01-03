@@ -2,17 +2,18 @@ import React, { useState, useRef, useEffect } from 'react';
 import { DragDropContext } from 'react-beautiful-dnd';
 import { Button, Container, Popover, Overlay } from 'react-bootstrap';
 import { FiStar } from "react-icons/fi";
-import { BsPeople, BsPersonPlus, BsTags, BsInboxes } from "react-icons/bs";
-import { BiArrowToLeft, BiWorld } from "react-icons/bi";
+import { BsPersonPlus, BsTags, BsInboxes } from "react-icons/bs";
+import { BiArrowToLeft } from "react-icons/bi";
 import { AiOutlinePlus } from "react-icons/ai";
-import { MdClose, MdOutlineDashboard, MdLockOutline, MdCorporateFare } from "react-icons/md";
-import { GrGroup } from "react-icons/gr";
+import { MdClose, MdOutlineDashboard } from "react-icons/md";
 import BoardList from './board-list/BoardList';
 import axios from 'axios';
 import {
   lightGreyColor, lightGreyBackground, iconSize24, iconSize20, iconSize34,
   contentBackgroundMask, menuContainer, menuDescription, listContainer, backgroundAddNewList, popoverDialogContainer
 } from './BoardStyles';
+import BoardWorkspaceVisibility from './board-workspace-visibility/BoardWorkspaceVisibility';
+import BoardMember from './board-member/BoardMember';
 
 // APIs
 export const BASE_URL = 'http://127.0.0.1:8000';
@@ -189,17 +190,6 @@ function Board(props) {
     }
   };
 
-  // Open/close dialog workspace visibility
-  const dialogWorkspaceVisibilityTarget = useRef(null);
-  const [isDialogWorkspaceVisibilityOpen, setDialogWorkspaceVisibility] = useState(false);
-  const onWorkspaceVisibleButtonClicked = () => {
-    if (isDialogWorkspaceVisibilityOpen) {
-      setDialogWorkspaceVisibility(false);
-    } else {
-      setDialogWorkspaceVisibility(true);
-    }
-  };
-
   return (
     <Container fluid className='p-0 m-0'>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -217,23 +207,19 @@ function Board(props) {
                 <FiStar style={iconSize20} />
               </div>
 
-              {/* Workspace visible */}
-              <div
-                className={"btn mx-2 p-3 rounded d-flex align-items-center"} style={lightGreyBackground}
-                ref={dialogWorkspaceVisibilityTarget} onClick={onWorkspaceVisibleButtonClicked}
-              >
-                <BsPeople style={iconSize20} />
-                <h6 className='my-0 mx-2'>Workspace Visible</h6>
-              </div>
+              {/* Workspace visibility */}
+              <BoardWorkspaceVisibility />
 
               {/* List of members */}
-              <div className={"mx-2 p-2 d-flex align-items-center"}>
-                {/* {
-                  board["members"].map((member, index) => {
-                    return <img className={"rounded-circle bg-success"} style={iconSize24}/>
-                  })
-                } */}
-              </div>
+              {board["members"] !== undefined && board["members"].length > 0 &&
+                <div className={"mx-2 p-2 d-flex align-items-center"}>
+                  {
+                    board["members"].map((member, i) => {
+                      return <BoardMember key={member.id} member={member}/>
+                    })
+                  }
+                </div>
+              }
 
               {/* Button invite member */}
               <Button
@@ -401,74 +387,6 @@ function Board(props) {
                   <Button variant='primary' className='mx-3 mb-3 mt-0'>
                     Send invitation
                   </Button>
-
-                </div>
-              </Popover>
-            )}
-          </Overlay>
-
-          {/* Dialog workspace visibility */}
-          <Overlay target={dialogWorkspaceVisibilityTarget.current} show={isDialogWorkspaceVisibilityOpen} placement="bottom">
-            {(props) => (
-              <Popover {...props}>
-                <div className='rounded bg-white p-0 d-flex flex-column' style={popoverDialogContainer} >
-
-                  {/* Header */}
-                  <div className='d-flex justify-content-between align-items-center p-3'>
-                    <div className='btn p-0' onClick={() => { setDialogWorkspaceVisibility(false) }}>
-                      <MdClose style={iconSize20} />
-                    </div>
-                    <h6 className='m-0'>Workspace visibility</h6>
-                    <div className='btn p-0' onClick={() => { setDialogWorkspaceVisibility(false) }}>
-                      <MdClose style={iconSize20} />
-                    </div>
-                  </div>
-
-                  <hr className='m-0' />
-
-                  {/* Private */}
-                  <div className='d-flex p-3'>
-                    <div>
-                      <MdLockOutline style={iconSize20} />
-                    </div>
-                    <div className='d-flex flex-column mx-3'>
-                      <h6 className='m-0'><strong>Private</strong></h6>
-                      <p className='m-0'>Only board member can see and edit this board.</p>
-                    </div>
-                  </div>
-
-                  {/* Workspace */}
-                  <div className='d-flex p-3'>
-                    <div>
-                      <GrGroup style={iconSize20} />
-                    </div>
-                    <div className='d-flex flex-column mx-3'>
-                      <h6 className='m-0'><strong>Workspace</strong></h6>
-                      <p className='m-0'>All members of the Workspace can see and edit this board. The board must be added to a Workspace to enable this.</p>
-                    </div>
-                  </div>
-
-                  {/* Organization */}
-                  <div className='d-flex p-3'>
-                    <div>
-                      <MdCorporateFare style={iconSize20} />
-                    </div>
-                    <div className='d-flex flex-column mx-3'>
-                      <h6 className='m-0'><strong>Organization</strong></h6>
-                      <p className='m-0'>All members of the organization can see this board. The board must be added to an enterprise Workspace to enable this.</p>
-                    </div>
-                  </div>
-
-                  {/* Public */}
-                  <div className='d-flex p-3'>
-                    <div>
-                      <BiWorld style={iconSize20} />
-                    </div>
-                    <div className='d-flex flex-column mx-3'>
-                      <h6 className='m-0'><strong>Public</strong></h6>
-                      <p className='m-0'>Anyone on the internet can see this board. Only board members can edit.</p>
-                    </div>
-                  </div>
 
                 </div>
               </Popover>
