@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom";
 import SVG from "react-inlinesvg";
 import { toAbsoluteUrl, checkIsActive } from "../../../../../../../_metronic/_helpers";
 
-export function HomeAsideMenuList({ layoutProps, workspaces }) {
+export function HomeAsideMenuList({ layoutProps, workspaces, handleWorkspaceModalOpen }) {
     const location = useLocation();
     const getMenuItemActive = (url, hasSubmenu = false) => {
         return checkIsActive(location, url)
@@ -12,11 +12,12 @@ export function HomeAsideMenuList({ layoutProps, workspaces }) {
             "menu-item-active"} menu-item-open menu-item-not-hightlighted`
         : "";
     };
-    const workspaces_array = workspaces.workspaces
-
+    const workspaces_array = workspaces
+    // console.log(workspaces_array)
 //   useEffect = () => {
 //       dispatchEvent()
 //   }
+
 
   return (
     <>
@@ -38,22 +39,30 @@ export function HomeAsideMenuList({ layoutProps, workspaces }) {
 
         {/*begin::1 Level*/}
         <li className="menu-section ">
-          <h4 className="menu-text text-black">Workspaces</h4>
-          <i className="menu-icon flaticon-more-v2"></i>
+            <li className="menu-item">
+                <div className="d-flex flex-row justify-content-between">
+                    <h4 className="menu-text text-black">Workspaces</h4>
+                    <span className="svg-icon" onClick={handleWorkspaceModalOpen} style={{cursor: 'pointer'}}>
+                        <SVG src={toAbsoluteUrl("/media/svg/icons/Navigation/Plus.svg")} />
+                    </span>
+                </div>
+            </li>
+            
         </li>
-        {workspaces_array.map(workspace => 
+        {workspaces_array.map((workspace, key) =>
            <li
                 className={`menu-item menu-item-submenu`}
                 aria-haspopup="true"
                 data-menu-toggle="hover"
+                key={key}
             >
-                <NavLink className="menu-link menu-toggle" to={`/workspaces/${workspace.id}`}>
+                <div className="menu-link menu-toggle">
                     <span className="svg-icon menu-icon">
                         <SVG src={toAbsoluteUrl("/media/svg/icons/Home/Library.svg")} />
                     </span>
                     <span className="menu-text text-black">{workspace.name}</span>
                     <i className="menu-arrow" />
-                </NavLink>
+                </div>
                 <div className="menu-submenu ">
                     <i className="menu-arrow" />
                     <ul className="menu-subnav">
@@ -61,11 +70,11 @@ export function HomeAsideMenuList({ layoutProps, workspaces }) {
                             className={`menu-item `}
                             aria-haspopup="true"
                         >
-                            <NavLink className="menu-link" to={`/workspaces/${workspace.id}/boards`}>
-                            <span className="svg-icon menu-icon">
-                                <SVG src={toAbsoluteUrl("/media/svg/icons/Home/Library.svg")} />
-                            </span>
-                            <span className="menu-text text-black">Boards</span>
+                            <NavLink className="menu-link" to={`/workspaces/${workspace.id}`}>
+                                <span className="svg-icon menu-icon">
+                                    <SVG src={toAbsoluteUrl("/media/svg/icons/Home/Library.svg")} />
+                                </span>
+                                <span className="menu-text text-black">Boards</span>
                             </NavLink>
                         </li>
                         <li
@@ -74,7 +83,7 @@ export function HomeAsideMenuList({ layoutProps, workspaces }) {
                         >
                             <NavLink className="menu-link" to={`/workspaces/${workspace.id}/members`}>
                             <span className="svg-icon menu-icon">
-                                <SVG src={toAbsoluteUrl("/media/svg/icons/Home/Library.svg")} />
+                                <SVG src={toAbsoluteUrl("/media/svg/icons/General/User.svg")} />
                             </span>
                             <span className="menu-text text-black">Members</span>
                             </NavLink>
@@ -85,7 +94,7 @@ export function HomeAsideMenuList({ layoutProps, workspaces }) {
                         >
                             <NavLink className="menu-link" to={`/workspaces/${workspace.id}/settings`}>
                             <span className="svg-icon menu-icon">
-                                <SVG src={toAbsoluteUrl("/media/svg/icons/Home/Library.svg")} />
+                                <SVG src={toAbsoluteUrl("/media/svg/icons/Tools/Tools.svg")} />
                             </span>
                             <span className="menu-text text-black">Settings</span>
                             </NavLink>

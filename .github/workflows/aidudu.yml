@@ -1,0 +1,12 @@
+name: Aidudu CI/CD
+on:
+  push:
+    branches:
+      - develop
+jobs:
+  github_actions_test:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v2
+      - run: docker-compose -f docker-compose.prod.yml down
+      - run: docker-compose -f docker-compose.prod.yml up -d

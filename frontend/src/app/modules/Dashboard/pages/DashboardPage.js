@@ -17,7 +17,6 @@ export function DashboardPage() {
     <Suspense fallback={<LayoutSplashScreen />}>
       <Switch>
         <ContentRoute path="/" component={HomePage}/>
-        <ContentRoute path="/board" component={BoardPage} />
         {/*{*/}
         {/*  <Redirect*/}
         {/*    exact={true}*/}

@@ -5,6 +5,12 @@ import { BuilderPage } from "./pages/BuilderPage";
 import { MyPage } from "./pages/MyPage";
 import { DashboardPage } from './modules/Dashboard/pages/DashboardPage';
 import WorkspacePage from "./modules/Dashboard/pages/workspace/WorkspacePage";
+import Board from "./modules/Dashboard/pages/board/components/Board";
+import WorkspaceBoards from "./modules/Dashboard/pages/workspace/components/main/WorkspaceBoards";
+import Members from "./modules/Dashboard/pages/workspace/components/main/workspacemembers/Members";
+import WorkspaceSettings from "./modules/Dashboard/pages/workspace/components/main/WorkspaceSettings";
+import WorkspaceMembers from "./modules/Dashboard/pages/workspace/components/main/WorkspaceMembers";
+import BoardPage from "./modules/Dashboard/pages/board/BoardPage";
 // import { DashboardPage } from "./modules/Dashboard/pages/DashboardPage";
 
 const GoogleMaterialPage = lazy(() =>
@@ -35,16 +41,25 @@ export default function BasePage() {
           <Redirect exact from="/" to="/dashboard" />
         }
         <ContentRoute path="/dashboard" component={DashboardPage} />
-        <Route path="/workspaces/:workspaceid" component={WorkspacePage}/>
-        <Route path="/workspaces/:workspaceid/boards" component={WorkspacePage}/>
-        <Route path="/workspaces/:workspaceid/members" component={WorkspacePage}/>
+        <Route path="/board" component={BoardPage} />
+        <Route path="/workspaces/:workspaceId" component={WorkspacePage}/>
+        <Route path="/workspaces/:workspaceId/boards" component={WorkspaceBoards}/>
+        <Route path="/workspaces/:workspaceId/members" component={WorkspaceMembers}/>
+        <Route path="/workspaces/:workspaceId/settings" component={WorkspaceSettings}/>
+        <Route
+                    path="/workspace/:workspaceId/members/members"
+                    component={Members}
+                />
+
         {/*<ContentRoute path="/builder" component={BuilderPage} />*/}
         <ContentRoute path="/my-page" component={MyPage} />
+        <ContentRoute path="/workspace" component={WorkspacePage} />
         {/*<Route path="/google-material" component={GoogleMaterialPage} />*/}
         {/*<Route path="/react-bootstrap" component={ReactBootstrapPage} />*/}
         {/*<Route path="/e-commerce" component={ECommercePage} />*/}
         <Route path="/user-profile" component={UserProfilepage} />
-        <Redirect to="error/error-v1" />
+        <Redirect to="/error/error-v1" />
+        {/*<Route path="*" component={ErrorPage1}/>*/}
       </Switch>
     </Suspense>
   );

@@ -13,8 +13,9 @@ export function getUserWorkspace() {
 
 export function getWorkspaceBoards(workspaceid) {
     const workspace_id = workspaceid
-    console.log(workspaceid)
+    // console.log(workspaceid)
     let url = BOARD_URL+`/?workspace=${workspace_id}`
+    console.log(url)
     return axios.get(url)
 }
 // export function createWorkspace(data) {
