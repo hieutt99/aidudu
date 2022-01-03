@@ -22,9 +22,21 @@ const BoardMember = (props) => {
         }
     };
 
-    // const removeMember = () => {
-    //     axios.post(`${BACKEND_ORIGIN}api/v1/boards/${board.id}/leave/`)
-    // }
+    const removeMemberFromBoard = (member) => {
+        axios.delete(`${BACKEND_ORIGIN}api/v1/boards/${props.board.id}/members/`, {data: {id: [member.id]}}).then(res => {
+            
+            setDialogMember(false);
+
+            props.handleRemoveMember(member);
+            if(member.id === user.id) window.location = '/';
+
+        }).catch(e => {
+            setDialogMember(false);
+            alert("Có lỗi xảy ra khi xoá thành viên khỏi nhóm");
+        });
+    }
+
+    
 
     return (
         <>
@@ -43,7 +55,7 @@ const BoardMember = (props) => {
 
                             {/* Header */}
                             <div className='d-flex justify-content-between align-items-center p-3'>
-                                <div className='btn p-0' onClick={() => { setDialogMember() }}>
+                                <div className='btn p-0' style={{visibility: 'hidden'}}>
                                     <MdClose style={iconSize20} />
                                 </div>
                                 <h6 className='m-0'>{member.username}</h6>
@@ -60,15 +72,12 @@ const BoardMember = (props) => {
                                     <Image roundedCircle style={iconSize50} src={member.avatar} />
                                 </div>
                                 <div className='d-flex flex-column mx-3'>
-                                    <h6 className='m-0'><strong>{member.username}</strong></h6>
+                                    <h6 className='m-0'><strong>{member.first_name} {member.last_name}</strong></h6>
                                 </div>
                             </div>
 
                             {/* Current user can leave board and remove others from board */}
-                            {member.id === user.id
-                                ? <Button variant='danger' className='mx-3 mt-0 mb-3 py-2'>Leave board</Button>
-                                : <Button variant='danger' className='mx-3 mt-0 mb-3 py-2'>Remove from board</Button>
-                            }
+                            <Button variant='danger' className='mx-3 mt-0 mb-3 py-2' onClick={() => removeMemberFromBoard(member)}>{member.id === user.id ? 'Leave board' : 'Remove from board'}</Button>
 
                         </div>
                     </Popover>
