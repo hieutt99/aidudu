@@ -151,7 +151,6 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = '__all__'
 
-
 class ChecklistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Checklist
@@ -162,7 +161,7 @@ class ChecklistItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = ChecklistItem
         fields = '__all__'
-
+        read_only_fields = ['id', 'checklist']
 
 class LabelSerializer(serializers.ModelSerializer):
     class Meta:
@@ -200,23 +199,17 @@ class ChecklistStatSerializer(serializers.ModelSerializer):
         stats = checklist_src.items.order_by('id').values('checked').annotate(count=Count('id'))
         return stats
 
-
 class ChecklistDetailSerializer(serializers.ModelSerializer):
-    items = ChecklistItemSerializer('items', many=True)
+    items = ChecklistItemSerializer("items", many=True)
     class Meta:
         model = Checklist
-        fields = ['id', 'items']
-
-
-
+        fields = ['id', 'title', 'position', 'items']
 
 class LabelDetailSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Label
         fields = ['id', 'name', 'color']
-
-
 
 class BoardDetailViewCardSerializer(serializers.ModelSerializer):
     comments = serializers.IntegerField(source='comments.count', read_only=True)

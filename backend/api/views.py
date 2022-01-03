@@ -491,6 +491,19 @@ class CardViewSet(ModelViewSet):
         card.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    @action(detail=True, methods=['get'], url_path='checklists')
+    def get_checklists_from_card(self, request, pk):
+        card = get_object_or_404(Card, id=pk)
+        board_membership = BoardMembership.objects.filter(
+            user_id=request.user, board_id=card.list.board.id
+        )
+        if board_membership.exists():
+            serializer = ChecklistDetailSerializer(card.checklists, many=True)
+            print(serializer)
+            return Response(data=serializer.data)
+        else:
+            raise PermissionDenied(detail="You do not belong to this board or this board doesn't exist.")
+
 class ListViewSet(ModelViewSet):
     model = List
 
@@ -692,6 +705,61 @@ class ChecklistViewSet(ModelViewSet):
         self.check_object_permissions(self.request, obj)
         return obj
 
+    def perform_create(self, serializer):
+        checklist = serializer.save()
+        card = checklist.card
+        checklists_in_card = [c for c in card.checklists.all() if c.id!=checklist.id]
+        checklist.position = len(checklists_in_card)
+        checklist.save()
+    
+    def perform_update(self, serializer):
+        card_id = self.request.data['card']
+        card = get_object_or_404(Card, id=card_id)
+        board_membership = BoardMembership.objects.filter(
+            user_id=self.request.user, board_id=card.list.board.id
+        )
+        if board_membership.exists():
+            checklist = get_object_or_404(Checklist, pk=self.kwargs['pk'])
+            old_position = checklist.position
+
+            checklist = serializer.save()
+            # di chuyen vi tri
+            card = checklist.card 
+            if old_position > checklist.position:
+                # di chuyen len 
+                with transaction.atomic():
+                    checklists_in_card = [c for c in card.checklists.all() if c.id!=checklist.id and c.position>=checklist.position and c.position<old_position]
+                    for c in checklists_in_card:
+                        c.position+=1
+                        c.save()
+
+            elif old_position < checklist.position:
+                # di chuyen xuong 
+                with transaction.atomic():
+                    checklists_in_card = [c for c in card.checklists.all() if c.id!=checklist.id and c.position>old_position and c.position<=checklist.position]
+                    for c in checklists_in_card:
+                        c.position-=1
+                        c.save()
+        else:
+            raise PermissionDenied(detail="You do not belong to this board or this board doesn't exist.")
+    
+    def perform_destroy(self, serializer):
+        checklist = get_object_or_404(Checklist, pk=self.kwargs['pk'])
+        card = checklist.card 
+        board_membership = BoardMembership.objects.filter(
+            user_id=self.request.user, board_id=card.list.board.id
+        )
+        if board_membership.exists():
+            checklists_in_card = [c for c in card.checklists.all() if c.id!=checklist.id and c.position>checklist.position]
+            with transaction.atomic():
+                for c in checklists_in_card:
+                    c.position-=1
+                    c.save()
+                checklist.delete()
+        else:
+            raise PermissionDenied(detail="You do not belong to this board or this board doesn't exist.")
+
+
 class ChecklistItemViewSet(ModelViewSet):
     model = ChecklistItem
 
@@ -707,6 +775,50 @@ class ChecklistItemViewSet(ModelViewSet):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
         self.check_object_permissions(self.request, obj)
         return obj
+
+    def perform_update(self, serializer):
+        old_item = get_object_or_404(ChecklistItem, pk=self.kwargs['pk'])
+        old_position = old_item.position
+        item = serializer.save()
+        checklist = item.checklist
+        if item.position<old_position:
+            # di chuyen len 
+            items_in_checklist = [i for i in checklist.items.all() if i.id!=item.id and i.position>=item.position and i.position<old_position]
+            with transaction.atomic():
+                for i in items_in_checklist:
+                    i.position+=1
+                    i.save()
+        elif item.position>old_position:
+            # di chuyen xuong 
+            items_in_checklist = [i for i in checklist.items.all() if i.id!=item.id and i.position>old_position and i.position<=item.position]
+            with transaction.atomic():
+                for i in items_in_checklist:
+                    i.position-=1
+                    i.save()
+
+    def perform_create(self, serializer):
+        item = serializer.save()
+        checklist = item.checklist 
+        items_in_checklist = [i for i in checklist.items.all() if i.id!=item.id]
+        item.position = len(items_in_checklist)
+        item.save()
+
+    def perform_destroy(self, serializer):
+        item = get_object_or_404(ChecklistItem, pk=self.kwargs['pk'])
+        card = item.checklist.card
+        board_membership = BoardMembership.objects.filter(
+            user_id=self.request.user, board_id=card.list.board.id
+        )
+        if board_membership.exists():
+            items_in_checklist = [i for i in item.checklist.items.all() if i.id!=item.id and i.position>item.position]
+            with transaction.atomic():
+                for i in items_in_checklist:
+                    i.position-=1
+                    i.save()
+                item.delete()
+        else:
+            raise PermissionDenied(detail="You do not belong to this board or this board doesn't exist.")
+
 
 class UserViewSet(ModelViewSet):
     model = get_user_model()
@@ -725,7 +837,7 @@ class UserViewSet(ModelViewSet):
             | Q(username__icontains=query_string))\
             | Q(full_name__icontains=query_string)
         
-        return self.model.objects.annotate(full_name=Concat('first_name', V(' '), 'last_name')).filter(q)
+        return self.model.objects.annotate(full_name=Concat('first_name', V(' '), 'last_name')).filter(q).order_by('id')
             
     def get_object(self):
         """
