@@ -22,6 +22,7 @@ export const WORK_API = 'api/v1';
 // export const GET_BOARD_DETAILS = BACKEND_ORIGIN + WORK_API + '/boards/2/details';
 export const CREATE_A_LIST = BACKEND_ORIGIN + WORK_API + '/lists/';
 export const CARD_DETAIL = BACKEND_ORIGIN + WORK_API + '/cards/';
+export const UPDATE_CARDS_POSITION = BACKEND_ORIGIN + WORK_API + '/boards/';
 
 function Board(props) {
   const param = useParams()
@@ -69,56 +70,53 @@ function Board(props) {
     }
   }
 
-  const updateDraggableCardPosition = (draggableId, newPosition, newListId) => {
-    axios
-      .put(CARD_DETAIL + draggableId + '/', {
-        position: newPosition,
-        list: newListId,
-      })
-      .then(response => {
-        console.log("Successfully update draggable: " + response.data["title"] + " - position: " + response.data["position"]);
-        // TODO: get board details
-      })
+  async function updateDraggableCardPosition(draggableId, newPosition, newListId) {
+    let response = await axios.put(CARD_DETAIL + draggableId + '/', {
+      position: newPosition,
+      list: newListId
+    });
+    return response;
+  };
+
+  async function moveCardPosition(movedCards, updateUnit) {
+    // Create array of updated cards
+    let updatedCards = [];
+    for (let i = 0; i < movedCards.length; i++) {
+      updatedCards.push(
+        {
+          id: movedCards[i]["id"],
+          position: movedCards[i]["position"] + updateUnit,
+        }
+      )
+    }
+
+    // Call api
+    let response = await axios.put(UPDATE_CARDS_POSITION + boardId + '/update_cards/', {
+      updatedCards,
+    });
+    
+    return response;
   }
 
-  const moveCardPosition = (listId, card, updateUnit) => {
-    axios
-      .put(CARD_DETAIL + card["id"] + '/', {
-        list: listId,
-        position: card["position"] + updateUnit,
-      })
-      .then(response => {
-        console.log("Successfully move card: "
-          + "id: " + response.data["id"] + " - "
-          + "title: " + response.data["title"] + " - "
-          + "new position: " + response.data["position"]
-        );
-      });
-  }
-
-  const moveCardsPositionInNewDestinationList = (oldListId, newListId, oldCardIndex, newCardIndex) => {
+  async function moveCardsPositionInNewDestinationList(oldListId, newListId, oldCardIndex, newCardIndex) {
     try {
       // Update position of cards in the new list
       const destinationList = lists.find((list) => list["id"] == newListId);
       const cardsInDestinationList = destinationList["cards"];
       const destinationmMovedCards = cardsInDestinationList.filter((card) => card["position"] >= newCardIndex)
-      for (let i = 0; i < destinationmMovedCards.length; i++) {
-        moveCardPosition(newListId, destinationmMovedCards[i], INCREMENT_CARD_POSITION);
-      }
+      await moveCardPosition(destinationmMovedCards, INCREMENT_CARD_POSITION);
 
       // Update position of cards in the old list
       const sourceList = lists.find((list) => list["id"] == oldListId);
       const cardsInSourceList = sourceList["cards"];
       const sourceMovedCards = cardsInSourceList.filter((card) => card["position"] > oldCardIndex);
-      for (let j = 0; j < sourceMovedCards.length; j++) {
-        moveCardPosition(oldListId, sourceMovedCards[j], DECREMENT_CARD_POSITION);
-      }
+      await moveCardPosition(sourceMovedCards, DECREMENT_CARD_POSITION);
     } catch (exception) {
       console.log(exception);
     }
   }
 
-  const moveCardsPositionInOldDestinationList = (listId, oldCardIndex, newCardIndex) => {
+  async function moveCardsPositionInOldDestinationList(listId, oldCardIndex, newCardIndex) {
     try {
       const destinationList = lists.find((list) => list["id"] == listId);
       const cardsInDestinationList = destinationList["cards"];
@@ -126,22 +124,18 @@ function Board(props) {
       if (oldCardIndex < newCardIndex) {
         // Update position of cards after being moved up
         const movedCards = cardsInDestinationList.filter((card) => card["position"] > oldCardIndex && card["position"] <= newCardIndex);
-        for (let i = 0; i < movedCards.length; i++) {
-          moveCardPosition(listId, movedCards[i], DECREMENT_CARD_POSITION);
-        }
+        await moveCardPosition(movedCards, DECREMENT_CARD_POSITION);
       } else {
         // Update position of cards after being moved down
         const movedCards = cardsInDestinationList.filter((card) => card["position"] < oldCardIndex && card["position"] >= newCardIndex);
-        for (let i = 0; i < movedCards.length; i++) {
-          moveCardPosition(listId, movedCards[i], INCREMENT_CARD_POSITION);
-        }
+        await moveCardPosition(movedCards, INCREMENT_CARD_POSITION);
       }
     } catch (exception) {
       console.log(exception);
     }
   }
 
-  const onDragEnd = (result) => {
+  async function onDragEnd(result) {
     const { source, destination, draggableId } = result;
 
     if (!destination) {
@@ -158,14 +152,14 @@ function Board(props) {
     }
 
     if (oldListId !== newListId) {
-      moveCardsPositionInNewDestinationList(oldListId, newListId, oldCardIndex, newCardIndex);
+      await moveCardsPositionInNewDestinationList(oldListId, newListId, oldCardIndex, newCardIndex);
     } else {
-      moveCardsPositionInOldDestinationList(newListId, oldCardIndex, newCardIndex);
+      await moveCardsPositionInOldDestinationList(newListId, oldCardIndex, newCardIndex);
     }
 
-    updateDraggableCardPosition(draggableId, newCardIndex, newListId);
+    let responseUpdateDraggable = await updateDraggableCardPosition(draggableId, newCardIndex, newListId);
+    console.log("Successfully update draggable: " + responseUpdateDraggable.data["title"] + " - position: " + responseUpdateDraggable.data["position"]);
 
-    // TODO: await for cards update first
     getBoardDetails();
   };
 
@@ -284,7 +278,7 @@ function Board(props) {
               <h3 className={"my-0 mx-4 p-2"}>{board["name"]}</h3>
 
               {/* Icon button star */}
-              <BoardStarred board={board}/>
+              <BoardStarred board={board} />
 
               {/* Workspace visibility */}
               <BoardWorkspaceVisibility />
