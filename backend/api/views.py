@@ -102,6 +102,7 @@ class BoardViewSet(ModelViewSet):
             boards = [bm.board for bm in BoardMembership.objects.filter(user_id=user_id).order_by('-updated')]
             return boards[:limit] if limit is not None else boards
         return [bm.board for bm in BoardMembership.objects.filter(user_id=user_id)]
+
     def perform_create(self, serializer):
         board = serializer.save()
         BoardMembership.objects.create(board=board, user=self.request.user, role=BoardMembership.ROLE.ADMIN)
@@ -115,25 +116,34 @@ class BoardViewSet(ModelViewSet):
         data = self.request.data
         obj = self.get_object_with_permission()
         workspace_src = get_object_or_404(Board, pk=self.kwargs['pk']).workspace
+
         if 'background' in data:
-            serializer.save(workspace_id = workspace_src.id)
+            serializer.save(workspace_id=workspace_src.id)
             return
+        
         if 'starred' in data:
-            starred_new = self.request.data['starred']
-            if starred_new.lower() == 'true':
-                starred_new = True
-            elif starred_new.lower() == 'false':
-                starred_new = False
-            else:
-                return
-            star_info = BoardMembership.objects.filter(user_id=self.request.user.id, board = obj)
+            starred = parse_bool_or_400(self.request.data, 'starred')
+
+            star_info = BoardMembership.objects.filter(user_id=self.request.user.id, board=obj)
             if not star_info.exists():
-                raise PermissionDenied(
-                    detail="You do not belong to this board or this board doesn't exist.")
-            else:
-                star_info.update(starred=starred_new)
-                return Response(status=status.HTTP_204_NO_CONTENT)
-            return
+                raise PermissionDenied(detail="You do not belong to this board or this board doesn't exist.")
+        
+            star_info.update(starred=starred)
+            # return Response(status=status.HTTP_204_NO_CONTENT)
+    
+    @action(detail=True, methods=['put', 'patch'], url_path='starred')
+    def update_starred(self, request, pk):
+        starred = parse_bool_or_400(self.request.data, 'starred')
+        board = get_object_or_404(self.model, id=pk)
+
+        star_info =BoardMembership.objects.filter(user=self.request.user, board=board)
+        if not star_info.exists():
+            raise PermissionDenied(detail="You do not belong to this board or this board doesn't exist.")
+
+        star_info.update(starred=starred)
+        return Response({"starred": starred}, status=status.HTTP_204_NO_CONTENT)
+
+
     def get_object_with_permission(self):
         obj = get_object_or_404(self.model, pk=self.kwargs['pk'])
         membership = BoardMembership.objects.filter(user_id = self.request.user.id, board = obj)
