@@ -294,7 +294,7 @@ function Board(props) {
               <BoardStarred board={board} />
 
               {/* Workspace visibility */}
-              <BoardWorkspaceVisibility />
+              <BoardWorkspaceVisibility visibility={board["visibility"]}/>
 
               {/* List of members */}
               {members !== undefined && members.length > 0 &&
