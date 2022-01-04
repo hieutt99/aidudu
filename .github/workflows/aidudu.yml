@@ -10,6 +10,6 @@ jobs:
       - uses: actions/checkout@v2
         with:
           ref: 'release'
-      - run: ls
       - run: docker-compose -f docker-compose.prod.yml down
       - run: docker-compose -f docker-compose.prod.yml up -d
+      - run: docker-compose -f docker-compose.prod.yml exec python manage.py test api.tests.unit_tests
