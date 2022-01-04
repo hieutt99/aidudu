@@ -214,9 +214,7 @@ class BoardViewSet(ModelViewSet):
                 # id can the ma chua ton tai
                 changes = [i for i in ids if i not in changes]
                 for change in changes:
-                    BoardMembership.objects.create(
-                        user_id=change, board_id=board.id
-                    )
+                    BoardMembership.objects.create(user_id=change, board_id=board.id, role=BoardMembership.ROLE.MEMBER)
             return Response(status=status.HTTP_204_NO_CONTENT)
         else:
             raise PermissionDenied(
@@ -257,8 +255,7 @@ class WorkspaceViewSet(ModelViewSet):
         return WorkspaceSerializer
 
     def get_queryset(self):
-        user_id = parse_int_or_400(
-            self.request.query_params, 'user', self.request.user.id)
+        user_id = parse_int_or_400(self.request.query_params, 'user', self.request.user.id)
         return [wm.workspace for wm in WorkspaceMembership.objects.filter(user_id=user_id)]
 
     def perform_create(self, serializer):
@@ -355,8 +352,7 @@ class WorkspaceViewSet(ModelViewSet):
     @action(detail=False, methods=['get'], url_path='')
     def get_workspaces(self, request):
         user_id = self.request.user.id
-        result = [wm.workspace_id for wm in WorkspaceMembership.objects.filter(
-            user_id=user_id)]
+        result = [wm.workspace_id for wm in WorkspaceMembership.objects.filter(user_id=user_id)]
         result = Workspace.objects.filter(id__in=result)
         serializer = WorkspaceBoardSerializer(result, many=True)
         return Response(serializer.data)
