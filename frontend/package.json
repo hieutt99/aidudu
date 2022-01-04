@@ -5,7 +5,7 @@
     "homepage": "/metronic/react/demo1",
     "scripts": {
         "start": "react-scripts start -o",
-        "start-production": "REACT_APP_BACKEND_ORIGIN=http://minhdq99hp.ddns.net:8000/ react-scripts start -o",
+        "start-production": "REACT_APP_BACKEND_ORIGIN=http://minhdq99hp.ddns.net:8100/ react-scripts start -o",
         "build": "react-scripts build",
         "test": "react-scripts test",
         "eject": "react-scripts eject",
