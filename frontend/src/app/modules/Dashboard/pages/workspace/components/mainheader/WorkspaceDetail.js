@@ -14,7 +14,6 @@ const textStyle = {
 
 const workspaceDetailStyle = {
     backgroundColor : "#afafaf",
-
 };
 
 
@@ -62,6 +61,7 @@ function WorkspaceDetail(workspaceId){
         <div className="d-flex flex-column">
             <div className="d-flex flex-column" style={workspaceDetailStyle}>
                 <div className="d-flex flex-row justify-content-center">
+				
                     <div className="d-flex justify-content-center" style={{width:150, height:150}}>
                         <img src={workspace.logo} class="img-fluid" alt="Responsive image"></img>
                     </div>
@@ -73,22 +73,22 @@ function WorkspaceDetail(workspaceId){
                 </div>
                 <div className="d-flex flex-row justify-content-center" style={{marginTop:15}}>
                     <div className="navi-item" style={{marginBottom:"0px"}}>
-                    <NavLink
-                        to={`/workspaces/${workspace.id}/boards`}
-                        className="navi-link py-4"
-                        activeClassName="active"
-                    >
-                        <button type="button" className="btn" style={buttonStyle}>Boards</button>
-                    </NavLink>
+						<NavLink
+							to={`/workspaces/${workspace.id}/boards`}
+							className="navi-link py-4"
+							activeClassName="active"
+						>
+							<button type="button" className="btn" style={buttonStyle}>Boards</button>
+						</NavLink>
                     </div>
                     <div className="navi-item" style={{marginBottom:"0px"}}>
-                    <NavLink
-                        to={`/workspaces/${workspace.id}/members`}
-                        className="navi-link py-4"
-                        activeClassName="active"
-                    >
-                        <button type="button" className="btn" style={buttonStyle}  >Members</button>
-                    </NavLink>
+						<NavLink
+							to={`/workspaces/${workspace.id}/members`}
+							className="navi-link py-4"
+							activeClassName="active"
+						>
+							<button type="button" className="btn" style={buttonStyle}  >Members</button>
+						</NavLink>
                     </div>
                     <div className="navi-item" style={{marginBottom:"0px"}}>
                     <NavLink

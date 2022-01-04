@@ -14,31 +14,29 @@ import UserProfileCard from "./UserProfileCard";
 import { ProfileCard } from "./components/ProfileCard";
 
 export default function UserProfilePage() {
-  const subheader = SubHeader({title:""});
-  
-  return (
-    <div className="d-flex flex-row">
-	  <>{subheader}</>
-	  {/*<ProfileCard></ProfileCard>*/}
-      <div className="flex-row-fluid ml-lg-8">
-        <Switch>
-		  {/*default page*/}
-          <Redirect
-            from="/user-profile"
-            exact={true} 
-            to="/user-profile/update-user-profile"
-          />
-          <Route
-            path="/user-profile/update-user-profile"
-            component={UserProfileUpdate}
-          />
-		  <Route
-            from="/user-profile"
-            component={UserProfileCard}
-          />
-        </Switch>
-      </div>
-	  
-    </div>
-  );
+	return (
+		<div className="d-flex flex-row">
+			<div className="d-flex flex-column w-100">
+				<SubHeader arg={''}/>
+				<div>
+					<Switch>
+						{/*default page*/}
+						<Redirect
+							from="/user-profile"
+							exact={true} 
+							to="/user-profile/update-user-profile"
+						/>
+						<Route
+							path="/user-profile/update-user-profile"
+							component={UserProfileUpdate}
+						/>
+						<Route
+							from="/user-profile"
+							component={UserProfileCard}
+						/>
+					</Switch>
+				</div>	  
+			</div>
+		</div>
+	);
 }

@@ -119,12 +119,14 @@ export default function UserProfileUpdate(props) {
 					Save Changes
 					{formik.isSubmitting}
 				</button>
+				{/*
 				<Link
 					to="/user-profile/profile-overview"
 					className="btn btn-secondary"
 				>
 					Cancel
 				</Link>
+				*/}
 			</div>
 		</div>
 		{/* end::Header */}

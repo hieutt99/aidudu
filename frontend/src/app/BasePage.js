@@ -11,6 +11,7 @@ import Members from "./modules/Dashboard/pages/workspace/components/main/workspa
 import WorkspaceSettings from "./modules/Dashboard/pages/workspace/components/main/WorkspaceSettings";
 import WorkspaceMembers from "./modules/Dashboard/pages/workspace/components/main/WorkspaceMembers";
 import BoardPage from "./modules/Dashboard/pages/board/BoardPage";
+import UserProfilePage from "./modules/UserProfile/UserProfilePage";
 // import { DashboardPage } from "./modules/Dashboard/pages/DashboardPage";
 
 const GoogleMaterialPage = lazy(() =>
@@ -22,9 +23,9 @@ const ReactBootstrapPage = lazy(() =>
 const ECommercePage = lazy(() =>
   import("./modules/ECommerce/pages/eCommercePage")
 );
-const UserProfilepage = lazy(() =>
-  import("./modules/UserProfile/UserProfilePage")
-);
+// const UserProfilePage = lazy(() =>
+  // import("./modules/UserProfile/UserProfilePage")
+// );
 
 //TODO: add routes
 export default function BasePage() {
@@ -57,7 +58,7 @@ export default function BasePage() {
         {/*<Route path="/google-material" component={GoogleMaterialPage} />*/}
         {/*<Route path="/react-bootstrap" component={ReactBootstrapPage} />*/}
         {/*<Route path="/e-commerce" component={ECommercePage} />*/}
-        <Route path="/user-profile" component={UserProfilepage} />
+        <Route path="/user-profile" component={UserProfilePage} />
         <Redirect to="/error/error-v1" />
         {/*<Route path="*" component={ErrorPage1}/>*/}
       </Switch>
