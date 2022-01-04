@@ -2,7 +2,7 @@ name: Aidudu CI/CD
 on:
   push:
     branches:
-      - develop
+      - release
 jobs:
   github_actions_test:
     runs-on: self-hosted
