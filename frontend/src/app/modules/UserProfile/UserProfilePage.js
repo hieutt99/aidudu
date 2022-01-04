@@ -31,7 +31,7 @@ export default function UserProfilePage() {
 							component={UserProfileUpdate}
 						/>
 						<Route
-							from="/user-profile"
+							path="/user-profile/user-cards"
 							component={UserProfileCard}
 						/>
 					</Switch>
