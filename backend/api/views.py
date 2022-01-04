@@ -192,7 +192,7 @@ class BoardViewSet(ModelViewSet):
             memberships = BoardMembership.objects.filter(
                 board_id=board.id
             )
-            serializer = BoardMembershipSerializer(memberships, many=True)
+            serializer = BoardMembershipSerializer(memberships, many=True, context={'request': request})
             return Response(data=serializer.data)
         else:
             raise PermissionDenied(
