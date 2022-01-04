@@ -7,7 +7,7 @@ on:
     branches:
       - release
 jobs:
-  github_actions_test:
+  aidudu_ci_cd:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
