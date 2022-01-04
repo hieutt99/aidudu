@@ -1,8 +1,7 @@
 import React, { useRef, useState } from 'react';
-import { Button, Col, Image, Overlay, Popover, Row } from 'react-bootstrap';
-import { BsPersonCircle } from 'react-icons/bs';
-import { iconSize20, iconSize34, popoverDialogContainer } from '../../board/components/BoardStyles';
-import { Avatar, Input, TextField } from '@material-ui/core';
+import { Button, Col, Overlay, Popover, Row } from 'react-bootstrap';
+import { iconSize20, iconSize34 } from '../../board/components/BoardStyles';
+import { Avatar, Input } from '@material-ui/core';
 import { MdClose } from 'react-icons/md';
 import { timeSince } from '../../../../../utils/dateUtils';
 
@@ -27,6 +26,10 @@ function CardComment(
     setIsEditable(false);
     handleCommentEdit(cmt.id, editInputRef.current.value);
   };
+
+  const onCloseButtonClicked = () => {
+    setIsEditable(false);
+  }
 
   // DELETE BUTTON
   const commentDeleteDialogTarget = useRef(null);
@@ -71,6 +74,12 @@ function CardComment(
                       size={'sm'}
                       onClick={onSaveButtonClicked}>
                 Save
+              </Button>
+              <Button variant='link'
+                      style={{color: 'red'}}
+                      size={'sm'}
+                      onClick={onCloseButtonClicked}>
+                Close
               </Button>
             </Row> : ''
           }
