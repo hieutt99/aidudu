@@ -79,7 +79,7 @@ class UserDisplaySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'fullname', 'avatar']
+        fields = ['id', 'fullname', 'avatar', 'lastname', 'firstname']
 
     def get_full_name_of_user(self, user):
         return user.get_full_name()
@@ -88,11 +88,19 @@ class UserDisplaySerializer(serializers.ModelSerializer):
 class WorkspaceMembershipSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField('get_user_id_of_workspacemembership')
     fullname = serializers.SerializerMethodField('get_user_fullname_of_workspacemembership')
+    firstname = serializers.SerializerMethodField()
+    lastname = serializers.SerializerMethodField()
     avatar = serializers.SerializerMethodField('get_user_avatar_of_workspacemembership')
     
     class Meta:
         model = WorkspaceMembership
-        fields = ['id', 'fullname', 'avatar', 'role']
+        fields = ['id', 'fullname', 'avatar', 'role', "firstname", "lastname"]
+
+    def get_firstname(self, instance):
+        return instance.user.first_name
+
+    def get_lastname(self, instance):
+        return instance.user.last_name
 
     def get_user_id_of_workspacemembership(self, workspace_src):
         return workspace_src.user.id
@@ -274,15 +282,21 @@ class BoardMembershipSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField()
     username = serializers.SerializerMethodField()
     avatar = serializers.SerializerMethodField()
+    firstname = serializers.SerializerMethodField()
+    lastname = serializers.SerializerMethodField()
 
     class Meta:
         model = BoardMembership
-        fields = ["id", "username", "avatar"]
+        fields = ["id", "username", "avatar", "firstname", "lastname"]
 
     def get_id(self, instance):
         return instance.user.id 
     def get_username(self, instance):
         return instance.user.username
+    def get_firstname(self, instance):
+        return instance.user.first_name
+    def get_lastname(self, instance):
+        return instance.user.last_name
     def get_avatar(self, instance):
         request = self.context.get("request")
         if not instance.user.avatar:
