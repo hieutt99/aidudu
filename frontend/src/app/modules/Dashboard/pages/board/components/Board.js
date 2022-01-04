@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { Button, Container, Popover, Overlay } from 'react-bootstrap';
+import { Button, Container, Popover, Overlay, Image } from 'react-bootstrap';
 import { BsPersonPlus, BsTags, BsInboxes } from "react-icons/bs";
 import { BiArrowToLeft } from "react-icons/bi";
 import { AiOutlinePlus } from "react-icons/ai";
@@ -16,10 +16,10 @@ import BoardMember from './board-member/BoardMember';
 import BoardWorkspaceVisibility from './board-workspace-visibility/BoardWorkspaceVisibility';
 import { BACKEND_ORIGIN } from '../../../../../../config';
 import BoardStarred from './board-starred/BoardStarred';
+import BoardChangeBackgroundDialog from './board-change-background-dialog/BoardChangeBackgroundDialog';
 
 // APIs
 export const WORK_API = 'api/v1';
-// export const GET_BOARD_DETAILS = BACKEND_ORIGIN + WORK_API + '/boards/2/details';
 export const CREATE_A_LIST = BACKEND_ORIGIN + WORK_API + '/lists/';
 export const CARD_DETAIL = BACKEND_ORIGIN + WORK_API + '/cards/';
 export const UPDATE_CARDS_POSITION = BACKEND_ORIGIN + WORK_API + '/boards/';
@@ -27,18 +27,20 @@ export const UPDATE_CARDS_POSITION = BACKEND_ORIGIN + WORK_API + '/boards/';
 function Board(props) {
   const param = useParams()
   const boardId = param.boardId
+
   const GET_BOARD_DETAILS = BACKEND_ORIGIN + WORK_API + `/boards/${boardId}/details`;
   const INCREMENT_CARD_POSITION = 1;
   const DECREMENT_CARD_POSITION = -1;
 
   const [board, setBoard] = useState({});
   const [lists, setLists] = useState([]);
+  const [members, setMembers] = useState([]);
+  const [admin, setAdmin] = useState({});
+
   const [onTextChangedNewListTitle, setTextChangedNewListTitle] = useState('');
   const [candidates, setCandidates] = useState([]);
   const [selectedCandidates, setSelectedCandidates] = useState([]);
   const [inviteQuery, setInviteQuery] = useState('');
-
-  const [members, setMembers] = useState([]);
 
   useEffect(() => {
     getBoardDetails();
@@ -52,11 +54,19 @@ function Board(props) {
       setLists(response.data["lists"]);
       props.setLists(response.data["lists"]);
       setMembers(response.data['members']);
+      getAdmin(response.data["members"]);
+      setBackground(response.data["background"]);
     })
       .catch(error => {
         console.log("Error get board details: " + error);
       })
   };
+
+  const getAdmin = (members) => {
+    const adminMember = members.find((m) => m.role === 'admin');
+    console.log("Admin of the board: " + adminMember.username);
+    setAdmin(adminMember);
+  }
 
   const addNewList = () => {
     if (onTextChangedNewListTitle !== '') {
@@ -175,6 +185,12 @@ function Board(props) {
     }
   };
 
+  // Change background
+  const [background, setBackground] = useState('');
+
+  // Open/close dialog change background
+  const [isDialogChangeBackgroundOpen, setDialogChangeBackgroundShow] = useState(false);
+
   // Open/close menu sidebar
   const openMenuSidebar = () => {
     document.getElementById("menuSidebar").style.width = "350px";
@@ -291,10 +307,10 @@ function Board(props) {
               <h3 className={"my-0 mx-4 p-2"}>{board["name"]}</h3>
 
               {/* Icon button star */}
-              <BoardStarred boardId={board["id"]} boardStarred={board["starred"]}/>
+              <BoardStarred boardId={board["id"]} boardStarred={board["starred"]} />
 
               {/* Workspace visibility */}
-              <BoardWorkspaceVisibility visibility={board["visibility"]}/>
+              <BoardWorkspaceVisibility visibility={board["visibility"]} />
 
               {/* List of members */}
               {members !== undefined && members.length > 0 &&
@@ -328,7 +344,7 @@ function Board(props) {
           </div >
 
           {/* Main content */}
-          < div className='p-0 bg-image' style={{ height: "100vh", backgroundImage: "url('" + board.background + "')" }
+          < div className='p-0 bg-image' style={{ height: "100vh", backgroundImage: "url('" + background + "')" }
           }>
             <div style={contentBackgroundMask}>
               <div className='px-5 pb-3 d-flex align-items-start h-100' style={{ overflowX: "auto" }}>
@@ -405,24 +421,30 @@ function Board(props) {
             {/* Admin info */}
             <div className='px-4 d-flex flex-column my-3'>
               <p className='mx-0 mb-3' style={lightGreyColor}>Admin</p>
-              <div className='d-flex justify-content-start align-items-center mb-3'>
-                <img className={"rounded-circle bg-success"} style={iconSize34} />
+              <div className='d-flex justify-content-start align-items-center mb-0'>
+                <Image roundedCircle style={iconSize34} src={admin.avatar} />
                 <div className='d-flex flex-column mx-3'>
-                  <h6 className='m-0'>Henlo Cheems</h6>
-                  <p className='m-0' style={lightGreyColor}>henlocheems@gmail.com</p>
+                  <h6 className='m-0'>{admin.first_name} {admin.last_name}</h6>
+                  <p className='m-0' style={lightGreyColor}>@{admin.username}</p>
                 </div>
               </div>
-              <p className='mx-0 mb-3' style={lightGreyColor}>Description</p>
-              <textarea className='py-2 px-3 rounded border-0 form-control' style={menuDescription} placeholder='Enter description of the board' />
+              {/* <p className='mx-0 mb-3' style={lightGreyColor}>Description</p>
+              <textarea className='py-2 px-3 rounded border-0 form-control' style={menuDescription} placeholder='Enter description of the board' /> */}
             </div>
 
             <hr className='my-2' />
 
             {/* Change background */}
-            <div className='p-4 d-flex align-items-center'>
+            <div className='btn p-4 d-flex align-items-center' onClick={() => setDialogChangeBackgroundShow(true)}>
               <img className={"rounded-circle bg-warning"} style={iconSize24} />
               <h6 className='my-0 mx-3'>Change background</h6>
             </div>
+            <BoardChangeBackgroundDialog
+              show={isDialogChangeBackgroundOpen}
+              onHide={() => setDialogChangeBackgroundShow(false)}
+              setBackground={setBackground}
+              boardId={boardId}
+            />
 
             {/* Labels */}
             <div className='p-4 d-flex align-items-center'>

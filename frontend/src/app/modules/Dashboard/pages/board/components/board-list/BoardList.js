@@ -1,10 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Droppable } from 'react-beautiful-dnd';
 import { FiMoreHorizontal } from "react-icons/fi";
 import { AiOutlinePlus } from "react-icons/ai";
 import { MdClose, MdContentCopy, MdDeleteOutline } from "react-icons/md";
 import { BiMove } from "react-icons/bi";
-import { BsSortDown } from "react-icons/bs";
+import { BsSortAlphaDown, BsSortAlphaDownAlt, BsSortDown, BsSortNumericDown, BsSortNumericDownAlt } from "react-icons/bs";
 import BoardCardItem from '../board-card-item/BoardCardItem';
 import { Button, Overlay, Popover } from 'react-bootstrap';
 import axios from 'axios';
@@ -14,14 +14,29 @@ import { iconSize20, iconSize24, listContainer, primaryBackground, backgroundAdd
 // APIs
 export const CREATE_A_CARD = BACKEND_ORIGIN + 'api/v1/cards/';
 export const DELETE_A_LIST = BACKEND_ORIGIN + 'api/v1/lists/';
+export const COPY_A_LIST = BACKEND_ORIGIN + 'api/v1/lists/';
+
+export const SortCard = {
+    POSITION_ASC: 1,
+    POSITION_DES: 2,
+    NAME_ASC: 3,
+    NAME_DES: 4,
+};
 
 const BoardList = (props) => {
 
     const getBoardDetails = props.getBoardDetails;
-    const list = props.list;
-    const cards = list["cards"];
 
+    const [list, setList] = useState({});
+    const [cards, setCards] = useState([]);
+    const [sortBy, setSortBy] = useState(SortCard.POSITION_ASC);
     const [onTextChangedNewCardTitle, setTextChangedNewCardTitle] = useState('');
+
+    useEffect(() => {
+        setList(props.list);
+        setCards(props.list["cards"]);
+        setSortBy(SortCard.POSITION_ASC);
+    }, [props.list]);
 
     const addNewCard = () => {
         if (onTextChangedNewCardTitle !== '') {
@@ -44,20 +59,72 @@ const BoardList = (props) => {
         axios
             .delete(DELETE_A_LIST + list["id"] + "/")
             .then(() => {
-                console.log("Successfully deleted!");
+                console.log("Successfully deleted");
                 onListActionsClicked();
                 getBoardDetails();
             });
     }
 
+    const copyList = () => {
+        axios
+            .post(COPY_A_LIST + list["id"] + '/copy-list/')
+            .then(() => {
+                console.log("Successfully copy list");
+                onListActionsClicked();
+                getBoardDetails();
+            })
+    }
+
     const compareCards = (card1, card2) => {
-        if (card1.position < card2.position) {
-            return -1;
+        switch (sortBy) {
+            case SortCard.POSITION_ASC:
+                if (card1.position < card2.position) {
+                    return -1;
+                }
+                if (card1.position > card2.position) {
+                    return 1;
+                }
+                return 0;
+            case SortCard.POSITION_DES:
+                if (card1.position > card2.position) {
+                    return -1;
+                }
+                if (card1.position < card2.position) {
+                    return 1;
+                }
+                return 0;
+            case SortCard.NAME_ASC:
+                if (card1.title < card2.title) {
+                    return -1;
+                }
+                if (card1.title > card2.title) {
+                    return 1;
+                }
+                return 0;
+            case SortCard.NAME_DES:
+                if (card1.title > card2.title) {
+                    return -1;
+                }
+                if (card1.title < card2.title) {
+                    return 1;
+                }
+                return 0;
+            default:
+                if (card1.position < card2.position) {
+                    return -1;
+                }
+                if (card1.position > card2.position) {
+                    return 1;
+                }
+                return 0;
         }
-        if (card1.position > card2.position) {
-            return 1;
-        }
-        return 0;
+
+    }
+
+    const sordCards = (unit) => {
+        setSortBy(unit);
+        onListActionsClicked();
+        onSortCardClicked();
     }
 
     // Toggle add new card
@@ -80,6 +147,17 @@ const BoardList = (props) => {
             setDialogListActions(true);
         }
     };
+
+    // Open/close dialog sort cards
+    const dialogSortCardsTarget = useRef(null);
+    const [isDialogSortCardsOpen, setDialogSortCardsShow] = useState(false);
+    const onSortCardClicked = () => {
+        if (isDialogSortCardsOpen) {
+            setDialogSortCardsShow(false);
+        } else {
+            setDialogSortCardsShow(true);
+        }
+    }
 
     return (
         <div className='card mx-1 p-2 pb-0 border-0' style={listContainer} >
@@ -157,7 +235,7 @@ const BoardList = (props) => {
 
                             {/* Header */}
                             <div className='d-flex justify-content-between align-items-center p-3'>
-                                <div className='btn p-0' style={{visibility: "hidden"}}>
+                                <div className='btn p-0' style={{ visibility: "hidden" }}>
                                     <MdClose style={iconSize20} />
                                 </div>
                                 <h6 className='m-0'>List actions</h6>
@@ -169,7 +247,10 @@ const BoardList = (props) => {
                             <hr className='m-0' />
 
                             {/* Copy list */}
-                            <div className='btn p-3 d-flex align-items-center'>
+                            <div
+                                className='btn p-3 d-flex align-items-center'
+                                onClick={copyList}
+                            >
                                 <div >
                                     <MdContentCopy style={iconSize20} />
                                 </div>
@@ -184,12 +265,16 @@ const BoardList = (props) => {
                                 <h6 className='mx-3 my-0'>Move list</h6>
                             </div>
 
-                            {/* Sort by */}
-                            <div className='btn p-3 d-flex align-items-center'>
+                            {/* Sort cards */}
+                            <div
+                                className='btn p-3 d-flex align-items-center'
+                                ref={dialogSortCardsTarget}
+                                onClick={onSortCardClicked}
+                            >
                                 <div>
                                     <BsSortDown style={iconSize20} />
                                 </div>
-                                <h6 className='mx-3 my-0'>Sort by</h6>
+                                <h6 className='mx-3 my-0'>Sort cards</h6>
                             </div>
 
                             {/* Delete list */}
@@ -208,7 +293,73 @@ const BoardList = (props) => {
                 )}
             </Overlay>
 
+            {/* Dialog sort cards */}
+            <Overlay target={dialogSortCardsTarget.current} show={isDialogSortCardsOpen} placement="right">
+                {(props) => (
+                    <Popover {...props}>
+                        <div className='rounded bg-white p-0 d-flex flex-column' style={popoverDialogContainer} >
 
+                            {/* Header */}
+                            <div className='d-flex justify-content-between align-items-center p-3'>
+                                <div className='btn p-0' style={{ visibility: "hidden" }}>
+                                    <MdClose style={iconSize20} />
+                                </div>
+                                <h6 className='m-0'>Sort cards</h6>
+                                <div className='btn p-0' onClick={onSortCardClicked}>
+                                    <MdClose style={iconSize20} />
+                                </div>
+                            </div>
+
+                            <hr className='m-0' />
+
+                            {/* Sort by POSITION ASCENDING */}
+                            <div
+                                className='btn p-3 d-flex align-items-center'
+                                onClick={() => sordCards(SortCard.POSITION_ASC)}
+                            >
+                                <div >
+                                    <BsSortNumericDown style={iconSize20} />
+                                </div>
+                                <h6 className='mx-3 my-0'>By position ascending</h6>
+                            </div>
+
+                            {/* Sort by POSITION DESCENDING */}
+                            <div
+                                className='btn p-3 d-flex align-items-center'
+                                onClick={() => sordCards(SortCard.POSITION_DES)}
+                            >
+                                <div>
+                                    <BsSortNumericDownAlt style={iconSize20} />
+                                </div>
+                                <h6 className='mx-3 my-0'>By position descending</h6>
+                            </div>
+
+                            {/* Sort by NAME ASCENDING */}
+                            <div
+                                className='btn p-3 d-flex align-items-center'
+                                onClick={() => sordCards(SortCard.NAME_ASC)}
+                            >
+                                <div>
+                                    <BsSortAlphaDown style={iconSize20} />
+                                </div>
+                                <h6 className='mx-3 my-0'>By name ascending</h6>
+                            </div>
+
+                            {/* Sort by NAME DESCENDING */}
+                            <div
+                                className='btn p-3 d-flex align-items-center'
+                                onClick={() => sordCards(SortCard.NAME_DES)}
+                            >
+                                <div>
+                                    <BsSortAlphaDownAlt style={iconSize20} />
+                                </div>
+                                <h6 className='mx-3 my-0'>By name descending</h6>
+                            </div>
+
+                        </div>
+                    </Popover>
+                )}
+            </Overlay>
         </div>
     );
 }

@@ -57,7 +57,7 @@ export const menuContainer = {
     top: "0",
     right: "0",
     overflowX: "hidden",
-    transition: "0.8s",
+    transition: "0.6s",
 };
 
 export const menuDescription = {
@@ -89,3 +89,8 @@ export const popoverDialogContainer = {
     width: "300px",
     height: "auto",
 };
+
+export const cardChooseFile = {
+    width: "120px",
+    height: "auto",
+}
