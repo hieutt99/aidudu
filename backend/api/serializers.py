@@ -400,7 +400,7 @@ class CardDetailViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Card 
         fields = ['id', 'title', 'description', 'start', 'due',
-                'position', 'list', 'labels', 'comments', 'checklists', 'members']
+                'position', 'list', 'labels', 'comments', 'checklists', 'members', 'archived']
     
     def get_comments(self, instance):
         comments = CommentCardSerializer(instance.comments, many=True, context=self.context)

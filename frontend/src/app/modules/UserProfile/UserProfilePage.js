@@ -19,7 +19,7 @@ export default function UserProfilePage() {
           <Redirect
             from="/user-profile"
             exact={true}
-            to="/user-profile/profile-overview"
+            to="/user-profile/personal-information"
           />
           <Route
             path="/user-profile/profile-overview"
