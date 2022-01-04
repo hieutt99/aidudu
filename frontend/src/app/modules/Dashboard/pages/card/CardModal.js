@@ -6,19 +6,14 @@ import {
   archiveCard,
   deleteCommentInCard,
   getCardDetails,
+  removeMemberToCard,
   updateCardDetails,
   updateCommentInCard
 } from '../../_redux/card/cardCrud';
 import { iconSize20, iconSize34 } from '../board/components/BoardStyles';
 import { BsFillCreditCardFill, BsPeople } from 'react-icons/bs';
 import { Avatar, TextField } from '@material-ui/core';
-import {
-  BiCommentDetail,
-  FiArchive,
-  ImParagraphJustify,
-  MdChecklistRtl,
-  MdOutlineLabel
-} from 'react-icons/all';
+import { BiCommentDetail, FiArchive, ImParagraphJustify, MdChecklistRtl } from 'react-icons/all';
 import DatePicker from 'react-datepicker';
 import { toIsoString } from '../../../../utils/dateUtils';
 import { toast } from 'react-toastify';
@@ -28,12 +23,14 @@ import { BACKEND_ORIGIN } from '../../../../../config';
 import CardMove from './components/CardMove';
 import { createNewChecklist } from '../../_redux/card/checklistCrud';
 import CardChecklist from './components/CardChecklist';
+import CardMemberModal from './components/CardMemberModal';
+import CardMemberChip from './components/CardMemberChip';
 
-const CardModal = ({ open, onClose, lists }) => {
+const CardModal = ({ open, onClose, lists, members: boardMembers }) => {
   //
-  const params = useParams()
+  const params = useParams();
   // console.log(params)
-  const cardId  = params.cardId;
+  const cardId = params.cardId;
   const { id: userId, username, avatar } = useSelector((state) => state.auth.user);
   const userAvatar = BACKEND_ORIGIN + '' + avatar.substring(1); //remove first slash in avatar
   //
@@ -47,11 +44,20 @@ const CardModal = ({ open, onClose, lists }) => {
   const commentRef = useRef();
   const checklistTitleRef = useRef();
 
+  // INVITE MEMBER STATES
+  const [cardMembers, setCardMembers] = useState([]);
+  const [isModalInviteMemberOpen, setDialogInviteMember] = useState(false);
+  const onInviteMemberButtonClicked = () => {
+    setDialogInviteMember(!isModalInviteMemberOpen);
+  };
+
   useEffect(() => {
+    console.log(boardMembers);
     getCardDetails(cardId)
       .then(response => {
         console.log(response.data);
         setCardData(response.data);
+        setCardMembers(response.data.members ?? []);
         if (response.data.start !== null) setStartDate(new Date(response.data.start));
         if (response.data.due !== null) setDueDate(new Date(response.data.due));
         if (response.data.checklists) setChecklists(response.data.checklists);
@@ -70,7 +76,7 @@ const CardModal = ({ open, onClose, lists }) => {
       const newCardData = {
         ...cardData,
         ...newData
-      }
+      };
       await setCardData(newCardData);
       updateCardDetails(cardId, newData)
         .then(response => {
@@ -171,7 +177,7 @@ const CardModal = ({ open, onClose, lists }) => {
     setIsChecklistModalOpen(true);
   };
 
-  const handleModalClose = () => {
+  const handleChecklistModalClose = () => {
     setIsChecklistModalOpen(false);
   };
 
@@ -186,7 +192,7 @@ const CardModal = ({ open, onClose, lists }) => {
               position: res.data.position,
               title: res.data.title,
               items: []
-            }
+            };
             setIsChecklistModalOpen(false);
             setChecklists([...checklists, newChecklist]); // update checklists after create
           } else {
@@ -201,6 +207,15 @@ const CardModal = ({ open, onClose, lists }) => {
         .catch(err => console.log(err));
     }
   };
+
+  const handleRemoveMember = (member) => {
+    removeMemberToCard(cardId, member.id)
+      .then(res => {
+        console.log(res);
+        setCardMembers([...cardMembers].filter(mem => mem.id !== member.id));
+      })
+      .catch(e => console.log(e));
+  }
 
   return (
     <>
@@ -242,7 +257,34 @@ const CardModal = ({ open, onClose, lists }) => {
                 </Row>
                 {/*END TITLE SECTION*/}
 
-                <br />
+                {/*BEGIN MEMBERS SECTION*/}
+                {
+                  cardMembers && cardMembers.length > 0 &&
+                    <>
+                      <Row className={'mb-2'}>
+                        <div className={'font-size-sm text-justify'}>
+                          Members
+                        </div>
+                      </Row>
+                      <Row>
+                        <div className={'ml-0 d-flex align-items-center'}>
+                          {
+                            cardMembers.map((member, i) => {
+                              console.log(member);
+                              return <CardMemberChip
+                                key={member.id}
+                                member={member}
+                                handleRemoveMember={handleRemoveMember}
+                              />;
+                            })
+                          }
+                        </div>
+                      </Row>
+                    </>
+                }
+                {/*END MEMBERS SECTION*/}
+
+                <br/>
 
                 {/*BEGIN DUE DATE SECTION*/}
                 <Row>
@@ -309,11 +351,11 @@ const CardModal = ({ open, onClose, lists }) => {
                 {/*END DESCRIPTION SECTION*/}
 
                 {/*BEGIN CHECKLIST SECTION*/}
-                <CardChecklist checklists={checklists} setChecklists={setChecklists}/>
+                <CardChecklist checklists={checklists} setChecklists={setChecklists} />
                 <br />
                 {/*END CHECKLIST SECTION*/}
 
-                <hr/>
+                <hr />
 
                 {/* BEGIN COMMENTS SECTION*/}
                 <Row className='align-items-center'>
@@ -372,26 +414,43 @@ const CardModal = ({ open, onClose, lists }) => {
                   <h6>Add to card</h6>
                 </Row>
                 <Row>
+                  {/* BEGIN INVITE MEMBER */}
                   <Button
+                    onClick={onInviteMemberButtonClicked}
                     variant='secondary'
                     style={{ justifyContent: 'flex-start' }}
                     className={'text-left w-100 mb-3'}
-                    onClick={() => {
-                    }}
                   >
                     <BsPeople className={'mr-3'} style={iconSize20} />
                     Members
                   </Button>
-                  <Button
-                    variant='secondary'
-                    style={{ justifyContent: 'flex-start' }}
-                    className={'text-left w-100 mb-3'}
-                    onClick={() => {
-                    }}
-                  >
-                    <MdOutlineLabel className={'mr-3'} style={iconSize20} />
-                    Labels
-                  </Button>
+                  {
+                    isModalInviteMemberOpen ?
+                      <CardMemberModal
+                        cardId={cardId}
+                        cardMembers={cardMembers}
+                        setCardMembers={setCardMembers}
+                        boardMembers={boardMembers}
+                        isOpen={isModalInviteMemberOpen}
+                        handleCloseButtonClick={onInviteMemberButtonClicked}
+                      />
+                      : ''
+                  }
+                  {/* END INVITE MEMBER */}
+
+                  {/*TODO: BEGIN LABEL*/}
+                  {/*<Button*/}
+                  {/*  variant='secondary'*/}
+                  {/*  style={{ justifyContent: 'flex-start' }}*/}
+                  {/*  className={'text-left w-100 mb-3'}*/}
+                  {/*  onClick={() => {*/}
+                  {/*  }}*/}
+                  {/*>*/}
+                  {/*  <MdOutlineLabel className={'mr-3'} style={iconSize20} />*/}
+                  {/*  Labels*/}
+                  {/*</Button>*/}
+                  {/*END LABEL*/}
+
                   <Button
                     variant='secondary'
                     style={{ justifyContent: 'flex-start' }}
@@ -405,7 +464,7 @@ const CardModal = ({ open, onClose, lists }) => {
                   {/*OPEN CHECKLIST CREATE MODAL*/}
                   {
                     isChecklistModalOpen ?
-                      <Modal show={isChecklistModalOpen} onHide={handleModalClose} centered size={'sm'}>
+                      <Modal show={isChecklistModalOpen} onHide={handleChecklistModalClose} centered size={'sm'}>
                         <Modal.Header closeButton>
                           <Modal.Title>Create a checklist</Modal.Title>
                         </Modal.Header>
@@ -422,7 +481,7 @@ const CardModal = ({ open, onClose, lists }) => {
                           </div>
                         </Modal.Body>
                         <Modal.Footer>
-                          <Button variant='secondary' onClick={handleModalClose}>
+                          <Button variant='secondary' onClick={handleChecklistModalClose}>
                             Close
                           </Button>
                           <Button variant='primary' onClick={handleCreateChecklist}>

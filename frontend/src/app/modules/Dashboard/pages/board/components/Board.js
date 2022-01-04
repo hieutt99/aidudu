@@ -50,6 +50,7 @@ function Board(props) {
         setBoard(response.data);
         setLists(response.data["lists"]);
         props.setLists(response.data["lists"]);
+        props.setMembers(response.data["members"]);
         setMembers(response.data['members']);
         })
         .catch(error => {
@@ -263,6 +264,7 @@ function Board(props) {
 
         axios.post(`${BACKEND_ORIGIN}api/v1/boards/${board.id}/members/`, { id: idList }).then(res => {
           setMembers([...members, ...selectedCandidates]);
+          props.setMembers([...members, ...selectedCandidates]);
         }).catch(e => {
           alert("Có lỗi xảy ra khi mời thành viên mới");
         })
@@ -279,6 +281,7 @@ function Board(props) {
         if(member.id === temp[i].id){
           temp.splice(i, 1);
           setMembers(temp);
+          props.setMembers(temp);
           break;
         }
       }
