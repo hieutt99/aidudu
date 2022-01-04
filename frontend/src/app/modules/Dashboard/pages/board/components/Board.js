@@ -291,7 +291,7 @@ function Board(props) {
               <h3 className={"my-0 mx-4 p-2"}>{board["name"]}</h3>
 
               {/* Icon button star */}
-              <BoardStarred board={board} />
+              <BoardStarred boardId={board["id"]} boardStarred={board["starred"]}/>
 
               {/* Workspace visibility */}
               <BoardWorkspaceVisibility visibility={board["visibility"]}/>
