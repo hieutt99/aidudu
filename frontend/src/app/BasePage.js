@@ -58,7 +58,8 @@ export default function BasePage() {
         {/*<Route path="/react-bootstrap" component={ReactBootstrapPage} />*/}
         {/*<Route path="/e-commerce" component={ECommercePage} />*/}
         <Route path="/user-profile" component={UserProfilepage} />
-        <Redirect to="error/error-v1" />
+        <Redirect to="/error/error-v1" />
+        {/*<Route path="*" component={ErrorPage1}/>*/}
       </Switch>
     </Suspense>
   );

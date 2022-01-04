@@ -11,3 +11,10 @@ export function getWorkspaceById(workspaceid) {
     console.log(url)
     return axios.get(url)
 }
+
+export function getMembersByWorkspace(workspaceid){
+    const workspace_id = workspaceid
+    let url = WORKSPACE_URL+`/${workspace_id}/members`
+    console.log(url)
+    return axios.get(url)
+}

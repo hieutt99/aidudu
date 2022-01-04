@@ -27,7 +27,7 @@ export const UPDATE_CARDS_POSITION = BACKEND_ORIGIN + WORK_API + '/boards/';
 function Board(props) {
   const param = useParams()
   const boardId = param.boardId
-  const GET_BOARD_DETAILS = BACKEND_ORIGIN + WORK_API + `/boards/${boardId}/details/`;
+  const GET_BOARD_DETAILS = BACKEND_ORIGIN + WORK_API + `/boards/${boardId}/details`;
   const INCREMENT_CARD_POSITION = 1;
   const DECREMENT_CARD_POSITION = -1;
 
@@ -42,13 +42,15 @@ function Board(props) {
 
   useEffect(() => {
     getBoardDetails();
-  }, []);
+    props.setRerenderFlag(false);
+  }, [props.rerenderFlag]);
 
   const getBoardDetails = () => {
     axios.get(GET_BOARD_DETAILS).then(response => {
       console.log("Board details: ", response.data);
       setBoard(response.data);
       setLists(response.data["lists"]);
+      props.setLists(response.data["lists"]);
       setMembers(response.data['members']);
     })
       .catch(error => {
