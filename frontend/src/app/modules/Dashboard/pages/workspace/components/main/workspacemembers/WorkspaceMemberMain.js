@@ -160,6 +160,15 @@ function WorkspaceMemberMain(workspaceId){
     
       }
     
+    function removeMember(member){
+        axios.delete(`${BACKEND_ORIGIN}api/v1/workspaces/${workspace.id}/members/`, { id: [member.id] }).then(res => {
+            setMembers([members.filter(mem => mem.id !== member.id)]);
+            setSearchMembers(members)
+        }).catch(e => {
+            alert("Error removing member from workspace!");
+        })
+    }
+    
     const inviteMembers = e => {
         let idList = [];
         for (let i = 0; i < selectedCandidates.length; i++) idList.push(selectedCandidates[i].id);
@@ -168,24 +177,12 @@ function WorkspaceMemberMain(workspaceId){
         ){
             axios.post(`${BACKEND_ORIGIN}api/v1/workspaces/${workspace.id}/members/`, { id: idList[i] }).then(res => {
                 setMembers([...members, selectedCandidates]);
-                console.log(selectedCandidates)
-                console.log(searchMembers)
-                // let newMembers = members.concat(selectedCandidates);
-                // for (
-                //     let i = 0; i < selectedCandidates.length; i++
-                // ){
-                //     setSearchMembers([...members, selectedCandidates[i]])
-                // }
-                // selectedCandidates.map(cand =>setSearchMembers([...searchMembers, cand]));
-                setSearchMembers([...searchMembers, selectedCandidates])
-                // setSearchMembers([...members, selectedCandidates]);
+                selectedCandidates.map(cand =>setSearchMembers([...searchMembers, cand]));
+
             }).catch(e => {
                 alert("Có lỗi xảy ra khi mời thành viên mới");
             })
         }   
-
-
-
         setInviteQuery('');
         setCandidates([]);
         setSelectedCandidates([]);
@@ -193,29 +190,8 @@ function WorkspaceMemberMain(workspaceId){
         // setMembers(members);
     }
 
-    // useEffect(()=>{
-    //     getWorkspaceById(workspaceId.workspaceId).then(res=>{
-    //       setWorkspace(res.data)
-    //     }).catch(err=>{
-    //       toast.error('Cannot get workspace', {
-    //           position: 'top-right',
-    //           autoClose: 5000,
-    //           hideProgressBar: false,
-    //           closeOnClick: true
-    //         });
-    //     })
-    //     getMembersByWorkspace(workspaceId.workspaceId).then(res=>{
-    //         setMembers(res.data)
-    //         setSearchMembers(res.data)
-    //     }).catch(err=>{
-    //         toast.error('Cannot get members', {
-    //             position: 'top-right',
-    //             autoClose: 5000,
-    //             hideProgressBar: false,
-    //             closeOnClick: true
-    //           });
-    //       })
-    // }, [])
+
+
 
     console.log(searchMembers)
     return (
@@ -304,11 +280,11 @@ function WorkspaceMemberMain(workspaceId){
                         <div className="d-flex flex-row" style={memberRowStyle}>
                             <div className="d-flex flex-row mr-auto align-items-center">
                                 <img src={member.avatar} class="rounded-circle" alt="Cinque Terre" width="50" height="50"></img>
-                                <h5 style={{marginLeft:"5px"}}>{member.firstname.concat(" "+member.lastname)}</h5>
+                                <h5 style={{marginLeft:"5px"}}>{member.first_name+" "+member.last_name}</h5>
                             </div>
                             <div className="d-flex flex-row align-items-center">
                                 <button class="btn btn-outline-secondary" style={{backgroundColor:"#DFE1E6", margin:"5px"}} type="button">Admin</button>
-                                <button class="btn btn-outline-secondary" style={{backgroundColor:"#DFE1E6", margin:"5px"}} type="button">Remove</button>
+                                <button class="btn btn-outline-secondary" onClick={()=> removeMember(member)} style={{backgroundColor:"#DFE1E6", margin:"5px"}} type="button">Remove</button>
                             </div>
                         </div>
                         )

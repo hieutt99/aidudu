@@ -7,10 +7,7 @@ import { useParams } from 'react-router-dom';
 import { getWorkspaceBoards } from "../../../../_redux/home/homeCrud";
 import { toast } from "react-toastify";
 import WorkspaceDetail from "../mainheader/WorkspaceDetail";
-import Box from '@mui/material/Box';
-import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 const textStyle = {
     fontSize : "15px"
@@ -51,7 +48,9 @@ const boardBackgroundIMG = {
     width : "350px",
     height : "170px",
     borderRadius : "8px",
-    margin: "20px"
+    margin: "20px",
+    padding: "10px",
+    backgroundColor:"#afafaf"
 }
 
 function WorkspaceBoards(props){
@@ -59,6 +58,8 @@ function WorkspaceBoards(props){
     const [boards, setBoards] = useState([])
     const [searchTerm, setSearchTerm] = useState([""])
     const [searchBoards, setSearchBoards] = useState([])
+    const [option, setOption] = useState([""])
+    
     useEffect(()=>{
         getWorkspaceBoards(workspaceId).then(res=>{
             setBoards(res.data)
@@ -83,6 +84,42 @@ function WorkspaceBoards(props){
         console.log(searchBoards)
     }
 
+    function compareZA( a, b ) {
+        if ( a.name < b.name ){
+          return 1;
+        }
+        if ( a.name > b.name ){
+          return -1;
+        }
+        return 0;
+      }
+
+
+    function compareAZ( a, b ) {
+        if ( a.name < b.name ){
+          return -1;
+        }
+        if ( a.name > b.name ){
+          return 1;
+        }
+        return 0;
+      }
+    console.log(boards)
+    const handleChange = (event) => {
+        handleSortBoard(event.target.value)
+        setOption(event.target.value);        
+      };
+
+    function handleSortBoard(option){
+        console.log(option)
+        if(option ==="Alphebetically Z-A"){
+            boards.sort(compareZA);
+        } else {
+            boards.sort(compareAZ);
+        }
+        setSearchBoards(boards);
+        console.log(searchBoards);
+    }
 
     return (
         <>
@@ -92,30 +129,35 @@ function WorkspaceBoards(props){
                 <div className="d-flex flex-row justify-content-around" style={{marginTop:30}}>
                     <div className="d-flex flex-column">
                         <h4>Sort by</h4>
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                Dropdown button
-                            </button>
-                            
-                        </div>
+                        <Select 
+                            style={{width:"200px", height:"40px"}}
+                            value={option}
+                            onChange={handleChange}
+                        >
+                            <MenuItem value="">
+                                <em>None</em>
+                            </MenuItem>
+                            <MenuItem value={"Alphebetically A-Z"}>Alphebetically A-Z</MenuItem>
+                            <MenuItem value={"Alphebetically Z-A"}>Alphebetically Z-A</MenuItem>
+                        </Select>
                     </div>
                     <div className="d-flex flex-column">
                         <h4>Search</h4>
                         <div class="input-group mb-3">
-                            <input type="text" onKeyUp={e => {if(e.key==='Enter'){handleSearchBoard(e.target.value)}}} class="form-control" aria-label="Default" aria-describedby="inputGroup-sizing-default"></input>
+                            <input type="text" onKeyUp={e => {if(e.key==='Enter'){handleSearchBoard(e.target.value)}}} class="form-control" placeholder="Search by name" aria-label="Default" aria-describedby="inputGroup-sizing-default"></input>
                         </div>
                     </div>  
                 </div>
                 <div className="row">
                     {searchBoards.map(board => 
-                        <div className="col-sm-4">
+                        <div className="col-sm-3" >
                             <div className="image-container" style={{position:"relative", textAlign:"center",textTransform:"uppercase",fontSize:"30px"}}>
                                 <NavLink
-                                to={`/boards/${board.id}`}
+                                to={`/board/${board.id}`}
                                 activeClassName="active"
                                 >
                                         <img src={board.background}  style={boardBackgroundIMG} alt={board.name}></img>
-                                        <div class="top-left" style={{position:"absolute", top:"25px", left:"90px", color:"white"}}>{board.name}</div>
+                                        <div class="top-left" style={{position:"absolute", top:"25px", left:"35px", color:"white"}}>{board.name}</div>
                                 </NavLink>
                         </div>
                         </div>

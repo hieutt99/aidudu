@@ -1,20 +1,26 @@
 import React from "react";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
-import { useState , useEffect} from "react";
+import { useState , useEffect, useRef} from "react";
 import { Switch, Route, NavLink } from "react-router-dom";
 import { WorkspaceWidget } from "../main/WorkspaceWidget";
 import { toast } from "react-toastify"
 import { getWorkspaceById } from '../../../../_redux/workspace/workspaceCrud';
 import { getWorkspaceBoards } from "../../../../_redux/home/homeCrud";
-import { popper } from "@popperjs/core";
+import { Popover, Overlay } from 'react-bootstrap';
+import { lightGreyBackground, iconSize20, popoverDialogContainer } from '../../../board/components/BoardStyles';
+import Axios from "axios";
+import { MdClose, MdLockOutline } from "react-icons/md";
+import { BiWorld } from "react-icons/bi";
+import { BACKEND_ORIGIN } from '../../../../../../../config';
+import { set } from "object-path";
 const textStyle = {
     fontSize : "15px",
     textTransform : "capitalize"
 };
 
 const workspaceDetailStyle = {
-    backgroundColor : "#afafaf",
-
+    backgroundColor : "#dddddd",
+    borderRadius : "5px"
 };
 
 
@@ -44,6 +50,15 @@ const clickedButtonStyle = {
 function WorkspaceDetail(workspaceId){
     console.log(workspaceId)
     const [workspace, setWorkspace] = useState([])
+    const dialogWorkspaceVisibilityTarget = useRef(null);
+    const [isDialogWorkspaceVisibilityOpen, setDialogWorkspaceVisibility] = useState(false);
+    const onWorkspaceVisibleButtonClicked = () => {
+        if (isDialogWorkspaceVisibilityOpen) {
+            setDialogWorkspaceVisibility(false);
+        } else {
+            setDialogWorkspaceVisibility(true);
+        }
+    };
     useEffect(()=>{
         getWorkspaceById(workspaceId.workspaceId).then(res=>{
           setWorkspace(res.data)
@@ -56,6 +71,22 @@ function WorkspaceDetail(workspaceId){
             });
         })
     }, [])
+
+    function changeWorkspaceName(name){
+        Axios.put(`${BACKEND_ORIGIN}api/v1/workspaces/${workspace.id}/settings/`, {name: name}).then(res => {
+        }).catch(e => {
+            alert("Error updating workspace's name!");
+        });
+    }
+
+    function changeWorkspaceLogo(logourl){
+        console.log(logourl)
+        Axios.put(`${BACKEND_ORIGIN}api/v1/workspaces/${workspace.id}/settings/`, {logo: logourl}).then(res => {
+        }).catch(e => {
+            alert("Error updating workspace's logo!");
+        });
+    }
+
     console.log(workspace)
     return (
         <>
@@ -68,7 +99,40 @@ function WorkspaceDetail(workspaceId){
                     <div className="d-flex flex-column m-5">
                         <h2>{workspace.name}</h2>
                         <p className="text-left" style={textStyle}> {workspace.visibility} </p>
-                        <button type="button" className="btn btn-md" data-toogle="modal" data-target="#editWorkspaceDetails" style={{color: "black", backgroundColor: "#EC6451"}}>Edit workspace's details</button>
+                        <button type="button" className="btn btn-md" ref={dialogWorkspaceVisibilityTarget} onClick={onWorkspaceVisibleButtonClicked} style={{color: "black", backgroundColor: "#EC6451"}}>Edit workspace's details</button>
+                        <Overlay target={dialogWorkspaceVisibilityTarget.current} show={isDialogWorkspaceVisibilityOpen} placement="bottom">
+                            {(props) => (
+                                <Popover {...props}>
+                                    <form>
+                                        <div className='rounded bg-white p-0 d-flex flex-column' style={popoverDialogContainer} >
+
+                                            {/* Header */}
+                                            <div className='d-flex justify-content-between align-items-center p-3'
+                                            style={{borderBottom:"2px groove"}}>
+                                                <div className='btn p-0' onClick={() => { setDialogWorkspaceVisibility(false) }}>
+                                                    <MdClose style={iconSize20} />
+                                                </div>
+                                                <h6 className='m-0'>Edit Workspace's details</h6>
+                                                <div className='btn p-0' onClick={() => { setDialogWorkspaceVisibility(false) }}>
+                                                    <MdClose style={iconSize20} />
+                                                </div>
+                                            </div>
+                                            {/* Body */}
+                                            <div class="form-group" style={{padding: "10px 10px 0px 10px"}}>
+                                                <label for="name-ws">Workspace name</label>
+                                                <input type="text" onChange={e => {changeWorkspaceName(e.target.value)}} class="form-control" id="name-ws" placeholder="Enter new name"/>
+                                            </div>
+                                            <div class="form-group" style={{padding: "10px 10px 0px 10px", borderTop:"2px groove"}}>
+                                                <label for="logo-ws">Upload workspace logo</label>
+                                                <input type="file" onChange={e => {changeWorkspaceLogo(e.target.value)}}  class="form-control-file" id="logo-ws"/>
+                                            </div>
+                                            <hr className='m-0' />
+                                            <button type="submit" class="btn btn-primary">Submit</button>
+                                        </div>
+                                    </form>
+                                </Popover>
+                                )}
+                        </Overlay>
                     </div>
                 </div>
                 <div className="d-flex flex-row justify-content-center" style={{marginTop:15}}>
