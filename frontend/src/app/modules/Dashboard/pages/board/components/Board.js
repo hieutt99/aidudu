@@ -1,16 +1,26 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { useHistory, useParams } from 'react-router-dom';
 import { DragDropContext } from 'react-beautiful-dnd';
-import { Button, Container, Popover, Overlay, Image } from 'react-bootstrap';
-import { BsPersonPlus, BsTags, BsInboxes } from "react-icons/bs";
-import { BiArrowToLeft } from "react-icons/bi";
-import { AiOutlinePlus } from "react-icons/ai";
-import { MdClose, MdOutlineDashboard } from "react-icons/md";
+import { Button, Container, Image, Overlay, Popover, Row } from 'react-bootstrap';
+import { FiStar } from 'react-icons/fi';
+import { BsInboxes, BsPersonPlus, BsTags } from 'react-icons/bs';
+import { BiArrowToLeft } from 'react-icons/bi';
+import { AiOutlinePlus } from 'react-icons/ai';
+import { MdClose, MdOutlineDashboard } from 'react-icons/md';
 import BoardList from './board-list/BoardList';
 import axios from 'axios';
 import {
-  lightGreyColor, lightGreyBackground, iconSize24, iconSize20, iconSize34,
-  contentBackgroundMask, menuContainer, menuDescription, listContainer, backgroundAddNewList, popoverDialogContainer
+    backgroundAddNewList,
+    contentBackgroundMask,
+    iconSize20,
+    iconSize24,
+    iconSize34,
+    lightGreyBackground,
+    lightGreyColor,
+    listContainer,
+    menuContainer,
+    menuDescription,
+    popoverDialogContainer
 } from './BoardStyles';
 import BoardMember from './board-member/BoardMember';
 import BoardWorkspaceVisibility from './board-workspace-visibility/BoardWorkspaceVisibility';
@@ -18,6 +28,7 @@ import { BACKEND_ORIGIN } from '../../../../../../config';
 import BoardStarred from './board-starred/BoardStarred';
 import BoardChangeBackgroundDialog from './board-change-background-dialog/BoardChangeBackgroundDialog';
 import { shallowEqual, useSelector } from 'react-redux';
+import { deleteCard, updateCardDetails } from '../../../_redux/card/cardCrud';
 
 // APIs
 export const WORK_API = 'api/v1';
@@ -44,21 +55,34 @@ function Board(props) {
   const [selectedCandidates, setSelectedCandidates] = useState([]);
   const [inviteQuery, setInviteQuery] = useState('');
 
-  useEffect(() => {
-    console.log('user', user);
-  }, [user])
+  const [archiveItems, setArchiveItems] = useState([]);
+  const history = useHistory();
 
   useEffect(() => {
     getBoardDetails();
     props.setRerenderFlag(false);
   }, [props.rerenderFlag]);
 
+    const getArchiveItems = (lists) => {
+        if (!lists || lists.length === 0) return;
+        const result = []
+        lists.forEach((list) => {
+            if (list.archived_cards && list.archived_cards.length > 0) {
+                result.push(...list.archived_cards);
+            }
+        })
+        console.log(result);
+        return result;
+    }
+
   const getBoardDetails = () => {
     axios.get(GET_BOARD_DETAILS).then(response => {
       console.log("Board details: ", response.data);
       setBoard(response.data);
       setLists(response.data["lists"]);
+      setArchiveItems(getArchiveItems(response.data["lists"]));
       props.setLists(response.data["lists"]);
+      props.setMembers(response.data["members"]);
       setMembers(response.data['members']);
       getAdmin(response.data["members"]);
       setBackground(response.data["background"]);
@@ -309,6 +333,34 @@ function Board(props) {
         alert("Có lỗi xảy ra khi xoá thành viên khỏi nhóm");
     });
   }
+  // ARCHIVE STATES
+    const [isArchiveItemsOpen, setIsArchiveItemsOpen] = useState(false);
+    const handleArchiveItemsClick = () => {
+        setIsArchiveItemsOpen(!isArchiveItemsOpen);
+    }
+
+    function handleUnarchiveCard(id) {
+        console.log(id);
+        updateCardDetails(id, {
+            archived: false
+        })
+          .then(res => {
+              console.log(res);
+              setArchiveItems([...archiveItems].splice(archiveItems.find(obj => obj.id === id), 1))
+              getBoardDetails();
+          })
+          .catch(e => console.log(e));
+    }
+
+    function handleDeleteCard(id) {
+        deleteCard(id)
+          .then(res => {
+              console.log(res);
+              setArchiveItems([...archiveItems].splice(archiveItems.find(obj => obj.id === id), 1))
+              getBoardDetails();
+          })
+          .catch(e => console.log(e));
+    }
 
   return (
     <Container fluid className='p-0 m-0'>
@@ -468,11 +520,48 @@ function Board(props) {
               <h6 className='my-0 mx-3'>Labels</h6>
             </div>
 
-            {/* Archived items */}
-            <div className='p-4 d-flex align-items-center'>
-              <BsInboxes style={iconSize24} />
-              <h6 className='my-0 mx-3'>Archived items</h6>
-            </div>
+                {/* Archived items */}
+                <div className='p-4 d-flex align-items-center' onClick={handleArchiveItemsClick}>
+                <BsInboxes style={iconSize24} />
+                <h6 className='my-0 mx-3'>Archived items</h6>
+                </div>
+
+                {
+                    isArchiveItemsOpen ?
+                      archiveItems.map((card, key) => {
+                          return (
+                            <Container key={key}>
+                                <Row>
+                                    <Button
+                                        style={{minHeight: '4rem'}}
+                                        className={'w-100'}
+                                        variant={'secondary'}
+                                        onClick={() => {
+                                            history.push(`/board/${boardId}/card/${card.id}`)
+                                        }}
+                                    >
+                                        {`${card.title}`}
+                                    </Button>
+                                </Row>
+                                <Row>
+                                    <Button variant='link'
+                                            size={'sm'}
+                                            style={{color: 'gray'}}
+                                            onClick={() => handleUnarchiveCard(card.id)}>
+                                        Move to board
+                                    </Button>
+                                    <Button variant='link'
+                                            style={{color: 'red'}}
+                                            size={'sm'}
+                                            onClick={() => handleDeleteCard(card.id)}>
+                                        Delete
+                                    </Button>
+                                </Row>
+                            </Container>
+                          )
+                      })
+                      : ''
+                }
 
             {/* Leave board */}
             <div className='position-absolute fixed-bottom w-100 p-3'>
@@ -481,8 +570,8 @@ function Board(props) {
                   <h6 className='m-0'>Leave board</h6>
                 </div>
               </Button>
+                </div>
             </div>
-          </div >
 
           {/* Dialog invite member */}
           < Overlay target={dialogInviteMemberTarget.current} show={isDialogInviteMemberOpen} placement="bottom" >
