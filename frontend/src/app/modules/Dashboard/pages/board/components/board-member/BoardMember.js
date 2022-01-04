@@ -58,7 +58,7 @@ const BoardMember = (props) => {
                                 <div className='btn p-0' style={{visibility: 'hidden'}}>
                                     <MdClose style={iconSize20} />
                                 </div>
-                                <h6 className='m-0'>{member.username}</h6>
+                                <h6 className='m-0'>@{member.username}</h6>
                                 <div className='btn p-0' onClick={() => { setDialogMember() }}>
                                     <MdClose style={iconSize20} />
                                 </div>

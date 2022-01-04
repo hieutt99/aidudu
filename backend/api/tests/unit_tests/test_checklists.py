@@ -110,7 +110,9 @@ class ChecklistsTest(APITestCase):
     def test_success_update_checklist(self):
         # Failed Not implement update
         data = {
-            "title": "This is a new title"
+            "title": "This is a new title", 
+            "card": self.my_checklist[0].card.id,
+            "position":0
         }
         resp = self.client.put(reverse("checklist-detail",args=[self.my_checklist[0].id]),data=data)
         # print(resp.status_code,resp.content)

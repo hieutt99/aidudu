@@ -1,25 +1,33 @@
 import React from "react";
 import { useSelector, useDispatch, shallowEqual } from "react-redux";
-import { useState , useEffect} from "react";
+import { useState , useEffect, useRef} from "react";
 import { Switch, Route, NavLink } from "react-router-dom";
 import { WorkspaceWidget } from "../main/WorkspaceWidget";
 import { toast } from "react-toastify"
 import { getWorkspaceById } from '../../../../_redux/workspace/workspaceCrud';
 import { getWorkspaceBoards } from "../../../../_redux/home/homeCrud";
-import { popper } from "@popperjs/core";
+import { Popover, Overlay } from 'react-bootstrap';
+import { lightGreyBackground, iconSize20, popoverDialogContainer } from '../../../board/components/BoardStyles';
+import Axios from "axios";
+import { MdClose, MdLockOutline } from "react-icons/md";
+import { BiWorld } from "react-icons/bi";
+import { BACKEND_ORIGIN } from '../../../../../../../config';
+import { set } from "object-path";
+import WorkspaceUpdateModal from "../modal/WorkspaceUpdateModal";
+
 const textStyle = {
     fontSize : "15px",
     textTransform : "capitalize"
 };
 
 const workspaceDetailStyle = {
-    backgroundColor : "#afafaf",
-
+    backgroundColor : "#dddddd",
+    borderRadius : "5px"
 };
 
 
 const buttonStyle = {
-    backgroundColor: "#DFE1E6",
+    backgroundColor: "#EEF0F8",
     marginLeft: "3px",
     marginRight: "3px",
     border: "None",
@@ -44,6 +52,25 @@ const clickedButtonStyle = {
 function WorkspaceDetail(workspaceId){
     console.log(workspaceId)
     const [workspace, setWorkspace] = useState([])
+    const [button, setButton] = useState([])
+    const dialogWorkspaceVisibilityTarget = useRef(null);
+    const [openWorkspace, setOpenWorkspace] = useState(false);
+
+    const [isDialogWorkspaceVisibilityOpen, setDialogWorkspaceVisibility] = useState(false);
+    const onWorkspaceVisibleButtonClicked = () => {
+        if (isDialogWorkspaceVisibilityOpen) {
+            setDialogWorkspaceVisibility(false);
+        } else {
+            setDialogWorkspaceVisibility(true);
+        }
+    };
+    const handleWorkspaceOpen = () => {
+        setOpenWorkspace(true);
+      };
+    
+    const handleWorkspaceClose = () => {
+    setOpenWorkspace(false);
+    };
     useEffect(()=>{
         getWorkspaceById(workspaceId.workspaceId).then(res=>{
           setWorkspace(res.data)
@@ -56,6 +83,22 @@ function WorkspaceDetail(workspaceId){
             });
         })
     }, [])
+
+    function changeWorkspaceName(name){
+        Axios.put(`${BACKEND_ORIGIN}api/v1/workspaces/${workspace.id}/settings/`, {name: name}).then(res => {
+        }).catch(e => {
+            alert("Error updating workspace's name!");
+        });
+    }
+
+    function changeWorkspaceLogo(logourl){
+        console.log(logourl)
+        Axios.put(`${BACKEND_ORIGIN}api/v1/workspaces/${workspace.id}/settings/`, {logo: logourl}).then(res => {
+        }).catch(e => {
+            alert("Error updating workspace's logo!");
+        });
+    }
+
     console.log(workspace)
     return (
         <>
@@ -68,7 +111,7 @@ function WorkspaceDetail(workspaceId){
                     <div className="d-flex flex-column m-5">
                         <h2>{workspace.name}</h2>
                         <p className="text-left" style={textStyle}> {workspace.visibility} </p>
-                        <button type="button" className="btn btn-md" data-toogle="modal" data-target="#editWorkspaceDetails" style={{color: "black", backgroundColor: "#EC6451"}}>Edit workspace's details</button>
+                        <button type="button" className="btn btn-md"  onClick={handleWorkspaceOpen} style={{color: "black", backgroundColor: "#EC6451"}}>Edit workspace's details</button>
                     </div>
                 </div>
                 <div className="d-flex flex-row justify-content-center" style={{marginTop:15}}>
@@ -78,7 +121,7 @@ function WorkspaceDetail(workspaceId){
                         className="navi-link py-4"
                         activeClassName="active"
                     >
-                        <button type="button" className="btn" style={buttonStyle}>Boards</button>
+                        <button type="button" className="btn" onClick={e=>{setButton(clickedButtonStyle)}} style={buttonStyle}>Boards</button>
                     </NavLink>
                     </div>
                     <div className="navi-item" style={{marginBottom:"0px"}}>
@@ -87,7 +130,7 @@ function WorkspaceDetail(workspaceId){
                         className="navi-link py-4"
                         activeClassName="active"
                     >
-                        <button type="button" className="btn" style={buttonStyle}  >Members</button>
+                        <button type="button" className="btn" onClick={e=>{setButton(clickedButtonStyle)}} style={buttonStyle}>Members</button>
                     </NavLink>
                     </div>
                     <div className="navi-item" style={{marginBottom:"0px"}}>
@@ -96,7 +139,7 @@ function WorkspaceDetail(workspaceId){
                         className="navi-link py-4"
                         activeClassName="active"
                     >
-                        <button type="button" className="btn" style={buttonStyle}>Settings</button>
+                        <button type="button" className="btn" onClick={e=>{setButton(clickedButtonStyle)}} style={buttonStyle}>Settings</button>
                     </NavLink>
                     </div>
                 </div>
@@ -121,6 +164,8 @@ function WorkspaceDetail(workspaceId){
                 </div>
                 </div>
             </div>
+              {/*Modal to create workspace*/}
+        <WorkspaceUpdateModal workspaceId={workspaceId} openWorkspace={openWorkspace} handleWorkspaceModalClose={handleWorkspaceClose} />
         </div>
         </>
     )

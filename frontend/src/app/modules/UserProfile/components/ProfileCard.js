@@ -88,10 +88,10 @@ export function ProfileCard() {
                     {user.email}
                   </span>
                 </div>
-                <div className="d-flex align-items-center justify-content-between mb-2">
+                {/* <div className="d-flex align-items-center justify-content-between mb-2">
                   <span className="font-weight-bold mr-2">Phone:</span>
                   <span className="text-muted">{user.phone}</span>
-                </div>
+                </div> */}
                 {/*<div className="d-flex align-items-center justify-content-between">*/}
                 {/*  <span className="font-weight-bold mr-2">Location:</span>*/}
                 {/*  <span className="text-muted">{user.address.city}</span>*/}
@@ -100,7 +100,7 @@ export function ProfileCard() {
               {/* end::Contact */}
               {/* begin::Nav */}
               <div className="navi navi-bold navi-hover navi-active navi-link-rounded">
-                <div className="navi-item mb-2">
+                {/* <div className="navi-item mb-2">
                   <NavLink
                     to="/user-profile/profile-overview"
                     className="navi-link py-4"
@@ -119,7 +119,7 @@ export function ProfileCard() {
                       Profile Overview
                     </span>
                   </NavLink>
-                </div>
+                </div> */}
                 <div className="navi-item mb-2">
                   <NavLink
                     to="/user-profile/personal-information"
@@ -140,7 +140,7 @@ export function ProfileCard() {
                     </span>
                   </NavLink>
                 </div>
-                <div className="navi-item mb-2">
+                {/* <div className="navi-item mb-2">
                   <NavLink
                     to="/user-profile/account-information"
                     className="navi-link py-4"
@@ -159,8 +159,8 @@ export function ProfileCard() {
                       Account Information
                     </span>
                   </NavLink>
-                </div>
-                <div className="navi-item mb-2">
+                </div> */}
+                {/* <div className="navi-item mb-2">
                   <NavLink
                     to="/user-profile/change-password"
                     className="navi-link py-4"
@@ -184,8 +184,8 @@ export function ProfileCard() {
                       </span>
                     </span>
                   </NavLink>
-                </div>
-                <div className="navi-item mb-2">
+                </div> */}
+                {/* <div className="navi-item mb-2">
                   <NavLink
                     to="/user-profile/email-settings"
                     className="navi-link py-4"
@@ -204,8 +204,8 @@ export function ProfileCard() {
                       Email settings
                     </span>
                   </NavLink>
-                </div>
-                <div className="navi-item mb-2">
+                </div> */}
+                {/* <div className="navi-item mb-2">
                   <OverlayTrigger
                     placement="right"
                     overlay={<Tooltip>Coming soon...</Tooltip>}
@@ -225,8 +225,8 @@ export function ProfileCard() {
                       </span>
                     </a>
                   </OverlayTrigger>
-                </div>
-                <div className="navi-item mb-2">
+                </div> */}
+                {/* <div className="navi-item mb-2">
                   <OverlayTrigger
                     placement="right"
                     overlay={<Tooltip>Coming soon...</Tooltip>}
@@ -251,8 +251,8 @@ export function ProfileCard() {
                       </span>
                     </a>
                   </OverlayTrigger>
-                </div>
-                <div className="navi-item mb-2">
+                </div> */}
+                {/* <div className="navi-item mb-2">
                   <OverlayTrigger
                     placement="right"
                     overlay={<Tooltip>Coming soon...</Tooltip>}
@@ -270,7 +270,7 @@ export function ProfileCard() {
                       <span className="navi-text">Statements</span>
                     </a>
                   </OverlayTrigger>
-                </div>
+                </div> */}
               </div>
               {/* end::Nav */}
             </div>
