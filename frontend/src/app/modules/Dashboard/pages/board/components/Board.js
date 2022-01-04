@@ -27,6 +27,7 @@ import BoardWorkspaceVisibility from './board-workspace-visibility/BoardWorkspac
 import { BACKEND_ORIGIN } from '../../../../../../config';
 import BoardStarred from './board-starred/BoardStarred';
 import BoardChangeBackgroundDialog from './board-change-background-dialog/BoardChangeBackgroundDialog';
+import { shallowEqual, useSelector } from 'react-redux';
 import { deleteCard, updateCardDetails } from '../../../_redux/card/cardCrud';
 
 // APIs
@@ -38,6 +39,7 @@ export const UPDATE_CARDS_POSITION = BACKEND_ORIGIN + WORK_API + '/boards/';
 function Board(props) {
   const param = useParams()
   const boardId = param.boardId
+  const { user } = useSelector(state => state.auth, shallowEqual);
 
   const GET_BOARD_DETAILS = BACKEND_ORIGIN + WORK_API + `/boards/${boardId}/details`;
   const INCREMENT_CARD_POSITION = 1;
@@ -56,8 +58,7 @@ function Board(props) {
   const [archiveItems, setArchiveItems] = useState([]);
   const history = useHistory();
 
-
-    useEffect(() => {
+  useEffect(() => {
     getBoardDetails();
     props.setRerenderFlag(false);
   }, [props.rerenderFlag]);
@@ -301,7 +302,7 @@ function Board(props) {
     for (let i = 0; i < selectedCandidates.length; i++) idList.push(selectedCandidates[i].id);
 
     axios.post(`${BACKEND_ORIGIN}api/v1/boards/${board.id}/members/`, { id: idList }).then(res => {
-      setMembers([...members, selectedCandidates]);
+      setMembers([...members, ...selectedCandidates]);
     }).catch(e => {
       alert("Có lỗi xảy ra khi mời thành viên mới");
     })
@@ -323,6 +324,15 @@ function Board(props) {
     }
   }
 
+  const handleLeaveBoard = e => {
+    // console.log('leave', user);
+
+    axios.delete(`${BACKEND_ORIGIN}api/v1/boards/${board.id}/members/`, {data: {id: [user.id]}}).then(res => {
+        window.location = '/';
+    }).catch(e => {
+        alert("Có lỗi xảy ra khi xoá thành viên khỏi nhóm");
+    });
+  }
   // ARCHIVE STATES
     const [isArchiveItemsOpen, setIsArchiveItemsOpen] = useState(false);
     const handleArchiveItemsClick = () => {
@@ -553,13 +563,13 @@ function Board(props) {
                       : ''
                 }
 
-                {/* Leave board */}
-                <div className='position-absolute fixed-bottom w-100 p-3'>
-                <Button variant='danger' className='w-100 py-2'>
-                    <div className='d-flex align-items-center justify-content-center py-1'>
-                    <h6 className='m-0'>Leave board</h6>
-                    </div>
-                </Button>
+            {/* Leave board */}
+            <div className='position-absolute fixed-bottom w-100 p-3'>
+              <Button variant='danger' className='w-100 py-2' onClick={handleLeaveBoard}>
+                <div className='d-flex align-items-center justify-content-center py-1'>
+                  <h6 className='m-0'>Leave board</h6>
+                </div>
+              </Button>
                 </div>
             </div>
 
