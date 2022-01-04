@@ -1,11 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router";
 import { NavLink } from "react-router-dom";
+import { Dropdown } from "react-bootstrap";
 import SVG from "react-inlinesvg";
 import { toAbsoluteUrl, checkIsActive } from "../../../../../../../_metronic/_helpers";
 
 export function HomeAsideMenuList({ layoutProps, workspaces, handleWorkspaceModalOpen }) {
     const location = useLocation();
+    const [clicked, setClicked] = useState(false)
     const getMenuItemActive = (url, hasSubmenu = false) => {
         return checkIsActive(location, url)
         ? ` ${!hasSubmenu &&
@@ -17,6 +19,9 @@ export function HomeAsideMenuList({ layoutProps, workspaces, handleWorkspaceModa
 //   useEffect = () => {
 //       dispatchEvent()
 //   }
+    function handleClicked(){
+        setClicked(!clicked)
+    }
 
 
   return (
@@ -50,13 +55,15 @@ export function HomeAsideMenuList({ layoutProps, workspaces, handleWorkspaceModa
             
         </li>
         {workspaces_array.map((workspace, key) =>
-           <li
-                className={`menu-item menu-item-submenu`}
+        <>
+        <li
+                className={clicked===true ? `menu-item menu-item-submenu menu-item-open`: `menu-item menu-item-submenu`}
                 aria-haspopup="true"
                 data-menu-toggle="hover"
                 key={key}
+                onClick={handleClicked}
             >
-                <div className="menu-link menu-toggle">
+                <div className="menu-link menu-toggle ">
                     <span className="svg-icon menu-icon">
                         <SVG src={toAbsoluteUrl("/media/svg/icons/Home/Library.svg")} />
                     </span>
@@ -67,7 +74,7 @@ export function HomeAsideMenuList({ layoutProps, workspaces, handleWorkspaceModa
                     <i className="menu-arrow" />
                     <ul className="menu-subnav">
                         <li
-                            className={`menu-item `}
+                            className={`menu-item`}
                             aria-haspopup="true"
                         >
                             <NavLink className="menu-link" to={`/workspaces/${workspace.id}`}>
@@ -102,6 +109,9 @@ export function HomeAsideMenuList({ layoutProps, workspaces, handleWorkspaceModa
                     </ul>
                 </div>
             </li>
+        </>
+           
+
         )}
         {/*end::1 Level*/}
     </ul>
