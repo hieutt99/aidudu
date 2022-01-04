@@ -46,44 +46,47 @@ const clickedButtonStyle = {
 };
 
 export function SubHeader(arg) {
-  const uiService = useHtmlClassService();
-  const location = useLocation();
-  const subheader = useSubheader(); // kind of override??
-  const user = useSelector(({ auth }) => auth.user, shallowEqual);
-  subheader.setTitle(arg.title);
-  
-  const layoutProps = useMemo(() => {
-    return {
-      config: uiService.config,
-      subheaderMobileToggle: objectPath.get(
-          uiService.config,
-          "subheader.mobile-toggle"
-      ),
-      subheaderCssClasses: uiService.getClasses("subheader", true),
-      subheaderContainerCssClasses: uiService.getClasses(
-          "subheader_container",
-          true
-      )
-    };
-  }, [uiService]);
+	const uiService = useHtmlClassService();
+	const location = useLocation();
+	const subheader = useSubheader(); // kind of override??
+	const user = useSelector(({ auth }) => auth.user, shallowEqual);
+	subheader.setTitle(arg.title);
 
-  useLayoutEffect(() => {
-    const aside = getBreadcrumbsAndTitle("kt_aside_menu", location.pathname);
-    const header = getBreadcrumbsAndTitle("kt_header_menu", location.pathname);
-    const breadcrumbs = (aside && aside.breadcrumbs.length > 0) ? aside.breadcrumbs : header.breadcrumbs;
-    // const breadcrumbs = (aside && aside.breadcrumbs.length > 0) ? header.breadcrumbs : header.breadcrumbs;
-    subheader.setBreadcrumbs(breadcrumbs);
-    subheader.setTitle((aside && aside.title && aside.title.length > 0) ? aside.title : header.title);
-    // subheader.setTitle((aside && aside.title && aside.title.length > 0) ? header.title : header.title);
-    // eslint-disable-next-line
-  }, [location.pathname]);
+	const layoutProps = useMemo(() => {
+		return {
+		  config: uiService.config,
+		  subheaderMobileToggle: objectPath.get(
+			  uiService.config,
+			  "subheader.mobile-toggle"
+		  ),
+		  subheaderCssClasses: uiService.getClasses("subheader", true),
+		  subheaderContainerCssClasses: uiService.getClasses(
+			  "subheader_container",
+			  true
+		  )
+		};
+	}, [uiService]);
 
-  // Do not remove this useEffect, need from update title/breadcrumbs outside (from the page)
-  useEffect(() => {}, [subheader]);
-  // console.log(subheader.breadcrumbs);
-  console.log(user);
-  // console.log("Message" +"Debug");
-  return (
+	useLayoutEffect(() => {
+		const aside = getBreadcrumbsAndTitle("kt_aside_menu", location.pathname);
+		const header = getBreadcrumbsAndTitle("kt_header_menu", location.pathname);
+		const breadcrumbs = (aside && aside.breadcrumbs.length > 0) ? aside.breadcrumbs : header.breadcrumbs;
+		// const breadcrumbs = (aside && aside.breadcrumbs.length > 0) ? header.breadcrumbs : header.breadcrumbs;
+		subheader.setBreadcrumbs(breadcrumbs);
+		subheader.setTitle((aside && aside.title && aside.title.length > 0) ? aside.title : header.title);
+		// subheader.setTitle((aside && aside.title && aside.title.length > 0) ? header.title : header.title);
+		// eslint-disable-next-line
+	}, [location.pathname]);
+
+	// Do not remove this useEffect, need from update title/breadcrumbs outside (from the page)
+	useEffect(() => {}, [subheader]);
+	// console.log(subheader.breadcrumbs);
+	console.log(user);
+	// console.log("Message" +"Debug");
+	/*
+	active page
+	*/
+	return (
 	<>
 	<div className="d-flex flex-column">
 		<div className="d-flex flex-column" style={subHeaderDetailStyle}>
@@ -93,7 +96,7 @@ export function SubHeader(arg) {
 					{/*<div className="img-fluid" style={{ backgroundImage: `url(${user.pic})` }}></div>*/}
 					{/*https://stackoverflow.com/questions/32591301/babel-error-jsx-value-should-be-either-an-expression-or-a-quoted-jsx-text*/}
 					{/*<img src={`url(${user.pic})`} class="img-fluid" alt={BACKEND_ORIGIN+"media/profile_pics/default.jpg"}></img>*/}
-					<img src={user.pic?user.pic:BACKEND_ORIGIN+"media/profile_pics/default.jpg"} class="img-fluid" alt=""></img>
+					<img src={user.avatar?BACKEND_ORIGIN+user.avatar.substring(1):BACKEND_ORIGIN+"media/profile_pics/default.jpg"} class="img-fluid" alt=""></img>
 				</div>
 				<div className="d-flex flex-column m-5">
 					<h2 className="text-left" style={{"font-weight":"bold"}}>{user.username}</h2>
@@ -126,5 +129,5 @@ export function SubHeader(arg) {
 		{/* end::Nav */}
 	</div>
 	</>
-  );
+	);
 }

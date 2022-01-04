@@ -8,7 +8,7 @@ export function SortingByBoard(){
 	return (
 		<>
 			<div>
-			hihi
+			
 			</div>
 		</>
 	);
