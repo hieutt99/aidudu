@@ -263,12 +263,12 @@ class BoardDetailViewCardSerializer(serializers.ModelSerializer):
         fields = ['id', 'title', 'due', 'position', 'comments', 'attachments', 'labels', 'members', 'checklists', 'archived']
 
     def get_members(self, instance):
-        members = instance.members
+        members = CardMembership.objects.filter(card_id=instance.id)
         return CardMembershipSerializer(members, many=True, context=self.context).data
 
 class BoardDetailViewListSerializer(serializers.ModelSerializer):
         # cards = BoardDetailViewCardSerializer(many=True)
-        cards = serializers.SerializerMethodField()
+        cards = serializers.SerializerMethodField("get_cards")
         class Meta:
             model = List
             fields = ['id', 'name', 'position', 'archived', 'cards']
@@ -331,7 +331,7 @@ class BoardDetailViewSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'visibility', 'background', 'workspace', 'members', 'lists', 'labels', 'starred']
     
     def get_lists(self, instance):
-        return BoardDetailViewListSerializer(many=True, context=self.context).data
+        return BoardDetailViewListSerializer(instance.lists, many=True, context=self.context).data
 
     def get_members(self, instance):
         bms = BoardMembership.objects.filter(board=instance)
