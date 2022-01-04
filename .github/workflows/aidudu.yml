@@ -10,8 +10,9 @@ jobs:
   aidudu_ci_cd:
     runs-on: self-hosted
     steps:
-      - uses: actions/checkout@v2
-      - run: docker system prune --volumes -f
-      - run: docker-compose -f docker-compose.prod.yml down
-      - run: docker-compose -f docker-compose.prod.yml up --build -d
-      - run: docker exec aidudu_backend_1 python manage.py test api.tests.unit_tests
+      - run: echo $PASSWD
+      # - uses: actions/checkout@v2
+      # - run: docker system prune --volumes -f
+      # - run: docker-compose -f docker-compose.prod.yml down
+      # - run: docker-compose -f docker-compose.prod.yml up --build -d
+      # - run: docker exec aidudu_backend_1 python manage.py test api.tests.unit_tests
