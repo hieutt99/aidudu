@@ -28,7 +28,7 @@ const BoardCardItem = (props) => {
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     ref={provided.innerRef}
-                    className='card-body rounded bg-white shadow-2 mb-2 p-3'
+                    className='card-body rounded bg-white shadow-2 mb-2 p-3' type='button'
                     onClick={() => handleCardClick(card["id"])}
                 >
                     {/* Labels */}
