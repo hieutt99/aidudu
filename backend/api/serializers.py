@@ -12,6 +12,22 @@ class UserSerializer(serializers.ModelSerializer):
         exclude = ('password', 'groups', 'user_permissions', 'is_superuser', 'is_staff', 'is_active')
 
 
+class GeneralUserSerializer(serializers.ModelSerializer):
+    avatar = serializers.SerializerMethodField()
+
+    class Meta:
+        model = get_user_model()
+        fields = ('id', 'username', 'first_name', 'last_name', 'avatar')
+
+    def get_avatar(self, instance):
+        request = self.context.get('request')
+        if not instance.avatar:
+            return None
+        
+        url = instance.avatar.url
+        return request.build_absolute_uri(url) if request else url
+
+
 class UserRegisterSerializer(serializers.ModelSerializer):
     """Serializer for user registration"""
 
@@ -63,7 +79,7 @@ class UserDisplaySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CustomUser
-        fields = ['id', 'fullname', 'avatar']
+        fields = ['id', 'fullname', 'avatar', 'lastname', 'firstname']
 
     def get_full_name_of_user(self, user):
         return user.get_full_name()
@@ -72,11 +88,19 @@ class UserDisplaySerializer(serializers.ModelSerializer):
 class WorkspaceMembershipSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField('get_user_id_of_workspacemembership')
     fullname = serializers.SerializerMethodField('get_user_fullname_of_workspacemembership')
+    firstname = serializers.SerializerMethodField()
+    lastname = serializers.SerializerMethodField()
     avatar = serializers.SerializerMethodField('get_user_avatar_of_workspacemembership')
     
     class Meta:
         model = WorkspaceMembership
-        fields = ['id', 'fullname', 'avatar', 'role']
+        fields = ['id', 'fullname', 'avatar', 'role', "firstname", "lastname"]
+
+    def get_firstname(self, instance):
+        return instance.user.first_name
+
+    def get_lastname(self, instance):
+        return instance.user.last_name
 
     def get_user_id_of_workspacemembership(self, workspace_src):
         return workspace_src.user.id
@@ -244,7 +268,7 @@ class BoardMemberSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'avatar')
+        fields = ('id', 'username', 'first_name', 'last_name', 'avatar')
     
     def get_avatar(self, instance):
         request = self.context.get('request')
@@ -258,15 +282,21 @@ class BoardMembershipSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField()
     username = serializers.SerializerMethodField()
     avatar = serializers.SerializerMethodField()
+    firstname = serializers.SerializerMethodField()
+    lastname = serializers.SerializerMethodField()
 
     class Meta:
         model = BoardMembership
-        fields = ["id", "username", "avatar"]
+        fields = ["id", "username", "avatar", "firstname", "lastname"]
 
     def get_id(self, instance):
         return instance.user.id 
     def get_username(self, instance):
         return instance.user.username
+    def get_firstname(self, instance):
+        return instance.user.first_name
+    def get_lastname(self, instance):
+        return instance.user.last_name
     def get_avatar(self, instance):
         request = self.context.get("request")
         if not instance.user.avatar:
@@ -278,18 +308,58 @@ class BoardDetailViewSerializer(serializers.ModelSerializer):
     lists = BoardDetailViewListSerializer(many=True)
     members = serializers.SerializerMethodField()
     labels = serializers.SerializerMethodField()
+    starred = serializers.SerializerMethodField()
+    # admins = serializers.SerializerMethodField()
 
     class Meta:
         model = Board
-        fields = ['id', 'name', 'background', 'workspace', 'members', 'lists', 'labels', 'starred']
+        fields = ['id', 'name', 'visibility', 'background', 'workspace', 'members', 'lists', 'labels', 'starred']
     
     def get_members(self, instance):
-        members = BoardMemberSerializer(instance.members, many=True, context=self.context)
-        return members.data
+        bms = BoardMembership.objects.filter(board=instance)
+
+        data = []
+        for bm in bms:
+            user_data = GeneralUserSerializer(bm.user, context=self.context).data
+            user_data.update({"role": bm.role})
+            data.append(user_data)
+        
+        return data
     
     def get_labels(self, instance):
         labels = LabelDetailSerializer(instance.labels, many=True)
         return labels.data
+    
+    def get_starred(self, instance):
+        if 'request' not in self.context:
+            return None
+        
+        user = self.context['request'].user
+
+        bms = BoardMembership.objects.filter(user=user, board=instance)
+
+        if not bms.exists():
+            return None
+        return bms.first().starred
+    
+    # def get_admins(self, instance):
+    #     if 'request' not in self.context:
+    #         return None
+        
+    #     bms = BoardMembership.objects.filter(board=instance, role=BoardMembership.ROLE.ADMIN)
+
+    #     data = []
+
+    #     for bm in bms:
+    #         user = bm.user
+
+    #         user_data = GeneralUserSerializer(bm.user, context=self.context).data
+    #         user_data.update({"role": bm.role})
+
+    #         data.append(user_data)
+        
+    #     return data
+        
 
 class ListDetailSerializer(serializers.ModelSerializer):
     class Meta:

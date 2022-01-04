@@ -94,7 +94,7 @@ function Board(props) {
     let response = await axios.put(UPDATE_CARDS_POSITION + boardId + '/update_cards/', {
       updatedCards,
     });
-    
+
     return response;
   }
 
@@ -265,6 +265,17 @@ function Board(props) {
     setDialogInviteMember(false);
   }
 
+  const handleRemoveMemberFromBoard = member => {
+    const temp = [...members];
+    for (let i = 0; i < temp.length; i++) {
+      if (member.id === temp[i].id) {
+        temp.splice(i, 1);
+        setMembers(temp);
+        break;
+      }
+    }
+  }
+
   return (
     <Container fluid className='p-0 m-0'>
       <DragDropContext onDragEnd={onDragEnd}>
@@ -288,7 +299,7 @@ function Board(props) {
                 <div className={"mx-2 p-2 d-flex align-items-center"}>
                   {
                     members.map((member, i) => {
-                      return <BoardMember key={member.id} member={member} />
+                      return <BoardMember key={member.id} member={member} handleRemoveMember={handleRemoveMemberFromBoard} board={board} />
                     })
                   }
                 </div>
@@ -305,17 +316,18 @@ function Board(props) {
                 </div>
               </Button>
 
-            </div>
+            </div >
 
             {/* Open menu button */}
-            <div className={"btn mx-3"} >
+            < div className={"btn mx-3"} >
               <BiArrowToLeft style={iconSize24} onClick={openMenuSidebar} />
-            </div>
+            </div >
 
-          </div>
+          </div >
 
           {/* Main content */}
-          <div className='p-0 bg-image' style={{ height: "100vh", backgroundImage: "url('" + board.background + "')" }}>
+          < div className='p-0 bg-image' style={{ height: "100vh", backgroundImage: "url('" + board.background + "')" }
+          }>
             <div style={contentBackgroundMask}>
               <div className='px-5 pb-3 d-flex align-items-start h-100' style={{ overflowX: "auto" }}>
 
@@ -364,21 +376,21 @@ function Board(props) {
 
               </div>
             </div>
-          </div>
+          </div >
 
           {/* Menu */}
-          <div className='card p-0 border-0' style={menuContainer} id='menuSidebar'>
+          < div className='card p-0 border-0' style={menuContainer} id='menuSidebar' >
 
             {/* Menu header */}
-            <div className='d-flex justify-content-between bg-white align-items-center p-4'>
-              <div>
+            < div className='d-flex justify-content-between bg-white align-items-center p-4' >
+              <div style={{ visibility: 'hidden' }}>
                 <MdClose style={iconSize24} className='opacity-0' />
               </div>
               <h5 className='m-0'>MENU</h5>
               <div className='btn p-0' onClick={closeMenuSidebar}>
                 <MdClose style={iconSize24} />
               </div>
-            </div>
+            </div >
 
             <hr className='mt-0 mb-2' />
 
@@ -430,17 +442,17 @@ function Board(props) {
                 </div>
               </Button>
             </div>
-          </div>
+          </div >
 
           {/* Dialog invite member */}
-          <Overlay target={dialogInviteMemberTarget.current} show={isDialogInviteMemberOpen} placement="bottom">
+          < Overlay target={dialogInviteMemberTarget.current} show={isDialogInviteMemberOpen} placement="bottom" >
             {(props) => (
               <Popover {...props}>
                 <div className='rounded bg-white p-0 d-flex flex-column' style={popoverDialogContainer} >
 
                   {/* Header */}
                   <div className='d-flex justify-content-between align-items-center p-3'>
-                    <div className='btn p-0' onClick={() => { setDialogInviteMember(false) }}>
+                    <div className='btn p-0' style={{ visibility: 'hidden' }}>
                       <MdClose style={iconSize20} />
                     </div>
                     <h6 className='m-0'>Invite to board</h6>
@@ -489,10 +501,11 @@ function Board(props) {
 
                 </div>
               </Popover>
-            )}
-          </Overlay>
+            )
+            }
+          </Overlay >
 
-        </Container>
+        </Container >
       </DragDropContext >
     </Container >
 
