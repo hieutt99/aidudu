@@ -8,5 +8,7 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v2
+        with:
+          ref: 'release'
       - run: docker-compose -f docker-compose.prod.yml down
       - run: docker-compose -f docker-compose.prod.yml up -d
