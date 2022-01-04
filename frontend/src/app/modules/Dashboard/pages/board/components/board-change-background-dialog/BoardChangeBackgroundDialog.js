@@ -27,10 +27,7 @@ export const backgroundImages = [
     'https://images.hdqwalls.com/download/4k-texture-simple-background-21-1920x1080.jpg'
 ];
 
-const BoardChangeBackgroundDialog = (props) => {
-
-    const boardId = props.boardId;
-    const setBackground = props.setBackground;
+const BoardChangeBackgroundDialog = ({ boardId, setBackground, onHide, show }) => {
 
     const [selectedImage, setSelectedImage] = useState(null);
 
@@ -59,7 +56,7 @@ const BoardChangeBackgroundDialog = (props) => {
 
     return (
         <Modal
-            {...props}
+            show={show}
             size="lg"
             aria-labelledby="contained-modal-title-vcenter"
             centered
@@ -104,7 +101,7 @@ const BoardChangeBackgroundDialog = (props) => {
                             </div>
                         </div>
                         
-                        <Button onclick={onImageUpload}>Submit</Button>
+                        <Button onClick={onImageUpload}>Submit</Button>
                         {/* <Formik
     validationSchema={schema}
     onSubmit={onImageUpload}
@@ -145,7 +142,7 @@ const BoardChangeBackgroundDialog = (props) => {
 
             </Modal.Body>
             <Modal.Footer>
-                <Button onClick={props.onHide}>Close</Button>
+                <Button onClick={onHide}>Close</Button>
             </Modal.Footer>
         </Modal>
     );
