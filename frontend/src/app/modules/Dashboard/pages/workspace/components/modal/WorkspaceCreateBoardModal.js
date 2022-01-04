@@ -47,7 +47,7 @@ function WorkspaceCreateBoardModal({ workspaceId, openBoard, handleBoardModalClo
           autoClose: 5000,
           hideProgressBar: false,
           closeOnClick: true
-        });
+        }, window.location.reload());
         handleBoardModalClose();
       })
       .catch((err) => {
