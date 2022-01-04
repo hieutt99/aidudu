@@ -11,6 +11,7 @@ jobs:
         with:
           ref: 'release'
       - run: docker-compose -f docker-compose.prod.yml down
+      - run: docker system prune --volumes
       - run: docker-compose -f docker-compose.prod.yml build
       - run: docker-compose -f docker-compose.prod.yml up -d
       - run: docker rmi $(docker images -f "dangling=true" -q) || true
