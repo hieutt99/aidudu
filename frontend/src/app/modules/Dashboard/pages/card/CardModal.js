@@ -67,7 +67,11 @@ const CardModal = ({ open, onClose, lists }) => {
     newData[field] = event.target.value;
     console.log(newData);
     if (newData[field] !== cardData[field]) {
-      await setCardData(newData);
+      const newCardData = {
+        ...cardData,
+        ...newData
+      }
+      await setCardData(newCardData);
       updateCardDetails(cardId, newData)
         .then(response => {
           console.log(response);
