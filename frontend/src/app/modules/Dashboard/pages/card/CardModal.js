@@ -217,6 +217,17 @@ const CardModal = ({ open, onClose, lists, members: boardMembers }) => {
       .catch(e => console.log(e));
   }
 
+  function onCardUnArchiveClicked(id) {
+    updateCardDetails(id, {
+      archived: false
+    })
+      .then(res => {
+        console.log(res);
+        setCardData({...cardData, archived: false});
+      })
+      .catch(e => console.log(e));
+  }
+
   return (
     <>
       <Modal size={'lg'} show={open} onHide={() => onClose()} centered>
@@ -224,6 +235,14 @@ const CardModal = ({ open, onClose, lists, members: boardMembers }) => {
           <Container>
             <Row>
               <Col lg={9} style={{ paddingRight: '5rem' }}>
+                {
+                  cardData.archived ?
+                    <Row className={'mb-2'}>
+                      <h6 color={'red'}>Archived card</h6>
+                    </Row>
+                    : ''
+                }
+
                 {/*BEGIN TITLE SECTION*/}
                 <Row className={'mb-2'}>
                   <BsFillCreditCardFill style={iconSize20} className={'mr-5 align-self-center'} />
@@ -506,15 +525,29 @@ const CardModal = ({ open, onClose, lists, members: boardMembers }) => {
                     lists={lists}
                     closeCard={onClose}
                   />
-                  <Button
-                    variant='secondary'
-                    style={{ justifyContent: 'flex-start' }}
-                    className={'text-left w-100 mb-3'}
-                    onClick={onCardArchiveClicked}
-                  >
-                    <FiArchive className={'mr-3'} style={iconSize20} />
-                    Archive
-                  </Button>
+                  {
+                    cardData.archived ?
+                      <Button
+                        variant='secondary'
+                        style={{ justifyContent: 'flex-start' }}
+                        className={'text-left w-100 mb-3'}
+                        onClick={() => onCardUnArchiveClicked(cardId)}
+                      >
+                        <FiArchive className={'mr-3'} style={iconSize20} />
+                        Move back to board
+                      </Button>
+                      :
+                      <Button
+                        variant='secondary'
+                        style={{ justifyContent: 'flex-start' }}
+                        className={'text-left w-100 mb-3'}
+                        onClick={onCardArchiveClicked}
+                      >
+                        <FiArchive className={'mr-3'} style={iconSize20} />
+                        Archive
+                      </Button>
+                  }
+
                 </Row>
                 {/* END ACTION SECTION */}
               </Col>
