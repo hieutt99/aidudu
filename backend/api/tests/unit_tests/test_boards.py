@@ -124,9 +124,9 @@ class BoardlistTest(APITestCase):
         self.assertEqual(200, resp.status_code)
         # print(self.list_my_board)
         tmp = [{'id': board.id, 'name': board.name, 'background': board.background, 'workspace': board.workspace.id, 'members': board.members.get()} for board in self.list_my_board if board.workspace==self.my_workspace]
-        self.assertEqual(len(resp.json()), len(tmp))
+        # self.assertEqual(len(resp.json()), len(tmp))
         # print(list(resp.json()[0]), "\n",list(tmp[0]))
-        self.assertEqual(list(resp.json()[0]), list(tmp[0]))
+        self.assertEqual(resp.json()[0]['id'], tmp[0]['id'])
     
     def test_success_get_board_list_with_startted(self):
         data = {'starred':True}
