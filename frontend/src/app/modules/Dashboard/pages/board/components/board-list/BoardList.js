@@ -164,7 +164,7 @@ const BoardList = (props) => {
 
             {/* Title */}
             <div className='card-header d-flex justify-content-between align-items-center py-2 px-3 mb-3 border-0 rounded text-white' style={primaryBackground}>
-                <p className='my-0 mx-2'>{list["name"]} - {list["id"]}</p>
+                <p className='my-0 mx-2'>{list["name"]}</p>
                 <div
                     className='btn btn-link text-reset m-0 py-0 px-0'
                     ref={dialogListActionsTarget} onClick={onListActionsClicked}
