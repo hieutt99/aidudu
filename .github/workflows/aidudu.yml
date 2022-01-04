@@ -12,6 +12,5 @@ jobs:
           ref: 'release'
       - run: docker system prune --volumes -f
       - run: docker-compose -f docker-compose.prod.yml down
-      - run: docker-compose -f docker-compose.prod.yml build
-      - run: docker-compose -f docker-compose.prod.yml up -d
-      - run: docker exec aidudu_backend_1 python manage.py test api.tests.unit_tests
+      - run: docker-compose -f docker-compose.prod.yml up --build -d
+      # - run: docker exec aidudu_backend_1 python manage.py test api.tests.unit_tests
