@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useLocation } from "react-router";
 import { NavLink } from "react-router-dom";
-import { Dropdown } from "react-bootstrap";
 import SVG from "react-inlinesvg";
 import { toAbsoluteUrl, checkIsActive } from "../../../../../../../_metronic/_helpers";
 import { WorkspaceMenuItem } from "./WorkspaceMenuItem";
 
 export function HomeAsideMenuList({ layoutProps, workspaces, handleWorkspaceModalOpen }) {
     const location = useLocation();
-    const [clicked, setClicked] = useState(false)
     const getMenuItemActive = (url, hasSubmenu = false) => {
         return checkIsActive(location, url)
         ? ` ${!hasSubmenu &&
@@ -20,9 +18,6 @@ export function HomeAsideMenuList({ layoutProps, workspaces, handleWorkspaceModa
 //   useEffect = () => {
 //       dispatchEvent()
 //   }
-    function handleClicked(){
-        setClicked(!clicked)
-    }
 
 
   return (

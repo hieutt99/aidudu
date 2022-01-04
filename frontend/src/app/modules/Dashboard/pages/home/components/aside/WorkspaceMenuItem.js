@@ -1,9 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router";
+import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Dropdown } from "react-bootstrap";
 import SVG from "react-inlinesvg";
-import { toAbsoluteUrl, checkIsActive } from "../../../../../../../_metronic/_helpers";
+import { toAbsoluteUrl } from "../../../../../../../_metronic/_helpers";
 
 export function WorkspaceMenuItem({workspace}) {
     // const workspace=workspace
