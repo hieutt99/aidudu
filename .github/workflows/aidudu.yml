@@ -10,7 +10,6 @@ jobs:
   aidudu_ci_cd:
     runs-on: self-hosted
     steps:
-      - run: echo $PASSWD | sudo -S chown -R $USER:$USER /home/administrator/actions-runner/_work/aidudu
       - uses: actions/checkout@v2
       - run: docker system prune --volumes -f
       - run: docker-compose -f docker-compose.prod.yml down
