@@ -7,7 +7,7 @@ export function ShowCardFromAllBoard(){
 	return (
 		<>
 			<div>
-			
+				
 			</div>
 		</>
 	);
