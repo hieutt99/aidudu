@@ -310,6 +310,7 @@ class WorkspaceViewSet(ModelViewSet):
         raise PermissionDenied(detail="Unsupported method")
     def delete_member_from_workspace(self, request, pk):
         member_id = parse_int_or_400(request.data, 'id')
+        print(repr(request.data))
         member = get_object_or_404(CustomUser, id=member_id)
         
         workspace_membership = WorkspaceMembership.objects.filter(

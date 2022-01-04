@@ -12,6 +12,11 @@ export const updateCardDetails = (cardId, cardData) => {
   return axios.patch(PATCH_CARD_URL, cardData);
 }
 
+export const deleteCard = (cardId) => {
+  const DELETE_CARD_URL = BACKEND_ORIGIN + `api/v1/cards/${cardId}`;
+  return axios.delete(DELETE_CARD_URL);
+}
+
 export const addCommentToCard = (cardId, userId, content) => {
   const POST_COMMENT_CARD_URL = BACKEND_ORIGIN + `api/v1/comments/`;
   const data = {

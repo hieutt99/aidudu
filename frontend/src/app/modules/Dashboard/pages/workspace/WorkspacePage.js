@@ -11,12 +11,13 @@ import WorkspaceMembers from './components/main/WorkspaceMembers';
 import WorkspaceSettings from './components/main/WorkspaceSettings';
 import { useParams } from 'react-router-dom';
 import { HomeAside } from '../home/components/aside/HomeAside';
+import WorkspaceCreateModal from '../../../../../_metronic/layout/components/header/header-menu/component/WorkspaceCreateModal';
 
 export function WorkspacePage(props) {
   const { workspaceId } = useParams()
   console.log(workspaceId)
   const [workspaces, setWorkspace] = useState([])
-  const [boards, setBoards] = useState([])
+  const [workspaceModalOpen, setWorkspaceModalOpen] = useState(false)
   useEffect(()=>{
     getUserWorkspace().then(res=>{
         setWorkspace(res.data)
@@ -30,13 +31,19 @@ export function WorkspacePage(props) {
     });
     
   }, [])
+  const handleWorkspaceOpen = () => {
+    setWorkspaceModalOpen(true);
+  };
 
+  const handleWorkspaceClose = () => {
+    setWorkspaceModalOpen(false);
+  };
   return (
     <>
     <div className="d-flex flex-row">
       {/*begin::Page*/}
       <div className="d-flex-fluid">
-        <HomeAside workspaces={workspaces}/>
+        <HomeAside workspaces={workspaces} handleWorkspaceModalOpen={handleWorkspaceOpen}/>
       </div>
       <Switch>
         <Redirect
@@ -59,16 +66,8 @@ export function WorkspacePage(props) {
       </Switch>
         
     </div>
-    <Switch>
-      {/*{*/}
-      {/*  <Redirect*/}
-      {/*    exact={true}*/}
-      {/*    from="/"*/}
-      {/*    to="/"*/}
-      {/*  />*/}
-      {/*}*/}
-      {/*<ContentRoute path="/" component={} />*/}
-    </Switch>
+    <WorkspaceCreateModal openWorkspace={workspaceModalOpen} handleWorkspaceModalClose={handleWorkspaceClose} />
+
     </>
   );
 }
