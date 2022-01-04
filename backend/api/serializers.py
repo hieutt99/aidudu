@@ -88,18 +88,18 @@ class UserDisplaySerializer(serializers.ModelSerializer):
 class WorkspaceMembershipSerializer(serializers.ModelSerializer):
     id = serializers.SerializerMethodField('get_user_id_of_workspacemembership')
     fullname = serializers.SerializerMethodField('get_user_fullname_of_workspacemembership')
-    firstname = serializers.SerializerMethodField()
-    lastname = serializers.SerializerMethodField()
+    first_name = serializers.SerializerMethodField()
+    last_name = serializers.SerializerMethodField()
     avatar = serializers.SerializerMethodField('get_user_avatar_of_workspacemembership')
     
     class Meta:
         model = WorkspaceMembership
-        fields = ['id', 'fullname', 'avatar', 'role', "firstname", "lastname"]
+        fields = ['id', 'fullname', 'avatar', 'role', "first_name", "last_name"]
 
-    def get_firstname(self, instance):
+    def get_first_name(self, instance):
         return instance.user.first_name
 
-    def get_lastname(self, instance):
+    def get_last_name(self, instance):
         return instance.user.last_name
 
     def get_user_id_of_workspacemembership(self, workspace_src):
