@@ -200,11 +200,13 @@ class LabelSerializer(serializers.ModelSerializer):
 class CardMembershipSerializer(serializers.ModelSerializer):    
     id = serializers.SerializerMethodField('get_user_id_of_cardmembership')
     fullname = serializers.SerializerMethodField('get_user_fullname_of_cardmembership')
-    avatar = serializers.SerializerMethodField('get_user_avatar_of_cardmembership')
+    avatar = serializers.SerializerMethodField("get_avatar_of_card_member")
+    firstname = serializers.SerializerMethodField()
+    lastname = serializers.SerializerMethodField()
     
     class Meta:
         model = CardMembership
-        fields = ['id', 'fullname', 'avatar']
+        fields = ['id', 'fullname', 'avatar', 'firstname', 'lastname']
 
     def get_user_id_of_cardmembership(self, card_src):
         return card_src.user.id
@@ -212,8 +214,18 @@ class CardMembershipSerializer(serializers.ModelSerializer):
     def get_user_fullname_of_cardmembership(self, card_src):
         return card_src.user.get_full_name()
     
-    def get_user_avatar_of_cardmembership(self, card_src):
-        return card_src.user.avatar.url
+    def get_avatar_of_card_member(self, instance):
+        request = self.context.get("request")
+        if not instance.user.avatar:
+            return None 
+        url = instance.user.avatar.url 
+        return request.build_absolute_uri(url) if request else url 
+
+    def get_firstname(self, instance):
+        return instance.user.first_name
+
+    def get_lastname(self, instance):
+        return instance.user.last_name
 
 
 class ChecklistStatSerializer(serializers.ModelSerializer):
@@ -242,7 +254,7 @@ class LabelDetailSerializer(serializers.ModelSerializer):
 class BoardDetailViewCardSerializer(serializers.ModelSerializer):
     comments = serializers.IntegerField(source='comments.count', read_only=True)
     attachments = serializers.IntegerField(source='attachments.count', read_only=True)
-    members = CardMembershipSerializer(source='user_cards', many=True)
+    members = serializers.SerializerMethodField()
     checklists = ChecklistStatSerializer('checklists', many=True)
     labels = LabelDetailSerializer('labels', many=True)
 
@@ -250,6 +262,9 @@ class BoardDetailViewCardSerializer(serializers.ModelSerializer):
         model = Card
         fields = ['id', 'title', 'due', 'position', 'comments', 'attachments', 'labels', 'members', 'checklists', 'archived']
 
+    def get_members(self, instance):
+        members = instance.members
+        return CardMembershipSerializer(members, many=True, context=self.context).data
 
 class BoardDetailViewListSerializer(serializers.ModelSerializer):
         # cards = BoardDetailViewCardSerializer(many=True)
@@ -260,7 +275,7 @@ class BoardDetailViewListSerializer(serializers.ModelSerializer):
         
         def get_cards(self, instance):
             cards = instance.cards.filter(archived=False)
-            serializer = BoardDetailViewCardSerializer(cards, many=True)
+            serializer = BoardDetailViewCardSerializer(cards, many=True, context=self.context)
             return serializer.data
             
 class BoardMemberSerializer(serializers.ModelSerializer):
@@ -305,7 +320,7 @@ class BoardMembershipSerializer(serializers.ModelSerializer):
         return request.build_absolute_uri(url) if request else url 
 
 class BoardDetailViewSerializer(serializers.ModelSerializer):
-    lists = BoardDetailViewListSerializer(many=True)
+    lists = serializers.SerializerMethodField()
     members = serializers.SerializerMethodField()
     labels = serializers.SerializerMethodField()
     starred = serializers.SerializerMethodField()
@@ -315,6 +330,9 @@ class BoardDetailViewSerializer(serializers.ModelSerializer):
         model = Board
         fields = ['id', 'name', 'visibility', 'background', 'workspace', 'members', 'lists', 'labels', 'starred']
     
+    def get_lists(self, instance):
+        return BoardDetailViewListSerializer(many=True, context=self.context).data
+
     def get_members(self, instance):
         bms = BoardMembership.objects.filter(board=instance)
 
@@ -391,4 +409,4 @@ class CardDetailViewSerializer(serializers.ModelSerializer):
         card_membership = CardMembership.objects.filter(
             card_id=instance.id
         )
-        return CardMembershipSerializer(card_membership, many=True).data
+        return CardMembershipSerializer(card_membership, many=True, context=self.context).data
