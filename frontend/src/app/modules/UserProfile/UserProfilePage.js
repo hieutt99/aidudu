@@ -7,7 +7,7 @@ import { SubHeader } from "./components/SubHeader";
 // import AccountInformation from "./AccountInformation";
 // import { ProfileOverview } from "./ProfileOverview";
 // import ChangePassword from "./ChangePassword";
-// import PersonaInformation from "./PersonaInformation";
+import PersonaInformation from "./PersonaInformation";
 // import EmailSettings from "./EmailSettings";
 import UserProfileUpdate from "./UserProfileUpdate";
 import UserProfileCard from "./UserProfileCard";

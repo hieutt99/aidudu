@@ -96,7 +96,7 @@ export function SubHeader(arg) {
 					{/*<div className="img-fluid" style={{ backgroundImage: `url(${user.pic})` }}></div>*/}
 					{/*https://stackoverflow.com/questions/32591301/babel-error-jsx-value-should-be-either-an-expression-or-a-quoted-jsx-text*/}
 					{/*<img src={`url(${user.pic})`} class="img-fluid" alt={BACKEND_ORIGIN+"media/profile_pics/default.jpg"}></img>*/}
-					<img src={user.avatar?BACKEND_ORIGIN+user.avatar.substring(1):BACKEND_ORIGIN+"media/profile_pics/default.jpg"} class="img-fluid" alt=""></img>
+					<img src={user.avatar=="/media/profile_pics/default.jpg"?BACKEND_ORIGIN+"media/profile_pics/default.jpg":user.avatar} class="img-fluid" alt=""></img>
 				</div>
 				<div className="d-flex flex-column m-5">
 					<h2 className="text-left" style={{"font-weight":"bold"}}>{user.username}</h2>
