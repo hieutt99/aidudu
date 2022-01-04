@@ -9,6 +9,8 @@ import { toast } from "react-toastify";
 import WorkspaceDetail from "../mainheader/WorkspaceDetail";
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
+import WorkspaceCreateBoardModal from "../modal/WorkspaceCreateBoardModal";
+
 const textStyle = {
     fontSize : "15px"
 };
@@ -59,7 +61,8 @@ function WorkspaceBoards(props){
     const [searchTerm, setSearchTerm] = useState([""])
     const [searchBoards, setSearchBoards] = useState([])
     const [option, setOption] = useState([""])
-    
+    const [openBoard, setOpenBoard] = useState(false);
+
     useEffect(()=>{
         getWorkspaceBoards(workspaceId).then(res=>{
             setBoards(res.data)
@@ -83,7 +86,13 @@ function WorkspaceBoards(props){
         }
         console.log(searchBoards)
     }
-
+    const handleBoardOpen = () => {
+        setOpenBoard(true);
+      };
+    
+    const handleBoardClose = () => {
+    setOpenBoard(false);
+    };
     function compareZA( a, b ) {
         if ( a.name < b.name ){
           return 1;
@@ -149,6 +158,16 @@ function WorkspaceBoards(props){
                     </div>  
                 </div>
                 <div className="row">
+                    <div className="col-sm-3">
+                        <div className="image-container" style={{height:"190px", paddingTop:"18px", position:"relative", textAlign:"center",textTransform:"uppercase",fontSize:"30px"}}>
+                            <button type="button" className="btn btn-md" onClick={handleBoardOpen} style={{width:"350px", height:"170px", color: "black", backgroundColor: "#dddddd", fontSize:"20px"}}>Create new board</button>
+                        </div>
+                    </div>
+                    {/* <div className="col-sm-3" >
+                            <div style={{position:"relative", textAlign:"center",textTransform:"uppercase",fontSize:"30px"}}>
+                                <div class="top-left" style={{position:"absolute", top:"25px", left:"35px", color:"white"}}>Create new board</div>
+                            </div>
+                    </div> */}
                     {searchBoards.map(board => 
                         <div className="col-sm-3" >
                             <div className="image-container" style={{position:"relative", textAlign:"center",textTransform:"uppercase",fontSize:"30px"}}>
@@ -159,12 +178,13 @@ function WorkspaceBoards(props){
                                         <img src={board.background}  style={boardBackgroundIMG} alt={board.name}></img>
                                         <div class="top-left" style={{position:"absolute", top:"25px", left:"35px", color:"white"}}>{board.name}</div>
                                 </NavLink>
-                        </div>
+                            </div>
                         </div>
 
                     )}
                 </div>
             </div>
+        <WorkspaceCreateBoardModal workspaceId={workspaceId} openBoard={openBoard} handleBoardModalClose={handleBoardClose} />
         </div>              
         </>
     )

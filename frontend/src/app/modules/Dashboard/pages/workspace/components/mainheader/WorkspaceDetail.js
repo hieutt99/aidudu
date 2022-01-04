@@ -13,6 +13,8 @@ import { MdClose, MdLockOutline } from "react-icons/md";
 import { BiWorld } from "react-icons/bi";
 import { BACKEND_ORIGIN } from '../../../../../../../config';
 import { set } from "object-path";
+import WorkspaceUpdateModal from "../modal/WorkspaceUpdateModal";
+
 const textStyle = {
     fontSize : "15px",
     textTransform : "capitalize"
@@ -25,7 +27,7 @@ const workspaceDetailStyle = {
 
 
 const buttonStyle = {
-    backgroundColor: "#DFE1E6",
+    backgroundColor: "#EEF0F8",
     marginLeft: "3px",
     marginRight: "3px",
     border: "None",
@@ -50,7 +52,10 @@ const clickedButtonStyle = {
 function WorkspaceDetail(workspaceId){
     console.log(workspaceId)
     const [workspace, setWorkspace] = useState([])
+    const [button, setButton] = useState([])
     const dialogWorkspaceVisibilityTarget = useRef(null);
+    const [openWorkspace, setOpenWorkspace] = useState(false);
+
     const [isDialogWorkspaceVisibilityOpen, setDialogWorkspaceVisibility] = useState(false);
     const onWorkspaceVisibleButtonClicked = () => {
         if (isDialogWorkspaceVisibilityOpen) {
@@ -58,6 +63,13 @@ function WorkspaceDetail(workspaceId){
         } else {
             setDialogWorkspaceVisibility(true);
         }
+    };
+    const handleWorkspaceOpen = () => {
+        setOpenWorkspace(true);
+      };
+    
+    const handleWorkspaceClose = () => {
+    setOpenWorkspace(false);
     };
     useEffect(()=>{
         getWorkspaceById(workspaceId.workspaceId).then(res=>{
@@ -99,40 +111,7 @@ function WorkspaceDetail(workspaceId){
                     <div className="d-flex flex-column m-5">
                         <h2>{workspace.name}</h2>
                         <p className="text-left" style={textStyle}> {workspace.visibility} </p>
-                        <button type="button" className="btn btn-md" ref={dialogWorkspaceVisibilityTarget} onClick={onWorkspaceVisibleButtonClicked} style={{color: "black", backgroundColor: "#EC6451"}}>Edit workspace's details</button>
-                        <Overlay target={dialogWorkspaceVisibilityTarget.current} show={isDialogWorkspaceVisibilityOpen} placement="bottom">
-                            {(props) => (
-                                <Popover {...props}>
-                                    <form>
-                                        <div className='rounded bg-white p-0 d-flex flex-column' style={popoverDialogContainer} >
-
-                                            {/* Header */}
-                                            <div className='d-flex justify-content-between align-items-center p-3'
-                                            style={{borderBottom:"2px groove"}}>
-                                                <div className='btn p-0' onClick={() => { setDialogWorkspaceVisibility(false) }}>
-                                                    <MdClose style={iconSize20} />
-                                                </div>
-                                                <h6 className='m-0'>Edit Workspace's details</h6>
-                                                <div className='btn p-0' onClick={() => { setDialogWorkspaceVisibility(false) }}>
-                                                    <MdClose style={iconSize20} />
-                                                </div>
-                                            </div>
-                                            {/* Body */}
-                                            <div class="form-group" style={{padding: "10px 10px 0px 10px"}}>
-                                                <label for="name-ws">Workspace name</label>
-                                                <input type="text" onChange={e => {changeWorkspaceName(e.target.value)}} class="form-control" id="name-ws" placeholder="Enter new name"/>
-                                            </div>
-                                            <div class="form-group" style={{padding: "10px 10px 0px 10px", borderTop:"2px groove"}}>
-                                                <label for="logo-ws">Upload workspace logo</label>
-                                                <input type="file" onChange={e => {changeWorkspaceLogo(e.target.value)}}  class="form-control-file" id="logo-ws"/>
-                                            </div>
-                                            <hr className='m-0' />
-                                            <button type="submit" class="btn btn-primary">Submit</button>
-                                        </div>
-                                    </form>
-                                </Popover>
-                                )}
-                        </Overlay>
+                        <button type="button" className="btn btn-md"  onClick={handleWorkspaceOpen} style={{color: "black", backgroundColor: "#EC6451"}}>Edit workspace's details</button>
                     </div>
                 </div>
                 <div className="d-flex flex-row justify-content-center" style={{marginTop:15}}>
@@ -142,7 +121,7 @@ function WorkspaceDetail(workspaceId){
                         className="navi-link py-4"
                         activeClassName="active"
                     >
-                        <button type="button" className="btn" style={buttonStyle}>Boards</button>
+                        <button type="button" className="btn" onClick={e=>{setButton(clickedButtonStyle)}} style={buttonStyle}>Boards</button>
                     </NavLink>
                     </div>
                     <div className="navi-item" style={{marginBottom:"0px"}}>
@@ -151,7 +130,7 @@ function WorkspaceDetail(workspaceId){
                         className="navi-link py-4"
                         activeClassName="active"
                     >
-                        <button type="button" className="btn" style={buttonStyle}  >Members</button>
+                        <button type="button" className="btn" onClick={e=>{setButton(clickedButtonStyle)}} style={buttonStyle}>Members</button>
                     </NavLink>
                     </div>
                     <div className="navi-item" style={{marginBottom:"0px"}}>
@@ -160,7 +139,7 @@ function WorkspaceDetail(workspaceId){
                         className="navi-link py-4"
                         activeClassName="active"
                     >
-                        <button type="button" className="btn" style={buttonStyle}>Settings</button>
+                        <button type="button" className="btn" onClick={e=>{setButton(clickedButtonStyle)}} style={buttonStyle}>Settings</button>
                     </NavLink>
                     </div>
                 </div>
@@ -185,6 +164,8 @@ function WorkspaceDetail(workspaceId){
                 </div>
                 </div>
             </div>
+              {/*Modal to create workspace*/}
+        <WorkspaceUpdateModal workspaceId={workspaceId} openWorkspace={openWorkspace} handleWorkspaceModalClose={handleWorkspaceClose} />
         </div>
         </>
     )

@@ -161,14 +161,27 @@ function WorkspaceMemberMain(workspaceId){
       }
     
     function removeMember(member){
-        axios.delete(`${BACKEND_ORIGIN}api/v1/workspaces/${workspace.id}/members/`, { id: [member.id] }).then(res => {
-            setMembers([members.filter(mem => mem.id !== member.id)]);
-            setSearchMembers(members)
+        console.log(members)
+        axios.delete(`${BACKEND_ORIGIN}api/v1/workspaces/${workspace.id}/members/`, { data: { id: member.id } }).then(res => {
+            console.log(members.filter(mem => mem.id !== member.id))
+            setSearchMembers(members.filter(mem => mem.id !== member.id));
+            // setSearchMembers(members)
         }).catch(e => {
             alert("Error removing member from workspace!");
         })
     }
     
+    function makeMemberAdmin(member){
+        console.log(member)
+        axios.put(`${BACKEND_ORIGIN}api/v1/workspaces/${workspace.id}/admin/`, { id: member.id }).then(res => {
+            // setSearchMembers(members.filter(mem => mem.id !== member.id));
+            // setSearchMembers(members)
+            alert(member.first_name+" "+member.last_name+" is promoted to be admin of this workspace!")
+        }).catch(e => {
+            alert("Error removing member from workspace!");
+        })
+    }
+
     const inviteMembers = e => {
         let idList = [];
         for (let i = 0; i < selectedCandidates.length; i++) idList.push(selectedCandidates[i].id);
@@ -176,7 +189,8 @@ function WorkspaceMemberMain(workspaceId){
             let i = 0; i < idList.length; i++
         ){
             axios.post(`${BACKEND_ORIGIN}api/v1/workspaces/${workspace.id}/members/`, { id: idList[i] }).then(res => {
-                setMembers([...members, selectedCandidates]);
+                // setMembers([...members, selectedCandidates]);
+                selectedCandidates.map(cand =>setMembers([...searchMembers, cand]));
                 selectedCandidates.map(cand =>setSearchMembers([...searchMembers, cand]));
 
             }).catch(e => {
@@ -193,18 +207,18 @@ function WorkspaceMemberMain(workspaceId){
 
 
 
-    console.log(searchMembers)
+    console.log(searchMembers.length)
     return (
         <>
         <div className="d-flex flex-row-fluid" style={{marginTop:"30px", marginLeft:"30px"}}>
             <div className="d-flex flex-column" style={{marginRight:"50px"}}>
                 <h4>Members of Workspace boards</h4>
                 <div className="navi-item" >
-                    <button type="button" className="btn" style={buttonStyle}>Workspace members ({members.length})</button>
+                    <button type="button" className="btn" style={buttonStyle}>Workspace members ({searchMembers.length})</button>
                 </div>
             </div>
             <div className="d-flex flex-column w-75">
-            <h2 style={{borderBottom:"2px solid"}}>Workspace members ({members.length})</h2>
+            <h2 style={{borderBottom:"2px solid"}}>Workspace members ({searchMembers.length})</h2>
             <p>Workspace members can view and join all Workspace boards and create new boards in the Workspace</p>
             <div className="d-flex flex-row justify-content-between">
                 <div class="input-group input-group-sm mb-3">
@@ -283,7 +297,7 @@ function WorkspaceMemberMain(workspaceId){
                                 <h5 style={{marginLeft:"5px"}}>{member.first_name+" "+member.last_name}</h5>
                             </div>
                             <div className="d-flex flex-row align-items-center">
-                                <button class="btn btn-outline-secondary" style={{backgroundColor:"#DFE1E6", margin:"5px"}} type="button">Admin</button>
+                                <button class="btn btn-outline-secondary" onClick={()=> makeMemberAdmin(member)} style={{backgroundColor:"#DFE1E6", margin:"5px"}} type="button">Admin</button>
                                 <button class="btn btn-outline-secondary" onClick={()=> removeMember(member)} style={{backgroundColor:"#DFE1E6", margin:"5px"}} type="button">Remove</button>
                             </div>
                         </div>
