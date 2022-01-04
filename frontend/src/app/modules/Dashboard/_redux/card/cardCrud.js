@@ -38,3 +38,19 @@ export const archiveCard = (cardId) => {
   const POST_ARCHIVE_CARD_URL = BACKEND_ORIGIN + `api/v1/cards/${cardId}/archive/`;
   return axios.post(POST_ARCHIVE_CARD_URL);
 }
+
+export const addMemberToCard = (cardId, memberId) => {
+  const POST_ADD_MEMBER_TO_CARD = BACKEND_ORIGIN + `api/v1/cards/${cardId}/members/`;
+  return axios.post(POST_ADD_MEMBER_TO_CARD, {
+    id: memberId
+  })
+}
+
+export const removeMemberToCard = (cardId, memberId) => {
+  const DELETE_ADD_MEMBER_TO_CARD = BACKEND_ORIGIN + `api/v1/cards/${cardId}/members/`;
+  return axios.delete(DELETE_ADD_MEMBER_TO_CARD, {
+    data: {
+      id: memberId
+    }
+  })
+}
