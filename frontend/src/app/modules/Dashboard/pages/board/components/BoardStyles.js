@@ -86,6 +86,6 @@ export const backgroundAddNewCard = {
 };
 
 export const popoverDialogContainer = {
-    width: "400px",
+    width: "300px",
     height: "auto",
 };
