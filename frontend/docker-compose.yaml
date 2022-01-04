@@ -1,0 +1,11 @@
+version: '3'
+services:
+  frontend:
+    build: .
+    container_name: frontend
+    image: frontend:1.0
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./:/app
+      - /app/node_modules
