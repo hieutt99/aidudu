@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-import { LOGIN_URL, ME_URL, REGISTER_URL, REQUEST_PASSWORD_URL } from '../../../../config';
+import { LOGIN_URL, ME_URL, REGISTER_URL, REQUEST_PASSWORD_URL, BACKEND_ORIGIN } from '../../../../config';
 
 export function login(email, password) {
   const username = email;
@@ -27,4 +27,26 @@ export function getUserByToken() {
   // Authorization head should be fulfilled in interceptor.
 
   return axios.get(ME_URL);
+}
+
+export function updateUserApi(user, userId) {
+  return axios.patch(`${BACKEND_ORIGIN}api/v1/users/${userId}/`, user)
+    .then(res => {
+      if (res.data) {
+        return {
+          status: 'SUCCESS',
+          data: res.data,
+        }
+      } else {
+        return {
+          status: 'ERROR'
+        }
+      }
+    })
+    .catch(err => {
+      return {
+        status: 'ERROR',
+        error: err,
+      }
+    })
 }
