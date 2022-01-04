@@ -43,7 +43,7 @@ const BoardCardItem = (props) => {
                     }
 
                     {/* Content */}
-                    <div>{card["title"]} - {card["id"]}</div>
+                    <div>{card["title"]}</div>
 
                     {/* Icon items */}
                     <div className='d-flex align-items-center justify-content-start mt-3' style={memberAvatarContainer}>
