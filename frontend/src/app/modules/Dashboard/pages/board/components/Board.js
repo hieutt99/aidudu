@@ -17,6 +17,7 @@ import BoardWorkspaceVisibility from './board-workspace-visibility/BoardWorkspac
 import { BACKEND_ORIGIN } from '../../../../../../config';
 import BoardStarred from './board-starred/BoardStarred';
 import BoardChangeBackgroundDialog from './board-change-background-dialog/BoardChangeBackgroundDialog';
+import { shallowEqual, useSelector } from 'react-redux';
 
 // APIs
 export const WORK_API = 'api/v1';
@@ -27,6 +28,7 @@ export const UPDATE_CARDS_POSITION = BACKEND_ORIGIN + WORK_API + '/boards/';
 function Board(props) {
   const param = useParams()
   const boardId = param.boardId
+  const { user } = useSelector(state => state.auth, shallowEqual);
 
   const GET_BOARD_DETAILS = BACKEND_ORIGIN + WORK_API + `/boards/${boardId}/details`;
   const INCREMENT_CARD_POSITION = 1;
@@ -41,6 +43,10 @@ function Board(props) {
   const [candidates, setCandidates] = useState([]);
   const [selectedCandidates, setSelectedCandidates] = useState([]);
   const [inviteQuery, setInviteQuery] = useState('');
+
+  useEffect(() => {
+    console.log('user', user);
+  }, [user])
 
   useEffect(() => {
     getBoardDetails();
@@ -272,7 +278,7 @@ function Board(props) {
     for (let i = 0; i < selectedCandidates.length; i++) idList.push(selectedCandidates[i].id);
 
     axios.post(`${BACKEND_ORIGIN}api/v1/boards/${board.id}/members/`, { id: idList }).then(res => {
-      setMembers([...members, selectedCandidates]);
+      setMembers([...members, ...selectedCandidates]);
     }).catch(e => {
       alert("Có lỗi xảy ra khi mời thành viên mới");
     })
@@ -292,6 +298,16 @@ function Board(props) {
         break;
       }
     }
+  }
+
+  const handleLeaveBoard = e => {
+    // console.log('leave', user);
+
+    axios.delete(`${BACKEND_ORIGIN}api/v1/boards/${board.id}/members/`, {data: {id: [user.id]}}).then(res => {
+        window.location = '/';
+    }).catch(e => {
+        alert("Có lỗi xảy ra khi xoá thành viên khỏi nhóm");
+    });
   }
 
   return (
@@ -460,7 +476,7 @@ function Board(props) {
 
             {/* Leave board */}
             <div className='position-absolute fixed-bottom w-100 p-3'>
-              <Button variant='danger' className='w-100 py-2'>
+              <Button variant='danger' className='w-100 py-2' onClick={handleLeaveBoard}>
                 <div className='d-flex align-items-center justify-content-center py-1'>
                   <h6 className='m-0'>Leave board</h6>
                 </div>
