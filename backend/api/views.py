@@ -192,7 +192,7 @@ class BoardViewSet(ModelViewSet):
             memberships = BoardMembership.objects.filter(
                 board_id=board.id
             )
-            serializer = BoardMembershipSerializer(memberships, many=True)
+            serializer = BoardMembershipSerializer(memberships, many=True, context={'request': request})
             return Response(data=serializer.data)
         else:
             raise PermissionDenied(
@@ -201,13 +201,11 @@ class BoardViewSet(ModelViewSet):
 
     def add_members_to_board(self, request, pk):
         board = get_object_or_404(Board, id=pk)
-        boardmembership = BoardMembership.objects.filter(
-            user_id=request.user, board_id=board.id
-        )
+        boardmembership = BoardMembership.objects.filter(user_id=request.user, board_id=board.id)
+
         if boardmembership.exists() and 'id' in request.data.keys():
-            ids = [request.data['id']] if isinstance(request.data['id'], int) \
-                else request.data['id']
-            if isinstance(ids, list) and len(ids)>0:
+            ids = [request.data['id']] if isinstance(request.data['id'], int) else request.data['id']
+            if isinstance(ids, list) and len(ids) > 0:
                 memberships = BoardMembership.objects.filter(user_id__in=ids, board_id=board.id)
                 # id da ton tai 
                 changes = [item.id for item in memberships]

@@ -56,7 +56,9 @@ export default function BasePage() {
         {/*<Route path="/google-material" component={GoogleMaterialPage} />*/}
         {/*<Route path="/react-bootstrap" component={ReactBootstrapPage} />*/}
         {/*<Route path="/e-commerce" component={ECommercePage} />*/}
-        <Redirect to="error/error-v1" />
+        <Route path="/user-profile" component={UserProfilepage} />
+        <Redirect to="/error/error-v1" />
+        {/*<Route path="*" component={ErrorPage1}/>*/}
       </Switch>
     </Suspense>
   );
