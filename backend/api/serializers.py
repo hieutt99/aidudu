@@ -269,12 +269,18 @@ class BoardDetailViewCardSerializer(serializers.ModelSerializer):
 class BoardDetailViewListSerializer(serializers.ModelSerializer):
         # cards = BoardDetailViewCardSerializer(many=True)
         cards = serializers.SerializerMethodField("get_cards")
+        archived_cards = serializers.SerializerMethodField("get_archived_cards")
         class Meta:
             model = List
-            fields = ['id', 'name', 'position', 'archived', 'cards']
+            fields = ['id', 'name', 'position', 'archived', 'cards', 'archived_cards']
         
         def get_cards(self, instance):
             cards = instance.cards.filter(archived=False)
+            serializer = BoardDetailViewCardSerializer(cards, many=True, context=self.context)
+            return serializer.data
+
+        def get_archived_cards(self, instance):
+            cards = instance.cards.filter(archived=True)
             serializer = BoardDetailViewCardSerializer(cards, many=True, context=self.context)
             return serializer.data
             
