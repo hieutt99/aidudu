@@ -16,6 +16,6 @@ export function getBoardDetail(boardId){
 };
 
 export function getCardOfUser(userId){
-	let url = USER_URL+`/${userId}/cards/`
+	let url = USER_URL+`${userId}/cards/`
 	return axios.get(url)
 };
